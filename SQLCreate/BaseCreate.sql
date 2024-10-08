@@ -50,13 +50,13 @@ exec(@sSql);
 Go
 
 /* Base DataTypes, TableTypes, Tables, Views, Functions, Procedures, Triggers and Finalize objects */
-Input ..\..\SQL_UI\SQL\DataTypes;
-Input ..\..\SQL_UI\SQL\TableTypes;
-Input ..\..\SQL_UI\SQL\Tables;
-Input ..\..\SQL_UI\SQL\Functions|fn_*;
-Input ..\..\SQL_UI\SQL\Views;
-Input ..\..\SQL_UI\SQL\Procedures|sp_*;
-Input ..\..\SQL_UI\SQL\Triggers;
-Input ..\..\SQL_UI\SQL\Finalize;
+Input ..\..\UI_SQL\SQL\DataTypes;
+Input ..\..\UI_SQL\SQL\TableTypes;
+Input ..\..\UI_SQL\SQL\Tables;
+Input ..\..\UI_SQL\SQL\Functions|fn_*;
+Input ..\..\UI_SQL\SQL\Views;
+Input ..\..\UI_SQL\SQL\Procedures|sp_*;
+Input ..\..\UI_SQL\SQL\Triggers;
+Input ..\..\UI_SQL\SQL\Finalize;
 
 Go

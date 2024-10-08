@@ -25,18 +25,18 @@ exec(@sSql);
 Go
 
 /* Base DataTypes for DE - specific */
-Input ..\..\SQL_UI\SQL\DataTypes\domains_Contacts.sql;
-Input ..\..\SQL_UI\SQL\DataTypes\domains_Core.sql;
+Input ..\..\UI_SQL\SQL\DataTypes\domains_Contacts.sql;
+Input ..\..\UI_SQL\SQL\DataTypes\domains_Core.sql;
 
 /* Base TableTypes for DE - specific */
-Input ..\..\SQL_UI\SQL\TableTypes\TAuditDetails.sql;
-Input ..\..\SQL_UI\SQL\TableTypes\TContentTemplates.sql;
-Input ..\..\SQL_UI\SQL\TableTypes\TControlsTable.sql;
-Input ..\..\SQL_UI\SQL\TableTypes\TEntityKeysTable.sql;
-Input ..\..\SQL_UI\SQL\TableTypes\TEntityStatusCounts.sql;
-Input ..\..\SQL_UI\SQL\TableTypes\TErrorInfo.sql;
-Input ..\..\SQL_UI\SQL\TableTypes\TJobStepsInfo.sql;
-Input ..\..\SQL_UI\SQL\TableTypes\TMarkers.sql;
+Input ..\..\UI_SQL\SQL\TableTypes\TAuditDetails.sql;
+Input ..\..\UI_SQL\SQL\TableTypes\TContentTemplates.sql;
+Input ..\..\UI_SQL\SQL\TableTypes\TControlsTable.sql;
+Input ..\..\UI_SQL\SQL\TableTypes\TEntityKeysTable.sql;
+Input ..\..\UI_SQL\SQL\TableTypes\TEntityStatusCounts.sql;
+Input ..\..\UI_SQL\SQL\TableTypes\TErrorInfo.sql;
+Input ..\..\UI_SQL\SQL\TableTypes\TJobStepsInfo.sql;
+Input ..\..\UI_SQL\SQL\TableTypes\TMarkers.sql;
 
 /* WMS DataTypes for DE - specific */
 Input ..\SQL\DataTypes\domains_Core.sql;
@@ -82,23 +82,23 @@ Input ..\SQL\TableTypes\TOpenReceiptExportType.sql;
 Input ..\SQL\TableTypes\TShippedLoadsExportType.sql;
 
 /* Base Tables for DE - specific */
-Input ..\..\SQL_UI\SQL\Tables\BusinessUnits.sql;
-Input ..\..\SQL_UI\SQL\Tables\EventMonitor.sql;
+Input ..\..\UI_SQL\SQL\Tables\BusinessUnits.sql;
+Input ..\..\UI_SQL\SQL\Tables\EventMonitor.sql;
 /* Statuses - Required in vwBU */
-Input ..\..\SQL_UI\SQL\Tables\Statuses.sql;
+Input ..\..\UI_SQL\SQL\Tables\Statuses.sql;
 
 /* Base Views for DE - specific */
-Input ..\..\SQL_UI\SQL\Views\vwBusinessUnits.sql;
+Input ..\..\UI_SQL\SQL\Views\vwBusinessUnits.sql;
 
 /* Base Functions for DE - specific */
-Input ..\..\SQL_UI\SQL\Functions\fn_Miscellaneous;
-Input ..\..\SQL_UI\SQL\Functions\fn_Controls;
+Input ..\..\UI_SQL\SQL\Functions\fn_Miscellaneous;
+Input ..\..\UI_SQL\SQL\Functions\fn_Controls;
 
 /* Base Procedures for DE - specific */
-Input ..\..\SQL_UI\SQL\Procedures\sp_Miscellaneous;
-Input ..\..\SQL_UI\SQL\Procedures\sp_Controls;
-Input ..\..\SQL_UI\SQL\Procedures\sp_Deploy;
-Input ..\..\SQL_UI\SQL\Procedures\sp_Jobs;
+Input ..\..\UI_SQL\SQL\Procedures\sp_Miscellaneous;
+Input ..\..\UI_SQL\SQL\Procedures\sp_Controls;
+Input ..\..\UI_SQL\SQL\Procedures\sp_Deploy;
+Input ..\..\UI_SQL\SQL\Procedures\sp_Jobs;
 
 /* DE DataTypes, TableTypes, Tables, Views, Functions, Procedures and Triggers */
 Input ..\CIMSDE\SQL\DataTypes;

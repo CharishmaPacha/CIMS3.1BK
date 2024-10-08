@@ -212,30 +212,30 @@ Input ..\SQL\Triggers;
 Input ..\SQL\Finalize;
 
 /* RF & AMF Framework DataTypes, TableTypes, Tables, Views, Functions, Procedures and Triggers */
-Input ..\..\SQL_RF_AMF\SQL\DataTypes;
-Input ..\..\SQL_RF_AMF\SQL\TableTypes;
-Input ..\..\SQL_RF_AMF\SQL\Tables;
-Input ..\..\SQL_RF_AMF\SQL\Functions|fn_*;
-Input ..\..\SQL_RF_AMF\SQL\Views;
-Input ..\..\SQL_RF_AMF\SQL\Procedures|sp_*;
-Input ..\..\SQL_RF_AMF\SQL\Triggers;
+Input ..\..\AMF_SQL\SQL\DataTypes;
+Input ..\..\AMF_SQL\SQL\TableTypes;
+Input ..\..\AMF_SQL\SQL\Tables;
+Input ..\..\AMF_SQL\SQL\Functions|fn_*;
+Input ..\..\AMF_SQL\SQL\Views;
+Input ..\..\AMF_SQL\SQL\Procedures|sp_*;
+Input ..\..\AMF_SQL\SQL\Triggers;
 
 /* API & AAF Framework DataTypes, TableTypes, Tables, Views, Functions, Procedures and Triggers */
-Input ..\..\SQL_API_AAF\SQL\DataTypes;
-Input ..\..\SQL_API_AAF\SQL\TableTypes;
-Input ..\..\SQL_API_AAF\SQL\Tables;
-Input ..\..\SQL_API_AAF\SQL\Functions|fn_*;
-Input ..\..\SQL_API_AAF\SQL\Views;
-Input ..\..\SQL_API_AAF\SQL\Procedures|sp_*;
-Input ..\..\SQL_API_AAF\SQL\Triggers;
+Input ..\..\AAF_SQL\SQL\DataTypes;
+Input ..\..\AAF_SQL\SQL\TableTypes;
+Input ..\..\AAF_SQL\SQL\Tables;
+Input ..\..\AAF_SQL\SQL\Functions|fn_*;
+Input ..\..\AAF_SQL\SQL\Views;
+Input ..\..\AAF_SQL\SQL\Procedures|sp_*;
+Input ..\..\AAF_SQL\SQL\Triggers;
 
 /* ADP & DaB Framework DataTypes, TableTypes, Tables, Views, Functions, Procedures and Triggers */
-Input ..\..\SQL_DaB_ADP\SQL\DataTypes;
-Input ..\..\SQL_DaB_ADP\SQL\TableTypes;
-Input ..\..\SQL_DaB_ADP\SQL\Tables;
-Input ..\..\SQL_DaB_ADP\SQL\Functions|fn_*;
-Input ..\..\SQL_DaB_ADP\SQL\Views;
-Input ..\..\SQL_DaB_ADP\SQL\Procedures|sp_*;
-Input ..\..\SQL_DaB_ADP\SQL\Triggers;
+Input ..\..\ADP_SQL\SQL\DataTypes;
+Input ..\..\ADP_SQL\SQL\TableTypes;
+Input ..\..\ADP_SQL\SQL\Tables;
+Input ..\..\ADP_SQL\SQL\Functions|fn_*;
+Input ..\..\ADP_SQL\SQL\Views;
+Input ..\..\ADP_SQL\SQL\Procedures|sp_*;
+Input ..\..\ADP_SQL\SQL\Triggers;
 
 Go
