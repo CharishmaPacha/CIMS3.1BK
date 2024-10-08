@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SqlDataSource>
+  <Name>vwOrderDetails</Name>
+  <Connection Name="DbConnection" FromAppConfig="true" />
+  <Query Type="SelectQuery" Name="vwOrderDetails">
+    <Tables>
+      <Table Name="vwOrderDetails" />
+    </Tables>
+    <Columns>
+      <AllColumns />
+    </Columns>
+  </Query>
+  <ConnectionOptions CloseConnection="true" />
+</SqlDataSource>

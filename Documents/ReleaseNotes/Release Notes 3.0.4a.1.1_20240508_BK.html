@@ -1,0 +1,91 @@
+<div class="csg-wrapper" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif; font-size: 14px; font-weight: 400; line-height: 24px; vertical-align: baseline;"><h1 class="csg-h1" style="font-style: inherit; color: #172B4D; font-weight: 600; margin-bottom: 0; font-size: 23px; line-height: 1.1034; margin-top: 40px; letter-spacing: -0.01em;">Release notes - Bamko - Release.BK.2024.May08(A)</h1><h3 class="csg-h3" style="font-style: inherit; color: #172B4D; font-weight: 600; margin-bottom: 0; font-size: 16px; line-height: 1.2; margin-top: 32px; font-weight: 500; letter-spacing: -0.008em;">Task</h3><p class="csg-p" style="margin: 0; padding: 0px; margin-bottom: 7px; padding-top: 7px; mso-line-height-rule: exactly; line-height: 24px; font-size: 14px;"><a href="https://cimswms.atlassian.net/browse/BK-1093" class="csg-mark-link" style="border: none; background: transparent; color: #0052cc; text-decoration: none;">BK-1093</a> UPS API Integration upgrade to OAuth for BK</p><p class="csg-p" style="margin: 0; padding: 0px; margin-bottom: 7px; padding-top: 7px; mso-line-height-rule: exactly; line-height: 24px; font-size: 14px;"><a href="https://cimswms.atlassian.net/browse/BK-1099" class="csg-mark-link" style="border: none; background: transparent; color: #0052cc; text-decoration: none;">BK-1099</a> FEDEX OAuth2 integrate with the CIMS </p></div>
+
+<P>Release Notes</P>
+<br>BK Production
+<br>M D:/SVN_VS/BK/branches/Prod/SQL/WMS/InitScripts/Init_Control.sql
+<br>Checkin created revision 1700
+<br>M E:/SVN_VS/BK/branches/Prod/API/SQLInit/Main/init_APIConfiguration.sql
+<br>M E:/SVN_VS/BK/branches/Prod/API/SQLInit/Main/init_APIIntegrations.sql
+<br>M E:/SVN_VS/BK/branches/Prod/SQLInit/Main/Init_ShippingAccounts.sql
+<br>Checkin created revision 1779
+<br>M E:/SVN_VS/BK/branches/Prod/SQL/Procedures/sp_Shipping/pr_Shipping_BuildReferences.sql
+<br>M E:/SVN_VS/BK/branches/Prod/SQL/Procedures/sp_Shipping/pr_Shipping_GetShipmentData.sql
+<br>M E:/SVN_VS/BK/branches/Prod/SQLInit/Main/Init_ShippingAccounts.sql
+<br>Checkin created revision 1781
+
+<br>CIMS3.0.4a.1.1:
+
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/InitScripts/Init_ShippingAccounts.sql
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/InitScripts/init_ShipVias.sql
+<br>Checkin created revision 85846
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/Base/def_Printing.sql
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/Base/sp_Miscellaneous.sql
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/Base/vwDocumentLibrary.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/InitScripts/Rules/Init_Rules_ShipLabels.sql -D
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/InitScripts/Rules/init_Rules_CarrierInterface.sql
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/InitScripts/Rules/init_Rules_Carrier_ShipmentData.sql
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/InitScripts/Rules/init_Rules_PrintList_Outbound.sql  --Bk Prod
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/InitScripts/Rules/init_Rules_ShippingAccounts.sql
+<br>Checkin created revision 85808
+
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/InitScripts/Init_Control.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/InitScripts/Init_Jobs.sql
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/InitScripts/Mappings/Init_Mapping_UPSAPI.sql
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/InitScripts/Mappings/init_Mapping_CarrierShippingDocuments.sql
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/InitScripts/Mappings/init_Mapping_FreightTerms.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/InitScripts/Rules/Init_Rules_ShipLabels.sql
+<br>Checkin created revision 85777
+
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQL/Procedures/sp_API_UPS/pr_API_UPS2_AccessToken_ValidateAndCreate.sql
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQL/Procedures/sp_API_UPS/pr_API_UPS2_AcessToken_ValidateAndRefresh.sql
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQL/Procedures/sp_API_UPS/pr_API_UPS2_CreateToken_GetMsgData.sql
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQL/Procedures/sp_API_UPS/pr_API_UPS2_CreateToken_ProcessResponse.sql
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQL/Procedures/sp_API_UPS/pr_API_UPS2_GenerateToken_GetMsgData.sql
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQL/Procedures/sp_API_UPS/pr_API_UPS2_GenerateToken_ProcessResponse.sql
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQL/Procedures/sp_API_UPS/pr_API_UPS2_GenerateToken_Request.sql
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQL/Procedures/sp_API_UPS/pr_API_UPS2_RefreshToken_GetMsgData.sql
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQL/Procedures/sp_API_UPS/pr_API_UPS2_RefreshToken_ProcessResponse.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQL/Procedures/sp_API_UPS/pr_API_UPS_AddShipmentRequest.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQL/Procedures/sp_API_UPS/pr_API_UPS_AddressValidation_GetMsgData.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQL/Procedures/sp_API_UPS/pr_API_UPS_AddressValidation_ProcessResponse.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQL/Procedures/sp_API_UPS/pr_API_UPS_GetAddress.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQL/Procedures/sp_API_UPS/pr_API_UPS_GetBillToAddress.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQL/Procedures/sp_API_UPS/pr_API_UPS_GetInternationalDocs.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQL/Procedures/sp_API_UPS/pr_API_UPS_GetLabelSpecifications.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQL/Procedures/sp_API_UPS/pr_API_UPS_GetPackageInfo.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQL/Procedures/sp_API_UPS/pr_API_UPS_GetPaymentInfo.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQL/Procedures/sp_API_UPS/pr_API_UPS_GetServiceInfo.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQL/Procedures/sp_API_UPS/pr_API_UPS_GetShipFromAddress.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQL/Procedures/sp_API_UPS/pr_API_UPS_GetShipToAddress.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQL/Procedures/sp_API_UPS/pr_API_UPS_GetShipperAddress.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQL/Procedures/sp_API_UPS/pr_API_UPS_GetSoldToAddress.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQL/Procedures/sp_API_UPS/pr_API_UPS_GetSpecialServices.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQL/Procedures/sp_API_UPS/pr_API_UPS_ProcessShipmentResponse.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQL/Procedures/sp_API_UPS/pr_API_UPS_ShipmentRequest_GetMsgData.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQLInit/Main/init_APIConfiguration.sql
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQLInit/Main/init_APIIntegrations.sql
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/Domains_Contacts.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/Domains_Core.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/Domains_Shipping.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/InitScripts/Init_Control.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/InitScripts/Init_Jobs.sql
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/InitScripts/Mappings/Init_Mapping_UPSAPI.sql
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/InitScripts/Mappings/init_Mapping_CarrierShippingDocuments.sql
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/InitScripts/Mappings/init_Mapping_FreightTerms.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/InitScripts/Rules/Init_Rules_ShipLabels.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/def_Core.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/def_Inventory.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/def_Orders.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/def_Shipping.sql
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/def_Tasks.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/sp_Carrier.sql
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/sp_Contacts.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/sp_LPNs.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/sp_Miscellaneous.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/sp_Orders.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/sp_Printing.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/sp_Shipping.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/sp_Tasks.sql
+<br>M E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/vwExports.sql
+<br>A E:/SVN_VS/cIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/vwShipVias.sql
+<br>Checkin created revision 85777

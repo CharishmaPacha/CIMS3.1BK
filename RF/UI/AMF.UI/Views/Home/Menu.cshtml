@@ -1,0 +1,193 @@
+﻿@using System.Xml.Linq;
+@using AMF.UI.Helpers;
+
+@section scripts
+{
+    <script type="text/javascript" src="~/Scripts/@Html.VersionedJSString("amf.ui.utility.js")"></script>
+    <script type="text/javascript" src="~/Scripts/@Html.VersionedJSString("amf.ui.menu.js")"></script>
+}
+
+@section customcssfiles
+{
+    @Styles.Render("~/Content/amfmenu")
+}
+
+@functions
+{
+    IEnumerable<XElement> GetMenuItems(XDocument MenuListXML, string ParentMenuName)
+    {
+        IEnumerable<XElement> menuitems =
+            from mi in MenuListXML.Root.Elements("MenuItem")
+            where (string)mi.Descendants("ParentMenuName").First().Value == ParentMenuName
+            select mi;
+
+        return menuitems;
+    }
+
+}
+@{
+    ViewBag.Title = "Menu";
+
+    XDocument RFViewDataXml = null;
+
+    try
+    {
+        string rfmessage = Model.Root.RFViewData;
+        RFViewDataXml = XDocument.Load(new StringReader(rfmessage));
+    }
+    catch (Exception ex)
+    {
+        // do nothing
+    }
+
+    bool resulthaserrors = false;
+    try
+    {
+        if (RFViewDataXml.Root.Elements("Errors").Count() > 0)
+        {
+            resulthaserrors = true;
+        }
+
+    }
+    catch (Exception ex)
+    {
+
+        resulthaserrors = false;
+    }
+
+    XDocument RFMenuXml = null;
+    dynamic rfmenu = AMF.UI.Helpers.DbUtility.GetMenu(Session);
+    if (rfmenu != null)
+    {
+        RFMenuXml = XDocument.Load(new StringReader(rfmenu));
+    }
+}
+
+@using (Html.BeginForm("Menu", "Home", FormMethod.Post))
+{
+    @Html.Hidden("SelectedMenu")
+    try
+    {
+        string submenuname = Model.Root.SubMenu.ToString();
+        @Html.Hidden("SubMenu", submenuname)
+    }
+    catch (Exception ex)
+    {
+        // do nothing
+    }
+
+    <div class="amf-form-header-container-tablet">
+        <div class="container">
+            <div class="amf-form-heading-tablet">
+                <a class="amf-form-heading-logo-tablet" href="#"><img src="~/Content/Images/@AMF.UI.Helpers.Constants.FormTitleLogoFileName" alt="image"></a>    
+                <span class="amf-form-heading-logo-name-tablet" style="">@AMF.UI.Helpers.Constants.FormTitleText</span>
+                <span class="pull-left amf-form-heading-key-info-tablet">@Session["SessionKey_Warehouse"].ToString()</span>
+                <span class="amf-form-heading-title js-amf-menu-title">Main Menu</span>      
+                <a class="pull-right amf-form-logout js-amf-logout"><i class="amfi-power-off"></i></a>
+                <a href="javascript:void(0);" class="hidden js-amf-backtomainmenu"><span class="pull-right amf-backtomainmenu"><i class="amfi-back-left"></i></span></a>
+                <a class="pull-right amf-message-showhide js-amf-message-showhide hidden"><i class="amfi-bell"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="amf-menu-container-tablet">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="amf-menu-container js-amf-mainmenu-container">
+                        <ul>
+                            @{
+
+                                IEnumerable<XElement> mainmenuitems = GetMenuItems(RFMenuXml, "MainMenu");
+                                char menushortcut = 'A';
+                                if (mainmenuitems.Count() < 10) { menushortcut = '1'; }
+                                foreach (System.Xml.Linq.XElement currentmenuitem in mainmenuitems)
+                                {
+                                    // if the Visible property is not defined or defined as 0, then continue with the next element
+                                    if ((@currentmenuitem.Elements("Visible") == null) || (@currentmenuitem.Elements("Visible").First().Value.Equals("0")))
+                                    {
+                                        continue;
+                                    }
+
+                                    //if the Enabled property is not defined or is set to 0, then disable the menu item
+                                    string disabledcssname = ((@currentmenuitem.Elements("Enabled") == null) || (@currentmenuitem.Elements("Enabled").First().Value.Equals("0"))) ? "amf-disabled" : string.Empty;
+                                    string jsonMenuDetail = Newtonsoft.Json.JsonConvert.SerializeXNode(currentmenuitem);
+                                    <li>
+                                        <a href="javascript:void(0);" class="amf-menuitem js-amf-mainmenuitem @disabledcssname" data-amfmenuname="@currentmenuitem.Elements("MenuName").First().Value" data-menudetail="@jsonMenuDetail"><img src="@Url.Content(currentmenuitem.Elements("UIIconPath").First().Value)" class="img-responsive" />@currentmenuitem.Elements("Caption").First().Value<span class="amf-mainmenuitem-shortcut" data-amfshortcutkeycode="@menushortcut">@menushortcut</span></a>
+                                    </li>
+                                    menushortcut++;
+                                }
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    @{
+                        foreach (System.Xml.Linq.XElement currentmenuitem in GetMenuItems(RFMenuXml, "MainMenu"))
+                        {
+                            string currentmainmenuname = currentmenuitem.Descendants("MenuName").First().Value;
+                            string submenucontainerclass = "js-" + currentmainmenuname;
+                            <div class="@submenucontainerclass js-amf-submenu-container hidden">
+                                <div class="amf-menu-container">
+                                    <ul>
+                                        @{
+                                            IEnumerable<XElement> submenuitems = GetMenuItems(RFMenuXml, currentmainmenuname);
+                                            char submenushortcut = 'A';
+                                            if (submenuitems.Count() < 10) { submenushortcut = '1'; }
+                                            foreach (System.Xml.Linq.XElement currentsubmenuitem in submenuitems)
+                                            {
+                                                // if the Visible property is not defined or defined as 0, then continue with the next element
+                                                if ((@currentsubmenuitem.Elements("Visible") == null) || (@currentsubmenuitem.Elements("Visible").First().Value.Equals("0")))
+                                                {
+                                                    continue;
+                                                }
+
+                                                //if the Enabled property is not defined or is set to 0, then disable the menu item
+                                                string disabledcssname = ((@currentsubmenuitem.Elements("Enabled") == null) || (@currentsubmenuitem.Elements("Enabled").First().Value.Equals("0"))) ? "amf-disabled" : string.Empty;
+
+                                                string jsonSubMenuDetail = Newtonsoft.Json.JsonConvert.SerializeXNode(currentsubmenuitem);
+                                                <li>
+                                                    <a href="javascript:void(0);" class="amf-menuitem js-amf-submenuitem @disabledcssname" data-menudetail="@jsonSubMenuDetail"><span class="amf-submenuitem-shortcut" data-amfshortcutkeycode="@submenushortcut">@submenushortcut</span>@currentsubmenuitem.Elements("Caption").First().Value</a>
+                                                </li>
+                                                submenushortcut++;
+                                            }
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                                            }
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="amf-ui-message hidden" data-amfautohide="true" data-amferrortimeout="@AMF.UI.Helpers.Constants.AppSettings_ErrorTimeout" data-amfinfotimeout="@AMF.UI.Helpers.Constants.AppSettings_InformationTimeout" data-amfwarningtimeout="@AMF.UI.Helpers.Constants.AppSettings_WarningTimeout">
+        @*<a class="amf-ui-message-close">&times;</a>*@
+        <div class="amf-message-arrows">
+            <span class="amf-ui-message-left" style="cursor: pointer;padding: 0 5px">&#8826;</span>
+            <span class="amf-ui-message-right" style="cursor: pointer; padding: 0 5px">&#8827;</span>
+        </div>
+        @{
+            if (resulthaserrors)
+            {
+                foreach (System.Xml.Linq.XElement currentMessage in RFViewDataXml.Root.Elements("Errors").Elements("Messages").FirstOrDefault().Elements())
+                {
+                    <div class="amf-ui-error-message amf-ui-message-detail">
+                        <p>@currentMessage.Elements("DisplayText").FirstOrDefault().Value</p>
+                    </div>
+                    }
+                }
+         }
+    </div>
+
+    <div class="amf-confirm-message-container hidden">
+        <div class="amf-confirm-message">
+            <p class="amf-confirm-message-text"></p>
+            <button type="button" class="btn btn-primary amf-confirm-message-yes">Yes</button>
+            <button type="button" class="btn btn-danger  amf-confirm-message-no">No</button>
+        </div>
+    </div>
+                                            }

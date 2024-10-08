@@ -1,0 +1,52 @@
+--/*------------------------------------------------------------------------------
+--  Copyright (c) Foxfire Technologies (India) Ltd.  All rights reserved
+--
+--  Revision History:
+--
+--  Date        Person  Comments
+--
+--  2023/02/23  SK      tr_LPNs_AU_GenerateCarrierTrackingInfo: Include SourceSystem from OH (BK-1025)
+--  2021/03/02  TK      tr_LPNs_AU_GenerateCarrierTrackingInfo: Initial Revision (BK-200)
+--------------------------------------------------------------------------------*/
+--
+--Go
+--
+--if object_id('tr_LPNs_AU_GenerateCarrierTrackingInfo') is not null
+--  drop Trigger tr_LPNs_AU_GenerateCarrierTrackingInfo;
+--Go
+--/*------------------------------------------------------------------------------
+--  tr_LPNs_AU_GenerateCarrierTrackingInfo: Whenever the LPN is shipped thru a small package carrier then this trigger
+--    will insert a record into CarrierTrackingInfo table which is used for tracking purposes
+--------------------------------------------------------------------------------*/
+--Create Trigger tr_LPNs_AU_GenerateCarrierTrackingInfo on LPNs After Update
+--as
+--begin
+--
+--  /* If LPNs table was modified, but Status was not part of the update statement, then exit */
+--  if not update(Status) return;
+--
+--  /* Return if not even one LPN the updated dataset is shipped and with TrackingNo */
+--  if not exists (select * from Inserted where Status = 'S' /* Shipped */ and TrackingNo <> '') return;
+--
+--  /* Insert all the LPNs that are shipped thru a small package carrier and there is no record that already exists in
+--     CarrierTrackingInfo table */
+--  insert into CarrierTrackingInfo (TrackingNo, Carrier, LPNId, LPN, OrderId, PickTicket,
+--                                   WaveId, WaveNo, SourceSystem, BusinessUnit, CreatedBy)
+--    select INS.TrackingNo, SV.Carrier, INS.LPNId, INS.LPN, INS.OrderId, INS.PickTicketNo,
+--           INS.PickBatchId, INS.PickBatchNo, OH.SourceSystem, INS.BusinessUnit, INS.ModifiedBy
+--    from Inserted INS
+--      join Deleted      DEL on (INS.LPNId = DEL.LPNId)
+--      join OrderHeaders OH  on (INS.OrderId = OH.OrderId)
+--      join ShipVias     SV  on (OH.ShipVia = SV.ShipVia)
+--      left outer join CarrierTrackingInfo CTI on INS.LPNId = CTI.LPNId
+--   where (SV.IsSmallPackageCarrier = 'Y' /* Yes */) and
+--         (INS.Status <> DEL.Status) and
+--         (INS.Status = 'S' /* Shipped */) and
+--         (CTI.RecordId is null);
+--
+--end /* tr_LPNs_AU_GenerateCarrierTrackingInfo */
+--
+--Go
+--
+--alter table LPNs Disable trigger tr_LPNs_AU_GenerateCarrierTrackingInfo;
+--

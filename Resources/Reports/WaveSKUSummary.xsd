@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="WaveSKUSummary" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="WaveSKUSummary" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="WaveSKUSummary" msprop:Generator_DataSetName="WaveSKUSummary" msprop:EnableTableAdapterManager="true">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="WaveHeader" msprop:Generator_UserTableName="WaveHeader" msprop:Generator_RowDeletedName="WaveHeaderRowDeleted" msprop:Generator_RowChangedName="WaveHeaderRowChanged" msprop:Generator_RowClassName="WaveHeaderRow" msprop:Generator_RowChangingName="WaveHeaderRowChanging" msprop:Generator_RowEvArgName="WaveHeaderRowChangeEvent" msprop:Generator_RowEvHandlerName="WaveHeaderRowChangeEventHandler" msprop:Generator_TableClassName="WaveHeaderDataTable" msprop:Generator_TableVarName="tableWaveHeader" msprop:Generator_RowDeletingName="WaveHeaderRowDeleting" msprop:Generator_TablePropName="WaveHeader">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="WaveId" msprop:Generator_UserColumnName="WaveId" msprop:Generator_ColumnVarNameInTable="columnWaveId" msprop:Generator_ColumnPropNameInRow="WaveId" msprop:Generator_ColumnPropNameInTable="WaveIdColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="WaveNo" msprop:Generator_UserColumnName="WaveNo" msprop:Generator_ColumnVarNameInTable="columnWaveNo" msprop:Generator_ColumnPropNameInRow="WaveNo" msprop:Generator_ColumnPropNameInTable="WaveNoColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="WaveType" msprop:Generator_UserColumnName="WaveType" msprop:Generator_ColumnVarNameInTable="columnWaveType" msprop:Generator_ColumnPropNameInRow="WaveType" msprop:Generator_ColumnPropNameInTable="WaveTypeColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="WaveTypeDesc" msprop:Generator_UserColumnName="WaveTypeDesc" msprop:Generator_ColumnVarNameInTable="columnWaveTypeDesc" msprop:Generator_ColumnPropNameInRow="WaveTypeDesc" msprop:Generator_ColumnPropNameInTable="WaveTypeDescColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="WaveStatus" msprop:Generator_UserColumnName="WaveStatus" msprop:Generator_ColumnVarNameInTable="columnWaveStatus" msprop:Generator_ColumnPropNameInRow="WaveStatus" msprop:Generator_ColumnPropNameInTable="WaveStatusColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="WaveStatusDesc" msprop:Generator_UserColumnName="WaveStatusDesc" msprop:Generator_ColumnVarNameInTable="columnWaveStatusDesc" msprop:Generator_ColumnPropNameInRow="WaveStatusDesc" msprop:Generator_ColumnPropNameInTable="WaveStatusDescColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="Account" msprop:Generator_UserColumnName="Account" msprop:Generator_ColumnVarNameInTable="columnAccount" msprop:Generator_ColumnPropNameInRow="Account" msprop:Generator_ColumnPropNameInTable="AccountColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="AccountName" msprop:Generator_UserColumnName="AccountName" msprop:Generator_ColumnVarNameInTable="columnAccountName" msprop:Generator_ColumnPropNameInRow="AccountName" msprop:Generator_ColumnPropNameInTable="AccountNameColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="BusinessUnit" msprop:Generator_UserColumnName="BusinessUnit" msprop:Generator_ColumnVarNameInTable="columnBusinessUnit" msprop:Generator_ColumnPropNameInRow="BusinessUnit" msprop:Generator_ColumnPropNameInTable="BusinessUnitColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="CreatedDate" msprop:Generator_UserColumnName="CreatedDate" msprop:Generator_ColumnVarNameInTable="columnCreatedDate" msprop:Generator_ColumnPropNameInRow="CreatedDate" msprop:Generator_ColumnPropNameInTable="CreatedDateColumn" type="xs:dateTime" minOccurs="0" />
+              <xs:element name="CreatedBy" msprop:Generator_UserColumnName="CreatedBy" msprop:Generator_ColumnVarNameInTable="columnCreatedBy" msprop:Generator_ColumnPropNameInRow="CreatedBy" msprop:Generator_ColumnPropNameInTable="CreatedByColumn" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="WaveSKUSummaryDetails" msprop:Generator_UserTableName="WaveSKUSummaryDetails" msprop:Generator_RowDeletedName="WaveSKUSummaryDetailsRowDeleted" msprop:Generator_RowChangedName="WaveSKUSummaryDetailsRowChanged" msprop:Generator_RowClassName="WaveSKUSummaryDetailsRow" msprop:Generator_RowChangingName="WaveSKUSummaryDetailsRowChanging" msprop:Generator_RowEvArgName="WaveSKUSummaryDetailsRowChangeEvent" msprop:Generator_RowEvHandlerName="WaveSKUSummaryDetailsRowChangeEventHandler" msprop:Generator_TableClassName="WaveSKUSummaryDetailsDataTable" msprop:Generator_TableVarName="tableWaveSKUSummaryDetails" msprop:Generator_RowDeletingName="WaveSKUSummaryDetailsRowDeleting" msprop:Generator_TablePropName="WaveSKUSummaryDetails">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="SKU" msprop:Generator_UserColumnName="SKU" msprop:Generator_ColumnVarNameInTable="columnSKU" msprop:Generator_ColumnPropNameInRow="SKU" msprop:Generator_ColumnPropNameInTable="SKUColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="SKU1" msprop:Generator_UserColumnName="SKU1" msprop:Generator_ColumnVarNameInTable="columnSKU1" msprop:Generator_ColumnPropNameInRow="SKU1" msprop:Generator_ColumnPropNameInTable="SKU1Column" type="xs:string" minOccurs="0" />
+              <xs:element name="SKU2" msprop:Generator_UserColumnName="SKU2" msprop:Generator_ColumnVarNameInTable="columnSKU2" msprop:Generator_ColumnPropNameInRow="SKU2" msprop:Generator_ColumnPropNameInTable="SKU2Column" type="xs:string" minOccurs="0" />
+              <xs:element name="SKU3" msprop:Generator_UserColumnName="SKU3" msprop:Generator_ColumnVarNameInTable="columnSKU3" msprop:Generator_ColumnPropNameInRow="SKU3" msprop:Generator_ColumnPropNameInTable="SKU3Column" type="xs:string" minOccurs="0" />
+              <xs:element name="SKU4" msprop:Generator_UserColumnName="SKU4" msprop:Generator_ColumnVarNameInTable="columnSKU4" msprop:Generator_ColumnPropNameInRow="SKU4" msprop:Generator_ColumnPropNameInTable="SKU4Column" type="xs:string" minOccurs="0" />
+              <xs:element name="SKU5" msprop:Generator_UserColumnName="SKU5" msprop:Generator_ColumnVarNameInTable="columnSKU5" msprop:Generator_ColumnPropNameInRow="SKU5" msprop:Generator_ColumnPropNameInTable="SKU5Column" type="xs:string" minOccurs="0" />
+              <xs:element name="Description" msprop:Generator_UserColumnName="Description" msprop:Generator_ColumnVarNameInTable="columnDescription" msprop:Generator_ColumnPropNameInRow="Description" msprop:Generator_ColumnPropNameInTable="DescriptionColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="UnitsOrdered" msprop:Generator_UserColumnName="UnitsOrdered" msprop:Generator_ColumnVarNameInTable="columnUnitsOrdered" msprop:Generator_ColumnPropNameInRow="UnitsOrdered" msprop:Generator_ColumnPropNameInTable="UnitsOrderedColumn" type="xs:int" minOccurs="0" />
+              <xs:element name="UnitsAuthorizedToShip" msprop:Generator_UserColumnName="UnitsAuthorizedToShip" msprop:Generator_ColumnVarNameInTable="columnUnitsAuthorizedToShip" msprop:Generator_ColumnPropNameInRow="UnitsAuthorizedToShip" msprop:Generator_ColumnPropNameInTable="UnitsAuthorizedToShipColumn" type="xs:int" minOccurs="0" />
+              <xs:element name="UnitsAssigned" msprop:Generator_UserColumnName="UnitsAssigned" msprop:Generator_ColumnVarNameInTable="columnUnitsAssigned" msprop:Generator_ColumnPropNameInRow="UnitsAssigned" msprop:Generator_ColumnPropNameInTable="UnitsAssignedColumn" type="xs:int" minOccurs="0" />
+              <xs:element name="UnitsAvailable" msprop:Generator_UserColumnName="UnitsAvailable" msprop:Generator_ColumnVarNameInTable="columnUnitsAvailable" msprop:Generator_ColumnPropNameInRow="UnitsAvailable" msprop:Generator_ColumnPropNameInTable="UnitsAvailableColumn" type="xs:int" minOccurs="0" />
+              <xs:element name="UnitsNeeded" msprop:Generator_UserColumnName="UnitsNeeded" msprop:Generator_ColumnVarNameInTable="columnUnitsNeeded" msprop:Generator_ColumnPropNameInRow="UnitsNeeded" msprop:Generator_ColumnPropNameInTable="UnitsNeededColumn" type="xs:int" minOccurs="0" />
+              <xs:element name="UnitsShort" msprop:Generator_UserColumnName="UnitsShort" msprop:Generator_ColumnVarNameInTable="columnUnitsShort" msprop:Generator_ColumnPropNameInRow="UnitsShort" msprop:Generator_ColumnPropNameInTable="UnitsShortColumn" type="xs:int" minOccurs="0" />
+              <xs:element name="BusinessUnit" msprop:Generator_UserColumnName="BusinessUnit" msprop:Generator_ColumnVarNameInTable="columnBusinessUnit" msprop:Generator_ColumnPropNameInRow="BusinessUnit" msprop:Generator_ColumnPropNameInTable="BusinessUnitColumn" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

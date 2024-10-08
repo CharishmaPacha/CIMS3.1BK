@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SqlDataSource>
+  <Name>vwBatchesToPack</Name>
+  <Connection Name="DbConnection" FromAppConfig="true" />
+  <Query Type="SelectQuery" Name="vwBatchesToPack">
+    <Tables>
+      <Table Name="vwBatchesToPack" />
+    </Tables>
+    <Columns>
+      <AllColumns />
+    </Columns>
+  </Query>
+  <ConnectionOptions CloseConnection="true" />
+</SqlDataSource>

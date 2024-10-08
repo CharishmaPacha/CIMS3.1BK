@@ -1,0 +1,296 @@
+--/*------------------------------------------------------------------------------
+--  Copyright (c) Foxfire Technologies (India) Ltd.  All rights reserved
+--
+--  Revision History:
+--
+--  Date        Person  Comments
+--
+--  2014/12/31  AK      pr_Exports_ExportDataToHost, pr_Exports_OnhandInventoryToHostDB and some part of pr_Exports_OpenOrders:
+--  2014/04/28  TK      pr_Exports_ExportDataToHost: Changes to export data to host.
+--  2014/04/11  TD      Added new proc pr_Exports_ExportDataToHost.
+--------------------------------------------------------------------------------*/
+--
+--Go
+--
+--if object_id('dbo.pr_Exports_ExportDataToHost') is not null
+--  drop Procedure pr_Exports_ExportDataToHost;
+--Go
+--/ *------------------------------------------------------------------------------
+--  Proc pr_Exports_ExportDataToHost: This procedure is used to return the export data
+--    for a given batch. If no batch is given, it would create a new batch and
+--    return the results of the newly created batch.
+--------------------------------------------------------------------------------* /
+--Create Procedure pr_Exports_ExportDataToHost
+--  (@TransType     TTypeCode = null,
+--   @BatchNo       TBatch    = null,
+--   @BusinessUnit  TBusinessUnit,
+--   @UserId        TUserId)
+--as
+--  declare @vIntegrationType  TControlValue;
+--begin / * pr_Exports_ExportDataToHost * /
+--
+--  select @vIntegrationType = dbo.fn_Controls_GetAsString ('Exports', 'IntegrationType',  'DE',
+--                                                          @BusinessUnit, @UserId);;
+--
+--  / * if the integration type is not database, then exit as this procedure is only
+--     for DB integration * /
+--  if (@vIntegrationType <> 'DB')
+--    return;
+--
+--  declare @ttExportData table (RecordId                 TRecordId,
+--                               RecordType               TRecordType,
+--                               TransType                TTypeCode,
+--                               TransTypeDescription     TDescription,
+--                               TransEntity              TEntity,
+--                               TransEntityDescription   TDescription,
+--                               TransQty                 TQuantity,
+--
+--                               TransDateTime            TDateTime,
+--                               Status                   TStatus,
+--                               StatusDescription        TDescription,
+--                               ProcessedDateTime        TDateTime,
+--
+--                               SKUId                    TRecordId,
+--                               SKU                      TSKU,
+--                               SKU1                     TSKU,
+--                               SKU2                     TSKU,
+--                               SKU3                     TSKU,
+--                               SKU4                     TSKU,
+--                               SKU5                     TSKU,
+--                               Description              TDescription,
+--                               UoM                      TUoM,
+--                               UPC                      TUPC,
+--                               Brand                    TBrand,
+--
+--                               SKU_UDF1                 TUDF,
+--                               SKU_UDF2                 TUDF,
+--                               SKU_UDF3                 TUDF,
+--                               SKU_UDF4                 TUDF,
+--                               SKU_UDF5                 TUDF,
+--                               SKU_UDF6                 TUDF,
+--                               SKU_UDF7                 TUDF,
+--                               SKU_UDF8                 TUDF,
+--                               SKU_UDF9                 TUDF,
+--                               SKU_UDF10                TUDF,
+--
+--                               LPNId                    TRecordId,
+--                               LPN                      TLPN,
+--                               LPNType                  TTypeCode,
+--                               LPNShipmentId            TShipmentId,
+--                               LoadId                   TLoadId,
+--                               ASNCase                  TASNCase,
+--                               UCCBarcode               TBarcode,
+--
+--                               LPN_UDF1                 TUDF,
+--                               LPN_UDF2                 TUDF,
+--                               LPN_UDF3                 TUDF,
+--                               LPN_UDF4                 TUDF,
+--                               LPN_UDF5                 TUDF,
+--
+--                               LPNDetailId              TRecordId,
+--                               LPNLine                  TDetailLine,
+--                               Innerpacks               TInnerpacks,
+--                               Quantity                 TQuantity,
+--                               UnitsPerPackage          TUnitsPerPack,
+--                               ReceivedUnits            TQuantity,
+--                               SerialNo                 TSerialNo,
+--
+--                               LPND_UDF1                TUDF,
+--                               LPND_UDF2                TUDF,
+--                               LPND_UDF3                TUDF,
+--                               LPND_UDF4                TUDF,
+--                               LPND_UDF5                TUDF,
+--
+--                               LocationId               TRecordId,
+--                               Location                 TLocation,
+--                               LocationType             TLocationType,
+--                               StorageType              TStorageType,
+--                               PickingZone              TLookUpCode,
+--                               PutawayZone              TLookUpCode,
+--
+--                               ReceiptId                TRecordId,
+--                               ReceiptNumber            TReceiptNumber,
+--                               ReceiptType              TReceiptType,
+--
+--                               RH_UDF1                  TUDF,
+--                               RH_UDF2                  TUDF,
+--                               RH_UDF3                  TUDF,
+--                               RH_UDF4                  TUDF,
+--                               RH_UDF5                  TUDF,
+--
+--                               ReceiptDetailId          TRecordId,
+--                               ReceiptLine              TReceiptLine,
+--                               VendorId                 TVendorId,
+--                               CoO                      TCoO,
+--                               UnitCost                 TCost,
+--                               HostReceiptLine          THostReceiptLine,
+--
+--                               ReasonCode               TVarChar,
+--                               Warehouse                TWarehouse,
+--                               Ownership                TOwnership,
+--
+--                               Weight                   TWeight,
+--                               Volume                   TVolume,
+--                               Length                   TLength,
+--                               Width                    TWidth,
+--                               Height                   THeight,
+--                               InnerPacksPerLPN         TInteger,
+--
+--                               RD_UDF1                  TUDF,
+--                               RD_UDF2                  TUDF,
+--                               RD_UDF3                  TUDF,
+--                               RD_UDF4                  TUDF,
+--                               RD_UDF5                  TUDF,
+--
+--                               OrderId                  TRecordId,
+--                               PickTicket               TPickTicket,
+--                               SalesOrder               TSalesOrder,
+--                               OrderType                TOrderType,
+--                               SoldToId                 TCustomerId,
+--                               ShipToId                 TShipToId,
+--                               ShipVia                  TShipVia,
+--                               ShipFrom                 TShipFrom,
+--                               CustPO                   TCustPO,
+--
+--                               OH_UDF1                  TUDF,
+--                               OH_UDF2                  TUDF,
+--                               OH_UDF3                  TUDF,
+--                               OH_UDF4                  TUDF,
+--                               OH_UDF5                  TUDF,
+--                               OH_UDF6                  TUDF,
+--                               OH_UDF7                  TUDF,
+--                               OH_UDF8                  TUDF,
+--                               OH_UDF9                  TUDF,
+--                               OH_UDF10                 TUDF,
+--
+--                               OrderDetailId            TRecordId,
+--                               OrderLine                TDetailLine,
+--                               UnitsOrdered             TQuantity,
+--                               UnitsAuthorizedToShip    TQuantity,
+--                               UnitsAssigned            TQuantity,
+--                               UnitsToAllocate          TQuantity,
+--                               RetailUnitPrice          TRetailUnitPrice,
+--                               CustSKU                  TCustSKU,
+--                               HostOrderLine            THostOrderLine,
+--
+--                               Reference                TReference,
+--                               ExportBatch              TBatch,
+--
+--                               Archived                 TFlag,
+--                               BusinessUnit             TBusinessUnit,
+--                               CreatedDate              TDateTime,
+--                               ModifiedDate             TDateTime,
+--                               CreatedBy                TUserId,
+--                               ModifiedBy               TUserId,
+--
+--                               OD_UDF1                  TUDF,
+--                               OD_UDF2                  TUDF,
+--                               OD_UDF3                  TUDF,
+--                               OD_UDF4                  TUDF,
+--                               OD_UDF5                  TUDF,
+--
+--                               LoadNumber               TLoadNumber,
+--                               ShippedDate              TDateTime,
+--                               BoL                      TBoL,
+--                               LoadShipVia              TShipVia,
+--                               TrailerNumber            TTrailerNumber,
+--                               ProNumber                TProNumber,
+--                               SealNumber               TSealNumber,
+--
+--                               LD_UDF1                  TUDF,
+--                               LD_UDF2                  TUDF,
+--                               LD_UDF3                  TUDF,
+--                               LD_UDF4                  TUDF,
+--                               LD_UDF5                  TUDF,
+--                               LD_UDF6                  TUDF,
+--                               LD_UDF7                  TUDF,
+--                               LD_UDF8                  TUDF,
+--                               LD_UDF9                  TUDF,
+--                               LD_UDF10                 TUDF,
+--
+--                               UDF1                     TUDF,
+--                               UDF2                     TUDF,
+--                               UDF3                     TUDF,
+--                               UDF4                     TUDF,
+--                               UDF5                     TUDF,
+--                               UDF6                     TUDF,
+--                               UDF7                     TUDF,
+--                               UDF8                     TUDF,
+--                               UDF9                     TUDF,
+--                               UDF10                    TUDF,
+--                               UDF11                    TUDF,
+--                               UDF12                    TUDF,
+--                               UDF13                    TUDF,
+--                               UDF14                    TUDF,
+--                               UDF15                    TUDF,
+--                               UDF16                    TUDF,
+--                               UDF17                    TUDF,
+--                               UDF18                    TUDF,
+--                               UDF19                    TUDF,
+--                               UDF20                    TUDF,
+--                               UDF21                    TUDF,
+--                               UDF22                    TUDF,
+--                               UDF23                    TUDF,
+--                               UDF24                    TUDF,
+--                               UDF25                    TUDF,
+--                               UDF26                    TUDF,
+--                               UDF27                    TUDF,
+--                               UDF28                    TUDF,
+--                               UDF29                    TUDF,
+--                               UDF30                    TUDF,
+--
+--                               PrevSKUId                TRecordId,
+--                               PalletId                 TRecordId,
+--                               Pallet                   TPallet,
+--                               FromWarehouse            TWarehouse,
+--                               ToWarehouse              TWarehouse,
+--                               FromLocation             TLocation,
+--                               ToLocation               TLocation,
+--                               Lot                      TLot,
+--                               MonetaryValue            TMonetaryValue,
+--                               ShipmentId               TShipmentId);
+--
+--  / * Insert data set into the temp table returned from pr_Exports_GetData * /
+--  insert into @ttExportData
+--    exec pr_Exports_GetData @TransType, @BatchNo output, @BusinessUnit, @UserId;
+--
+--  / * Insert data into the host table for the batch generated above * /
+--  insert into HostExportTransaction
+--     (RecordType, TransDateTime, TransQty, SKU, SKU1, SKU2, SKU3, SKU4, SKU5, Description, UoM, UPC, Brand,
+--      LPN, ShipmentId, LoadId, ASNCase, UCCBarcode, LPNLine, Innerpacks, UnitsPerPackage, Pallet, Location,
+--      ReceiptNumber, ReceiptType, ReceiptLine, ReceiverNumber, VendorId, CoO, UnitCost, HostReceiptLine, ReasonCode,
+--      Warehouse, Ownership, / *ExpiryDate,* /  LotNumber, Weight, Volume, Length, Width, Height, UnitsPerInnerPack, PickTicket,
+--      SalesOrder, OrderType, SoldToId, ShipToId, ShipVia, ShipFrom, CustPO, HostOrderLine, OrderLine, UnitsOrdered,
+--      UnitsAuthorizedToShip, UnitsAssigned, CustSKU, LoadNumber, ShippedDate, BoL, LoadShipVia, TrailerNumber,
+--      ProNumber, SealNumber, Reference, FromWarehouse, ToWarehouse, FromLocation, ToLocation, BusinessUnit,
+--      SKU_UDF1, SKU_UDF2, SKU_UDF3, SKU_UDF4, SKU_UDF5, SKU_UDF6, SKU_UDF7, SKU_UDF8, SKU_UDF9, SKU_UDF10,
+--      LPN_UDF1, LPN_UDF2, LPN_UDF3, LPN_UDF4, LPN_UDF5, LPND_UDF1, LPND_UDF2, LPND_UDF3, LPND_UDF4, LPND_UDF5,
+--      RH_UDF1, RH_UDF2, RH_UDF3, RH_UDF4, RH_UDF5, RD_UDF1, RD_UDF2, RD_UDF3, RD_UDF4, RD_UDF5,
+--      OH_UDF1, OH_UDF2, OH_UDF3, OH_UDF4, OH_UDF5, OH_UDF6, OH_UDF7, OH_UDF8, OH_UDF9, OH_UDF10,
+--      OD_UDF1, OD_UDF2, OD_UDF3, OD_UDF4, OD_UDF5, LD_UDF1, LD_UDF2, LD_UDF3, LD_UDF4, LD_UDF5, LD_UDF6,
+--      LD_UDF7,LD_UDF8,LD_UDF9, LD_UDF10, UDF1, UDF2, UDF3, UDF4, UDF5, UDF6, UDF7, UDF8, UDF9,UDF10,
+--      CreatedBy)
+--
+--  / * return the records for the particular Batch * /
+--  select  E.RecordType, E.TransDateTime, E.TransQty, E.SKU, E.SKU1, E.SKU2, E.SKU3, E.SKU4, E.SKU5, E.Description,
+--          E.UoM, E.UPC, E.Brand, E.LPN, E.ShipmentId, E.LoadId, E.ASNCase, E.UCCBarcode,  E.LPNLine, E.Innerpacks,
+--          E.UnitsPerPackage as UnitsPerPackage, E.Pallet, E.Location, ReceiptNumber, E.ReceiptType, E.ReceiptLine,
+--          E.UDF1 as ReceiverNumber, E.VendorId, E.CoO, E.UnitCost, E.HostReceiptLine, E.ReasonCode, E.Warehouse, E.Ownership,
+--          E.Lot as LotNumber, E.Weight, E.Volume, E.Length, E.Width, E.Height, E.UnitsPerPackage, E.PickTicket, E.SalesOrder,
+--          E.OrderType, E.SoldToId, E.ShipToId, E.ShipVia, E.ShipFrom, E.CustPO, E.HostOrderLine, E.OrderLine, E.UnitsOrdered,
+--          E.UnitsAuthorizedToShip, E.UnitsAssigned, E.CustSKU, E.LoadNumber, E.ShippedDate, E.BoL, E.LoadShipVia, E.TrailerNumber,
+--          E.ProNumber, E.SealNumber, E.Reference, E.FromWarehouse, E.ToWarehouse, E.FromLocation, E.ToLocation, E.BusinessUnit,
+--          E.SKU_UDF1, E.SKU_UDF2, E.SKU_UDF3, E.SKU_UDF4, E.SKU_UDF5, E.SKU_UDF6, E.SKU_UDF7, E.SKU_UDF8, E.SKU_UDF9, E.SKU_UDF10,
+--          E.LPN_UDF1, E.LPN_UDF2, E.LPN_UDF3, E.LPN_UDF4, E.LPN_UDF5, E.LPND_UDF1, E.LPND_UDF2, E.LPND_UDF3, E.LPND_UDF4, E.LPND_UDF5,
+--          E.RH_UDF1, E.RH_UDF2, E.RH_UDF3, E.RH_UDF4, E.RH_UDF5, E.RD_UDF1, E.RD_UDF2, E.RD_UDF3, E.RD_UDF4, E.RD_UDF5,
+--          E.OH_UDF1, E.OH_UDF2, E.OH_UDF3, E.OH_UDF4, E.OH_UDF5,E.OH_UDF6, E.OH_UDF7, E.OH_UDF8, E.OH_UDF9, E.OH_UDF10,
+--          E.OD_UDF1, E.OD_UDF2, E.OD_UDF3, E.OD_UDF4, E.OD_UDF5, E.LD_UDF1, E.LD_UDF2, E.LD_UDF3, E.LD_UDF4, E.LD_UDF5, LD_UDF6,
+--          E.LD_UDF7, E.LD_UDF8, E.LD_UDF9, E.LD_UDF10, E.UDF1, E.UDF2, E.UDF3, E.UDF4, E.UDF5, E.UDF6, E.UDF7, E.UDF8, E.UDF9, E.UDF10,
+--          @UserId
+--  from @ttExportData E
+--  where (ExportBatch = @BatchNo)
+--  order by RecordId;
+--end / * pr_Exports_ExportDataToHost * /
+--*/
+--
+--Go

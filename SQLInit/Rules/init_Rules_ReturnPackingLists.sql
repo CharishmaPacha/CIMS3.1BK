@@ -1,0 +1,81 @@
+/*==============================================================================
+  VM_20201210 (CIMS-3140):
+    Commented all lines of this file because while setting up of processing rule files via Folder instead of _init_All_Rules.sql to build blank DB,
+    I found this file is eisther not listed or commented in _Init_All_Rules.sql.
+
+    If it is require to be used, you can remove comments (==) from each line and use it
+==============================================================================*/
+--/*------------------------------------------------------------------------------
+--  Copyright (c) Foxfire Technologies (India) Ltd.  All rights reserved
+--
+--  Revision History:
+--
+--  Date        Person  Comments
+--
+--  2015/03/10  VV      Initial version
+--------------------------------------------------------------------------------*/
+--
+--declare @RuleSetType  TRuleSetType = 'ReturnPackingList';
+--
+--Delete R from Rules R join RuleSets RS on (R.RuleSetId = RS.RuleSetId) where (RS.RuleSetType = @RuleSetType);
+--delete from RuleSets where RuleSetType = @RuleSetType;
+--
+--  declare  @vRecordId      TRecordId,
+--           @vRuleSetId     TRecordId,
+--           @vRuleSetType   TRuleSetType,
+--           @vRuleSetFilter TQuery,
+
+--           @vBusinessUnit  TBusinessUnit,
+--
+--           @vRuleCondition TQuery,
+--           @vRuleQuery     TQuery,
+--
+--           @vSortSeq       TSortSeq,
+--           @vStatus        TStatus;
+--
+--  declare @RuleSets TRuleSetsTable,
+--          @Rules    TRulesTable;
+--
+--/*----------------------------------------------------------------------------*/
+--/* Rule Set #1 - LPN ReturnPackingList */
+--/*----------------------------------------------------------------------------*/
+--select @vRuleSetId     = 501,
+--       @vRuleSetType   = 'ReturnPackingList',
+--       @vRuleSetFilter = '~PackingListType~ = ''LPN''',
+--       @vSortSeq       = null, -- as we update RecordId, we do not need to specify this
+--       @vStatus        = 'A' /* Active */;
+--
+--insert into @RuleSets (RuleSetName, RuleSetDescription, RuleSetType, RuleSetFilter, SortSeq, Status, BusinessUnit)
+--  select @vRuleSetName, @vRuleSetDescription, @vRuleSetType, @vRuleSetFilter, coalesce(@vSortSeq, 0), @vStatus, @vBusinessUnit;
+--
+--/*----------------------------------------------------------------------------*/
+--/* Rule Set #1 Rules - LPN ReturnPackingList */
+--/*----------------------------------------------------------------------------*/
+--
+--/* USPS */
+--select @vRuleCondition = null,
+--       @vRuleQuery     = 'select ''PackingList_'' + OH.ShipVia
+--                         from LPNS L
+--                           join OrderHeaders OH on(L.OrderId = OH.OrderId)
+--                         where (L.LPN = ~LPN~) and
+--                               (OH.ShipVia in (''USPS'',''USPSL''))',
+--       @vStatus        = 'A'; /* Active */
+--
+--insert into @Rules (RuleSetId, RuleSetName, RuleCondition, RuleQuery, SortSeq, Status)
+-- select @vRuleSetId, @vRuleCondition, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus;
+--
+--select @vRuleCondition = null,
+--       @vRuleQuery     = 'select ~BusinessUnit~ + ''PackingList_Generic''',
+--       @vStatus        = 'A'; /* Active */
+--
+--insert into @Rules (RuleSetId, RuleSetName, RuleCondition, RuleQuery, SortSeq, Status)
+-- select @vRuleSetId, @vRuleCondition, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus;
+--
+--
+--
+--exec pr_Rules_Setup @RuleSets, @Rules;
+--
+--/* Deleting the empty spaces with in the RuleQuery records */
+--update Rules set RuleQuery =  replace(replace(replace(RuleQuery,' ','[]'),'][',''),'[]',' ')
+--
+--Go

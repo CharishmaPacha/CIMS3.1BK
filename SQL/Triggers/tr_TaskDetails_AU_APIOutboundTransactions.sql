@@ -1,0 +1,47 @@
+--/*------------------------------------------------------------------------------
+--  Copyright (c) Foxfire Technologies (India) Ltd.  All rights reserved
+--
+--  Revision History:
+--
+--  Date        Person  Comments
+--
+--------------------------------------------------------------------------------*/
+--
+--Go
+--
+--if object_id('tr_TaskDetails_AU_APIOutboundTransactions') is not null
+--  drop Trigger tr_TaskDetails_AU_APIOutboundTransactions;
+--Go
+--/*------------------------------------------------------------------------------
+--  tr_TaskDetails_AU_APIOutboundTransactions: When the ExportStatus of TaskDetail
+--    has been changed from to ReadyToExport for external picking methods
+--    we would need to resend the data to those systems and this triggers creates
+--    an API outbound transaction to do the same.
+--------------------------------------------------------------------------------*/
+--Create Trigger tr_TaskDetails_AU_APIOutboundTransactions on TaskDetails After Update
+--as
+--begin
+--  /* If TaskDetails table was modified, but ExportStatus was not part of the update statement, then exit */
+--  if not update(ExportStatus) return;
+--
+--  /* Generate API outbound Re-Export transaction */
+--  insert into APIOutboundTransactions (IntegrationName, MessageType, EntityType, EntityId, EntityKey, BusinessUnit, CreatedBy)
+--    select distinct 'CIMS' + PickMethod, 'PickWave', 'PickTicket', INS.OrderId, OH.PickTicket, OH.BusinessUnit, System_User
+--    from Inserted INS
+--      join Deleted      DEL on (INS.TaskDetailId = DEL.TaskDetailId)
+--      join OrderHeaders OH  on (INS.OrderId      = OH.OrderId      )
+--      join Waves        W   on (INS.WaveId       = W.WaveId        )
+--    where (INS.ExportStatus = 'ReadyToExport') and
+--          (DEL.ExportStatus <> 'WaitingOnReplen') and
+--          (W.PickMethod <> 'CIMSRF') and
+--          (INS.Status not in ('C', 'X' /* Completed, Canceled */)) and
+--          (INS.ExportStatus <> DEL.ExportStatus);
+--
+--end /* tr_TaskDetails_AU_APIOutboundTransactions */
+--
+--Go
+--
+--alter table TaskDetails Disable trigger tr_TaskDetails_AU_APIOutboundTransactions;
+--
+--Go
+--

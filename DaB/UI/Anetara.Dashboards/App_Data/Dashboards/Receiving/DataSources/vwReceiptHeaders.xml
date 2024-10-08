@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SqlDataSource>
+  <Name>vwReceiptHeaders</Name>
+  <Connection Name="DbConnection" FromAppConfig="true" />
+  <Query Type="SelectQuery" Name="vwReceiptHeaders">
+    <Tables>
+      <Table Name="vwReceiptHeaders" />
+    </Tables>
+    <Columns>
+      <AllColumns />
+    </Columns>
+  </Query>
+  <ConnectionOptions CloseConnection="true" />
+</SqlDataSource>

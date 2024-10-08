@@ -1,0 +1,80 @@
+--/*------------------------------------------------------------------------------
+--  Copyright (c) Foxfire Technologies (India) Ltd.  All rights reserved
+--
+--  Revision History:
+--
+--  Date        Person  Comments
+--
+--  2021/02/13  TK      tr_TaskDetails_AU_UpdateTaskDetailDependencyFlag & tr_TaskDetails_AU_UpdateTaskDetailStatus:
+--  2021/02/12  TK      tr_TaskDetails_AU_UpdateTaskDetailDependencyFlag & tr_TaskDetails_AU_UpdateTaskDetailStatus:
+--------------------------------------------------------------------------------*/
+--
+--Go
+--
+--if object_id('tr_TaskDetails_AU_UpdateTaskDetailStatus') is not null
+--  drop Trigger tr_TaskDetails_AU_UpdateTaskDetailStatus;
+--Go
+--/*------------------------------------------------------------------------------
+--  tr_TaskDetails_AU_UpdateTaskDetailStatus: Whenever the Pick is canceled this trigger will generate an
+--    API transaction as Pick Canceled
+--
+--  There are chances that all picks for the order may be canceled or some picks
+--     If all the picks for the order are canceled then generates PickCanceled API Trasaction
+--     If some picks for the order are canceled then we will generate a PickCanceled API Transaction and a PickWave API trasaction
+--     for the remaining picks
+--------------------------------------------------------------------------------*/
+--Create Trigger tr_TaskDetails_AU_UpdateTaskDetailStatus on TaskDetails After Update
+--as
+--begin
+--  declare @ttOrdersToExport   TRecountKeysTable;
+--
+--  /* If TaskDetails table was modified, but Status was not part of the update statement, then exit */
+--  if not update(Status) return;
+--
+--  /* Get all the Picks when there is a change in task detail status */
+--  select distinct INS.TaskId, INS.TaskDetailId, INS.OrderId, OH.PickTicket, INS.Status as NewStatus, DEL.Status as OldStatus, W.PickMethod as PickMethod, INS.BusinessUnit as BusinessUnit
+--  into #PicksCanceled
+--  from Inserted INS
+--    join Deleted      DEL on (INS.TaskDetailId = DEL.TaskDetailId)
+--    join OrderHeaders OH  on (INS.OrderId = OH.OrderId)
+--    join Waves        W   on (INS.WaveId = W.WaveId)
+--    join TaskDetails  TD  on (INS.TaskDetailId = TD.TaskDetailId)
+--  where (W.PickMethod <> 'CIMSRF') and
+--        (TD.PickGroup not like 'CIMSRF%') and
+--        (TD.ExportStatus <> 'NotRequired') and
+--        (INS.Status <> DEL.Status) and
+--        (INS.Status = 'X' /* Canceled */);
+--
+--  /* If none of the task details had changes, then exit */
+--  if not exists (select * from #PicksCanceled) return;
+--
+--  /* Update export status on task details as those needs to be processed again */
+--  update TD
+--  set ExportStatus = 'ReadyToExport'
+--  output inserted.OrderId into @ttOrdersToExport (EntityId)
+--  from TaskDetails TD
+--    join #PicksCanceled PC on (TD.OrderId = PC.OrderId)
+--  where (Status not in ('X', 'C' /* Canceled, Completed */)) and
+--        (PickGroup not like 'CIMSRF%') and
+--        (ExportStatus <> 'NotRequired');
+--
+--  /* Generate required API transaction for the orders */
+--  insert into APIOutboundTransactions (IntegrationName, MessageType, EntityType, EntityId, EntityKey, BusinessUnit, CreatedBy)
+--    select distinct 'CIMS' + PickMethod, 'PickCanceled', 'PickTicket', OrderId, PickTicket, PC.BusinessUnit, system_user
+--    from #PicksCanceled PC
+--      left outer join APIOutboundTransactions OT on PC.OrderId = OT.EntityId and OT.EntityType = 'PickTicket' and MessageType = 'PickCanceled' and TransactionStatus = 'Initial'
+--    where OT.RecordId is null
+--    union
+--    select distinct 'CIMS' + PickMethod, 'PickWave', 'PickTicket', OrderId, PickTicket, PC.BusinessUnit, system_user
+--    from @ttOrdersToExport OTE join #PicksCanceled PC on (OTE.EntityId = PC.OrderId)
+--      left outer join APIOutboundTransactions OT on PC.OrderId = OT.EntityId and OT.EntityType = 'PickTicket' and MessageType = 'PickWave' and TransactionStatus = 'Initial'
+--    where OT.RecordId is null;
+--
+--end /* tr_TaskDetails_AU_UpdateTaskDetailStatus */
+--
+--Go
+--
+--alter table TaskDetails Disable trigger tr_TaskDetails_AU_UpdateTaskDetailStatus;
+--
+--Go
+--

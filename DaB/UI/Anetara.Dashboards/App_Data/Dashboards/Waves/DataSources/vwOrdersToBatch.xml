@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SqlDataSource>
+  <Name>vwOrdersToBatch</Name>
+  <Connection Name="DbConnection" FromAppConfig="true" />
+  <Query Type="SelectQuery" Name="vwOrdersToBatch">
+    <Tables>
+      <Table Name="vwOrdersToBatch" />
+    </Tables>
+    <Columns>
+      <AllColumns />
+    </Columns>
+  </Query>
+  <ConnectionOptions CloseConnection="true" />
+</SqlDataSource>

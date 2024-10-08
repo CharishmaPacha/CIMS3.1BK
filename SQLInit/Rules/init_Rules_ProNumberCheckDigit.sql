@@ -1,0 +1,135 @@
+/*==============================================================================
+  VM_20201210 (CIMS-3140):
+    Commented all lines of this file because while setting up of processing rule files via Folder instead of _init_All_Rules.sql to build blank DB, 
+    I found this file is eisther not listed or commented in _Init_All_Rules.sql.
+
+    If it is require to be used, you can remove comments (==) from each line and use it
+==============================================================================*/
+--/*------------------------------------------------------------------------------
+--  Copyright (c) Foxfire Technologies (India) Ltd.  All rights reserved
+--
+--  Revision History:
+--
+--  Date        Person  Comments
+--
+--  2019/09/11  MJ      Changed the RuleCondition for ProNumberCheckDigit (S2G-727)
+--  2019/07/18  RKC     Modified the ShipVia in rule (S2G-727) (Ported from Prod)
+--  2019/07/15  RKC     Added new rule ported prod onsite (S2G-727)
+--  2018/11/02  MJ      Changes migrated from Prod Onsite (S2G-727)
+--  2018/07/15  PK      Initial version (S2G-1042)
+--------------------------------------------------------------------------------*/
+--
+--Go
+--
+--declare @vRecordId            TRecordId,
+--        @vRuleSetType         TRuleSetType,
+--        @vRuleSetName         TName,
+--        @vRuleSetDescription  TDescription,
+--        @vRuleSetFilter       TQuery,
+
+--        @vBusinessUnit        TBusinessUnit,
+--
+--        @vRuleCondition       TQuery,
+--        @vRuleQuery           TQuery,
+--        @vRuleQueryType       TTypeCode,
+--        @vRuleDescription     TDescription,
+--
+--        @vSortSeq             TSortSeq,
+--        @vStatus              TStatus;
+--
+--declare @RuleSets             TRuleSetsTable,
+--        @Rules                TRulesTable;
+--
+--/******************************************************************************/
+--/******************************************************************************/
+--/* Rules for : Pro number check digit */
+--/******************************************************************************/
+--/******************************************************************************/
+--select @vRuleSetType = 'ProNumberCheckDigit';
+--
+--delete from @RuleSets;
+--delete from @Rules;
+--
+--/******************************************************************************/
+--/* Rule Set #1 - ProNumber CheckDigit  */
+--/******************************************************************************/
+--select @vRuleSetName     = 'ProNumberCheckDigit',
+--       @vRuleDescription = 'ProNumber Check Digit',
+--       @vRuleSetFilter   = null,
+--       @vSortSeq         = null,
+--       @vStatus          = 'A' /* Active */;
+--
+--insert into @RuleSets (RuleSetName, RuleSetDescription, RuleSetType, RuleSetFilter, SortSeq, Status, BusinessUnit)
+--  select @vRuleSetName, @vRuleSetDescription, @vRuleSetType, @vRuleSetFilter, coalesce(@vSortSeq, 0), @vStatus, @vBusinessUnit;
+--
+--/*----------------------------------------------------------------------------*/
+--select @vRuleCondition   = '~ShipVia~ in (''USCS'', ''USCS2'', ''USCS2D'', ''USCS3D'', ''USCSON'')',
+--       @vRuleDescription = 'ProNumber Check Digit for USCS Shipvias',
+--       @vRuleQuery       = 'select dbo.fn_GetMod10USCSCheckDigit(~ProNo~)',
+--       @vRuleQueryType   = 'Select',
+--       @vStatus          = 'A'/* Active */,
+--       @vSortSeq         = 1;
+--
+--insert into @Rules (RuleSetName, RuleQueryType, RuleCondition, RuleDescription, RuleQuery, SortSeq, Status)
+--  select @vRuleSetName, @vRuleQueryType, @vRuleCondition, @vRuleDescription, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus;
+--
+--/*----------------------------------------------------------------------------*/
+--select @vRuleCondition   = '~ShipVia~ in (''AACT'', ''ODFL'', ''RDFS'')',
+--       @vRuleDescription = 'ProNumber Check Digit for AACT & ODFL Shipvias',
+--       @vRuleQuery       = 'select dbo.fn_GetMod10IBMCheckDigit(~ProNo~)',
+--       @vRuleQueryType   = 'Select',
+--       @vStatus          = 'A'/* Active */,
+--       @vSortSeq        += 1;
+--
+--insert into @Rules (RuleSetName, RuleQueryType, RuleCondition, RuleDescription, RuleQuery, SortSeq, Status)
+--  select @vRuleSetName, @vRuleQueryType, @vRuleCondition, @vRuleDescription, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus;
+--
+--/*----------------------------------------------------------------------------*/
+--select @vRuleCondition   = '~ShipVia~ in (''ABFS'')',
+--       @vRuleDescription = 'ProNumber Check Digit for ABFS Shipvia',
+--       @vRuleQuery       = 'select dbo.fn_GetMod10ABFCheckDigit(~ProNo~)',
+--       @vRuleQueryType   = 'Select',
+--       @vStatus          = 'A'/* Active */,
+--       @vSortSeq        += 1;
+--
+--insert into @Rules (RuleSetName, RuleQueryType, RuleCondition, RuleDescription, RuleQuery, SortSeq, Status)
+--  select @vRuleSetName, @vRuleQueryType, @vRuleCondition, @vRuleDescription, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus;
+--
+--/*----------------------------------------------------------------------------*/
+--select @vRuleCondition   = '~ShipVia~ in (''FXFEE'', ''FXFEP'', ''XPOL'')',
+--       @vRuleDescription = 'ProNumber Check Digit for FXFEE & FXFEP Shipvias',
+--       @vRuleQuery       = 'select ~ProNo~ % 7',
+--       @vRuleQueryType   = 'Select',
+--       @vStatus          = 'A'/* Active */,
+--       @vSortSeq        += 1;
+--
+--insert into @Rules (RuleSetName, RuleQueryType, RuleCondition, RuleDescription, RuleQuery, SortSeq, Status)
+--  select @vRuleSetName, @vRuleQueryType, @vRuleCondition, @vRuleDescription, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus
+--
+--/*----------------------------------------------------------------------------*/
+--select @vRuleCondition   = '~ShipVia~ in (''CTII'')',
+--       @vRuleDescription = 'ProNumber Check Digit for CTII Shipvia',
+--       @vRuleQuery       = 'select dbo.fn_GetMod10CTIICheckDigit(~ProNo~)',
+--       @vRuleQueryType   = null,
+--       @vStatus          = 'A'/* Active */,
+--       @vSortSeq        += 1;
+--
+--insert into @Rules (RuleSetName, RuleQueryType, RuleCondition, RuleDescription, RuleQuery, SortSeq, Status)
+--  select @vRuleSetName, @vRuleQueryType, @vRuleCondition, @vRuleDescription, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus;
+--
+--/*----------------------------------------------------------------------------*/
+--select @vRuleCondition   = '~ShipVia~ in (''HMES'')',
+--       @vRuleDescription = 'ProNumber Check Digit for HMES Shipvias',
+--       @vRuleQuery       = 'select dbo.fn_GetMod10CheckDigit(~ProNo~)',
+--       @vRuleQueryType   = 'Select',
+--       @vStatus          = 'A'/* Active */,
+--       @vSortSeq        += 1;
+--
+--insert into @Rules (RuleSetName, RuleQueryType, RuleCondition, RuleDescription, RuleQuery, SortSeq, Status)
+--  select @vRuleSetName, @vRuleQueryType, @vRuleCondition, @vRuleDescription, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus;
+--
+--/*----------------------------------------------------------------------------*/
+--exec pr_Rules_Setup @RuleSets, @Rules;
+--
+--Go
+--

@@ -1,0 +1,111 @@
+/*==============================================================================
+  VM_20201210 (CIMS-3140):
+    Commented all lines of this file because while setting up of processing rule files via Folder instead of _init_All_Rules.sql to build blank DB, 
+    I found this file is eisther not listed or commented in _Init_All_Rules.sql.
+
+    If it is require to be used, you can remove comments (==) from each line and use it
+==============================================================================*/
+--/*------------------------------------------------------------------------------
+--  Copyright (c) Foxfire Technologies (India) Ltd.  All rights reserved
+--
+--  Revision History:
+--
+--  Date        Person  Comments
+--
+--  2016/03/19  OK      Specified the fields while inserting the Rules and RuleSets (HPI-29)
+--  2016/02/18  AY      Revised to return the labeltypes to be printed instead of a Yes or No
+--  2015/12/23  DK      Initial version
+--------------------------------------------------------------------------------*/
+--
+--declare @vRuleSetType  TRuleSetType = 'PackingLabels';
+--
+--Delete R from Rules R join RuleSets RS on (R.RuleSetName = RS.RuleSetName) where (RS.RuleSetType = @vRuleSetType);
+--delete from RuleSets where RuleSetType = @vRuleSetType;
+--
+--  declare @vRecordId      TRecordId,
+--          @vRuleSetId     TRecordId,
+--          @vRuleSetName   TName,
+--          @vRuleSetFilter TQuery,
+
+--          @vBusinessUnit  TBusinessUnit,
+--
+--          @vRuleCondition TQuery,
+--          @vRuleQuery     TQuery,
+--
+--          @vSortSeq       TSortSeq,
+--          @vStatus        TStatus;
+--
+--  declare @RuleSets       TRuleSetsTable,
+--          @Rules          TRulesTable;
+--
+--/*----------------------------------------------------------------------------*/
+--/* Rule Set #1 - Packing Label - what labels to print? */
+--/*----------------------------------------------------------------------------*/
+--select @vRuleSetName   = 'PackingLabels',
+--       @vRuleSetFilter = null,
+--       @vSortSeq       = null,
+--       @vStatus        = 'A' /* Active */;
+--
+--insert into @RuleSets (RuleSetName, RuleSetDescription, RuleSetType, RuleSetFilter, SortSeq, Status, BusinessUnit)
+--  select @vRuleSetName, @vRuleSetDescription, @vRuleSetType, @vRuleSetFilter, coalesce(@vSortSeq, 0), @vStatus, @vBusinessUnit;
+--
+--/*----------------------------------------------------------------------------*/
+--/* Rules #1.1 - Print SPL & SL Labels   */
+--/*----------------------------------------------------------------------------*/
+--select @vRuleCondition = null,
+--       @vRuleQuery     = 'select ''SPL,SL''',
+--       @vStatus        = 'I' /* In-Active */,
+--       @vSortSeq       = 1;
+--
+--insert into @Rules (RuleSetName, RuleCondition, RuleQuery, SortSeq, Status)
+-- select @vRuleSetName, @vRuleCondition, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus;
+--
+--/*----------------------------------------------------------------------------*/
+--/* Rules #1.2 - Print SL & CL labels         */
+--/*----------------------------------------------------------------------------*/
+--select @vRuleCondition = null,
+--       @vRuleQuery     = 'select ''SL,CL''',
+--       @vStatus        = 'I' /* In-Active */,
+--       @vSortSeq       = 2;
+--
+--insert into @Rules (RuleSetName, RuleCondition, RuleQuery, SortSeq, Status)
+--  select @vRuleSetName, @vRuleCondition, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus;
+--
+--/*----------------------------------------------------------------------------*/
+--/* Rules #1.3 - Print SPL, SL & CL labels         */
+--/*----------------------------------------------------------------------------*/
+--select @vRuleCondition = null,
+--       @vRuleQuery     = 'select ''SPL,SL,CL''',
+--       @vStatus        = 'I' /* In-Active */,
+--       @vSortSeq       = 3;
+--
+--insert into @Rules (RuleSetName, RuleCondition, RuleQuery, SortSeq, Status)
+--  select @vRuleSetName, @vRuleCondition, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus;
+--
+--/*----------------------------------------------------------------------------*/
+--/* Rules #1.4 Rules - Print Small Package Label & Packing list only */
+--/*----------------------------------------------------------------------------*/
+--select @vRuleCondition = null,
+--       @vRuleQuery     = 'select ''SPL,PL''',
+--       @vStatus        = 'A'   /* Active */,
+--       @vSortSeq       = 4;
+--
+--insert into @Rules (RuleSetName, RuleCondition, RuleQuery, SortSeq, Status)
+-- select @vRuleSetName, @vRuleCondition, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus;
+--
+--/*----------------------------------------------------------------------------*/
+--/* Rules #1.5 Rules - Packing Label */
+--/*----------------------------------------------------------------------------*/
+--select @vRuleCondition = null,
+--       @vRuleQuery     = 'select ''PCKL''',
+--       @vStatus        = 'I'   /* Active */,
+--       @vSortSeq       = 999;  /* Generally, Generic rule should be processed last, hence set it for higher number */
+--
+--insert into @Rules (RuleSetName, RuleCondition, RuleQuery, SortSeq, Status)
+-- select @vRuleSetName, @vRuleCondition, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus;
+--
+--/*----------------------------------------------------------------------------*/
+--exec pr_Rules_Setup @RuleSets, @Rules;
+--
+--Go
+--

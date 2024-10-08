@@ -1,0 +1,199 @@
+--/*------------------------------------------------------------------------------
+--  Copyright (c) Foxfire Technologies (India) Ltd.  All rights reserved
+--
+--  Revision History:
+--
+--  Date        Person  Comments
+--
+--  2014/12/24  YJ      Commented the procedures pr_OrderHeaders_GetDestination because it is GNC specific.
+--  2014/08/05  AY      pr_OrderHeaders_GetDestination: Enhanced to compute and return WorkId
+--------------------------------------------------------------------------------*/
+--
+--Go
+--
+--if object_id('dbo.pr_OrderHeaders_GetDestination') is not null
+--  drop Procedure pr_OrderHeaders_GetDestination;
+--Go
+--/ *------------------------------------------------------------------------------
+--  Function pr_OrderHeaders_GetDestination:
+--
+--    If the order has non sortable items then the result will be N --No
+--------------------------------------------------------------------------------* /
+--Create Procedure pr_OrderHeaders_GetDestination
+--  (@OrderId             TRecordId,
+--   @LPNId               TRecordId,
+--   @Operation           TOperation,
+--   @IsLastCarton        TFlags,
+--  ---------------------------------------
+--   @DestZone            TZoneId   output,
+--   @DestLocation        TLocation output,
+--   @WorkId              TWorkId   output)
+--as
+--  declare @vOrderHasNonSortableItem  TFlags,
+--          @vOrderid                  TRecordId,
+--          @vOrderDetailId            TRecordId,
+--          @vWaveId                   TRecordId,
+--          @vWaveType                 TTypeCode,
+--          @vShippingLane             TLocation,
+--          @vOrderShort               TFlags,
+--          @vLPN                      TLPN,
+--
+--          @vStickersRequired         TUDF,
+--          @vNonBaggableSKUs          TCount,
+--          @vExpediteOrder            TUDF,
+--          @vBaggableOrder            TFlags,
+--          @vCartonVolume             TFloat,
+--          @vReturnCode               TInteger,
+--          @vSorterId                 varchar(30),
+--          @vFreightTerms             TDescription,
+--          @vOrderType                TTypeCode,
+--
+--          @vTotalUnitsToAllocate     TQuantity,
+--          @vUnitsRemainingToPick     TQuantity,
+--
+--          @ttOrderDetails            TToteOrderDetails;
+--begin
+--  select @vReturnCode = 0,
+--         @vOrderId    = @OrderId,
+--         @vOrderShort = null;
+--
+--  if (@LPNId is not null)
+--    select @vOrderId = coalesce(@OrderId, OrderId),
+--           @vLPN     = LPN
+--    from LPNs
+--    where (LPNId = @LPNId);
+--
+--  select @vWaveId           = PickBatchId,
+--         @vFreightTerms     = FreightTerms,
+--         @vOrderType        = OrderType,
+--         @vShippingLane     = UDF1,
+--         @vStickersRequired = UDF7
+--  from OrderHeaders
+--  where (OrderId = @vOrderId);
+--
+--  select @vWaveType = BatchType
+--  from PickBatches
+--  where (RecordId = @vWaveId);
+--
+--  / * Get sorterid here  for the given LPNs from the
+--     packed carton * /
+--  select @vSorterId = SorterId
+--  from WCSPackedCartonHeader
+--  where (oLPN = @vLPN);
+--
+--  / * If last carton, then get additional info to determine destination * /
+--  if (@IsLastCarton = 'Y')
+--    begin
+--      / * Get all the OrderDetails that are not fulfilled yet
+--           - then we need to make sure that there aren't picks for those in PTL * /
+--      insert into @ttOrderDetails (OrderId, OrderDetailId, SKUId, UnitsToShip, UnitsAssigned,
+--                                   UnitsToAllocate, IsSortable, UnitsToPick, DestZone, PutawayZone,
+--                                   Location, PutawayPath, PickPath)
+--        select OrderId, OrderDetailId, SKUId, UnitsAuthorizedToShip, UnitsAssigned,
+--               UnitsToAllocate, IsSortable, UnitsToPick, DestZone, PutawayZone,
+--               Location, PutawayPath, PickPath
+--        from dbo.fn_Tote_GetRemainingPickDetails(@vOrderId, @vSorterId, 'ToteCompleteDetails');
+--
+--      / * Get the total units unfulfilled on the order * /
+--      select @vTotalUnitsToAllocate = sum(coalesce(UnitsToAllocate, 0)),
+--             @vUnitsRemainingToPick = sum(coalesce(UnitsToPick, 0))
+--      from @ttOrderDetails
+--
+--      / * If Order is fully allocated, then it is neither short nor has any non-sortable items * /
+--      if (@vTotalUnitsToAllocate = 0)
+--        select @vOrderShort = 'N';
+--   end
+--
+--  / * check if there are any details that are yet to be filled and if so, divert carton to Shelving * /
+--  if ((@Operation = 'PackedAtSorter') or (@Operation = 'ConfirmedAtPanda')) and
+--     (@IsLastCarton = 'Y' / * Yes * /) and
+--     (@vWaveType = 'RETAIL' and @vOrderShort = 'Y')
+--    begin
+--      / * Determine which shelving zone to go to first * /
+--      select top 1 @DestZone     = PutawayZone,
+--                   @DestLocation = Location
+--      from @ttOrderDetails
+--      order by PutawayPath;
+--    end
+--  else
+--  if ((@Operation = 'PackedAtSorter') or (@Operation = 'ConfirmedAtPanda')) and
+--     (@IsLastCarton = 'Y' / * Yes * /) and
+--     (@vWaveType = 'ECOM-M' and (@vOrderShort = 'Y' or @vUnitsRemainingToPick > 0))
+--    begin
+--      / * Determine which shelving zone to go to first * /
+--      select top 1 @DestZone     = PutawayZone,
+--                   @DestLocation = Location
+--      from @ttOrderDetails
+--      order by PutawayPath;
+--    end
+--  else
+--  if ((@Operation = 'PackedAtSorter') and (@vWaveType = 'ECOM-M')) or
+--     (@Operation = 'MissingWorkId')
+--    begin
+--      select @DestZone     = 'EComPack',
+--             @DestLocation = 'EComPack',
+--             @WorkId       = '';
+--
+--      / * Determine if all SKUs in the LPN are baggable * /
+--      select @vNonBaggableSKUs = count(*)
+--      from LPNDetails LD join SKUs S on LD.SKUId = S.SKUId
+--      where (LD.LPNId = @LPNId) and (S.UDF3 / * Baggable * / <> 'Y');
+--
+--      / * Get volume of carton * /
+--      select @vCartonVolume = EstimatedVolume
+--      from LPNs
+--      where (LPNId = @LPNId);
+--
+--      / * If order is to be shipped expedited, then setup workid to be routed to appropriate station * /
+--      select @vExpediteOrder = case when (@vFreightTerms in ('High', 'ShopRunner')) then 'Y' else 'N' end;
+--
+--      / * If all SKUs in the order are baggable and total volume is <= 280 then the order is baggable * /
+--      select @vBaggableOrder = case when (@vNonBaggableSKUs = 0 and @vCartonVolume <= 280) then 'Y' else 'N' end;
+--
+--      / * Now set up Work ids * /
+--      select @WorkId = @WorkId + case when @vExpediteOrder = 'Y' then dbo.fn_Pad('EXPEDITE', 15) else '' end;
+--
+--      if (@vBaggableOrder = 'Y')
+--        select @WorkId = @WorkId  + dbo.fn_Pad('BAG', 15);
+--      else
+--        begin
+--          select @WorkId = @WorkId + case when @vCartonVolume <= 280 then dbo.fn_Pad('SMALL', 15) else '' end;
+--          select @WorkId = @WorkId + case when @vCartonVolume > 280 and @vCartonVolume < 330 then dbo.fn_Pad('MEDIUM', 15) else '' end;
+--          select @WorkId = @WorkId + case when @vCartonVolume > 330 then dbo.fn_Pad('LARGE', 15) else '' end;
+--        end
+--    end
+--  else
+--  if (@Operation = 'PackedAtSorter') and
+--     (@vWaveType in ('RETAIL', 'PTLONLY'))
+--    begin
+--      select @DestZone = 'PANDA';
+--    end
+--  else
+--  if (@Operation = 'ConfirmedAtPanda') or (@Operation = 'PickedAtShelving')
+--    begin
+--      / * Retail orders that may require stickers, in which case direct to E-Com Packing * /
+--      if (@vOrderType in ('GNC-RETAIL')) and (@vStickersRequired ='Y')
+--        begin
+--          select @DestZone = 'EComPack',
+--                 @WorkId   = 'STICKER';
+--        end
+--      else
+--       / * If the LPN is exiting from Panda, then direct it to the Shipping lane on the order * /
+--       select @DestZone = @vShippingLane;
+--    end
+--  else
+--  if (@Operation = 'GetZone')
+--    begin
+--      / * Determine which shelving zone to go to first * /
+--      select top 1 @DestZone     = PutawayZone,
+--                   @DestLocation = Location
+--      from @ttOrderDetails
+--      order by PutawayPath;
+--    end
+--
+--
+--  return(coalesce(@vReturnCode, 0));
+--end / * pr_OrderHeaders_GetDestination * /
+--*/
+--
+--Go

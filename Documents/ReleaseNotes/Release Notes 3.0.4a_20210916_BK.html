@@ -1,0 +1,90 @@
+Release notes - BK - Version Release.BKStag.2021.Sep16(A)
+    
+ 
+<h2>   Improvement
+</h2>
+<ul>
+<li>[<a>BK-563</a>] -         BK - Cubing Prepacks
+</li>
+</ul>
+
+<h2>   Sub-task
+</h2>
+<ul>
+<li>[<a>BK-587</a>] -         Drop Pallet: Incomplete Orders list not displayed
+</li>
+<li>[<a>BK-571</a>] -         Waves: Unable to access  Reports action from Waves(Summary by Wave type)
+</li>
+<li>[<a>BK-544</a>] -         Corrections to Print the SKU and carton summary in the Label
+</li>
+</ul>
+        
+<h2>   Task
+</h2>
+<ul>
+<li>[<a>BK-562</a>] -         YHM - Print static data on Packinglist
+</li>
+<li>[<a>BK-551</a>] -         Standard Combo PL for RD warehouse
+</li>
+<li>[<a>BK-528</a>] -         Duplicate printers & Print jobs not automatically released
+</li>
+<li>[<a>BK-501</a>] -         INO - Sample UPC label with Saftey logo
+</li>
+</ul>
+    
+
+
+The below tasks changes are already in the onsite staging
+
+<ul>
+<li>[<a>BK-457</a>] -         Roles: Add Role: Role Created with Inactive Status even create with Active
+</li>
+<li>[<a>BK-532</a>] -         Wave summary is not showing the reserved units
+</li>
+<li>[<a>BK-575</a>] -         Waves: Unable to release the Wave even Valid Data on the orders
+</li>
+<li>[<a>BK-584</a>] -         KK21090907: Blocker: Shipping Docs: Unable to Print Packing list and getting error like below
+</li>
+<li>[<a>BK-540</a>] -         Substitution does not work - the system asked to pick from LPN C878 or something and we tried to pick from a diff LPN in the same location
+</li>
+</ul>
+<h1 class="csg-h1" style="font-style: inherit; color: #172B4D; font-weight: 600; margin-bottom: 0; font-size: 23px; line-height: 1.1034; margin-top: 40px; letter-spacing: -0.01em;">Files</h1>
+<br>A /cIMS/branches/Staging/SQL/WMS/InitScripts/Init_LabelFormats.sql
+<br>A /cIMS/branches/Staging/SQL/WMS/InitScripts/Labels
+<br>A /cIMS/branches/Staging/SQL/WMS/InitScripts/Labels/init_Labels_Ship_4x8_INO.sql
+<br>M /cIMS/branches/Staging/SQL/WMS/InitScripts/Rules/Init_Rules_PrintList_Outbound.sql
+<br>Checkin created revision 845
+<br>M /cIMS/branches/Staging/SQL/WMS/InitScripts/Rules/Init_Rules_Allocation_AllocateWave.sql
+<br>M /cIMS/branches/Staging/SQL/WMS/InitScripts/Rules/init_Rules_OrderPreProcess.sql
+<br>Checkin created revision 820
+<br>M /cIMS3.0/3.0.4a/SQL/WMS/sp_Allocation.sql
+<br>Checkin created revision 55507
+<br>M /cIMS3.0/3.0.4a/RF/SQL/InitScripts/Picking/init_RF_Form_Picking_DropPickingCart_Confirm.sql
+<br>M /cIMS3.0/3.0.4a/RF/SQL/sp_AMF_Info.sql
+<br>Checkin created revision 55669
+<br>M /cIMS3.0/3.0.4a/SQL/WMS/sp_PreProcess.sql
+<br>Checkin created revision 55625
+<br>M D:/SVN/CIMS3.0/branches/CIMS3.0.4a/SQL/WMS/InitScripts/Init_Mapping_Warehouses.sql
+<br>Checkin created revision 55533
+<br>M D:/VSVN/cIMS 3.0/branches/CIMS3.0.4a/SQL/WMS/InitScripts/Init_LabelFormats.sql
+<br>A D:/VSVN/cIMS 3.0/branches/CIMS3.0.4a/SQL/WMS/InitScripts/Labels/init_Labels_Ship_4x6_Standard.sql
+<br>M D:/VSVN/cIMS 3.0/branches/CIMS3.0.4a/SQL/WMS/InitScripts/_Init_All_Labels.sql
+<br>Checkin created revision 55416
+<br>M D:/SVN/CIMS3.0/branches/CIMS3.0.4a/SQL/Base/InitScripts/Init_UIActionDetails.sql
+<br>Checkin created revision 55710
+<br>A D:/SVN/BK/branches/Staging/Resources/Reports/PackingList_BK_RD_Standard_ComboPL.rdlc
+<br>A D:/SVN/BK/branches/Staging/Resources/Reports/PackingList_BK_RD_Standard_ComboPL_AP.rdlc
+<br>M D:/SVN/BK/branches/Staging/SQL/WMS/InitScripts/Rules/Init_Rules_PrintList_Outbound.sql
+<br>M D:/SVN/BK/branches/Staging/SQL/WMS/InitScripts/init_Reports.sql
+<br>Checkin created revision 800
+<br>M D:/SVN/BK/branches/Staging/SQL/WMS/InitScripts/Rules/Init_Rules_Printing_CreatePrintJobs.sql
+<br>Checkin created revision 765    
+<br>A D:/VSVN/BK/branches/Staging/SQL/WMS/InitScripts/Rules/Init_Rules_PackingLists.sql
+<br>Checkin created revision 838
+<br>M D:/VSVN/BK/branches/Staging/Resources/Reports/PackingList_BK_ComboPL.rdlc
+<br>Checkin created revision 839
+<br>M D:/SVN/BK/branches/Staging/Resources/Reports/PackingList_BK_ComboPL.rdlc
+<br>Checkin created revision 788
+<br>M D:/SVN/CIMS3.0/branches/CIMS3.0.4a/RF/SQL/InitScripts/Picking/init_RF_Form_Picking_DropPickingCart_Confirm.sql
+<br>M D:/SVN/CIMS3.0/branches/CIMS3.0.4a/RF/SQL/sp_AMF_Info.sql
+<br>Checkin created revision 55725

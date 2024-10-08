@@ -1,0 +1,97 @@
+--/*------------------------------------------------------------------------------
+--  Copyright (c) Foxfire Technologies (India) Ltd.  All rights reserved
+--
+--  Revision History:
+--
+--  Date        Person  Comments
+--
+--  2014/12/26  VM      pr_PickBatch_SetUpAttributes: Commmented this proc as this also exists
+--------------------------------------------------------------------------------*/
+--
+--Go
+--
+--if object_id('dbo.pr_PickBatch_SetUpAttributes') is not null
+--  drop Procedure pr_PickBatch_SetUpAttributes;
+--Go
+--/ *------------------------------------------------------------------------------
+--  Proc pr_PickBatch_SetUpAttributes
+--------------------------------------------------------------------------------* /
+--Create Procedure pr_PickBatch_SetUpAttributes
+--  (@PickBatchId    TRecordId,
+--   @BusinessUnit   TBusinessUnit,
+--   @UserId         TUserId)
+--as
+--  declare @ReturnCode        TInteger,
+--          @MessageName       TMessageName,
+--          @Message           TDescription,
+--
+--          @vCreatedDate      TDateTime,
+--          @vPickBatchId      TRecordId,
+--          @vPickBatchNo      TPickBatchNo,
+--          @vPickBatchType    TTypeCode,
+--          @vWarehouse        TWarehouse,
+--
+--          / * controls related * /
+--          @vControlCategory       TCategory,
+--          @vDefaultDestination    TName,
+--          @vAvgUnitsPerOrder      TControlValue,
+--          @vUnitsPerLine          TControlValue,
+--          @vNumSKUOrdersPerBatch  TControlValue;
+--begin
+--  select @vCreatedDate = current_timestamp,
+--         @ReturnCode   = 0;
+--
+--  / * Assumption: Caller will handle validations * /
+--  select @vPickBatchNo     = BatchNo,
+--         @vPickBatchId     = RecordId,
+--         @vPickBatchType   = BatchType,
+--         @vWarehouse       = Warehouse,
+--         @vControlCategory = 'PickBatch_' + BatchType
+--  from PickBatches
+--  where (RecordId = @PickBatchId);
+--
+--  if (@vPickBatchNo is null)
+--    return;
+--
+--  / * Get default values from Controls here * /
+--  select @vAvgUnitsPerOrder     = dbo.fn_Controls_GetAsString(@vControlCategory, 'AvgUnitsPerOrder', '20', @BusinessUnit, null / * UserId * /),
+--         @vUnitsPerLine         = dbo.fn_Controls_GetAsString(@vControlCategory, 'UnitsPerLine', '10', @BusinessUnit, null / * UserId * /),
+--         @vNumSKUOrdersPerBatch = dbo.fn_Controls_GetAsString(@vControlCategory, 'NumSKUOrdersPerBatch', '10', @BusinessUnit, null / * UserId * /),
+--         @vDefaultDestination   = dbo.fn_Controls_GetAsString(@vControlCategory, 'DefaultDestination', 'RMS', @BusinessUnit, null / * UserId * /);
+--
+--  / * insert the data into table here  * /
+--  insert into PickBatchAttributes (PickBatchId,
+--                                   PickBatchNo,
+--                                   AvgUnitsPerOrder,
+--                                   UnitsPerLine,
+--                                   NumSKUOrdersPerBatch,
+--                                   DefaultDestination,
+--                                   Warehouse,
+--                                   BusinessUnit,
+--                                   CreatedDate,
+--                                   CreatedBy)
+--                            values(@vPickBatchId,
+--                                   @vPickBatchNo,
+--                                   @vAvgUnitsPerOrder,
+--                                   @vUnitsPerLine,
+--                                   @vNumSKUOrdersPerBatch,
+--                                   @vDefaultDestination,
+--                                   @vWarehouse,
+--                                   @BusinessUnit,
+--                                   @vCreatedDate,
+--                                   @UserId);
+--
+--  if (@ReturnCode = 0)
+--    goto ExitHandler;
+--
+--ErrorHandler:
+-- if (@MessageName is not null)
+--   exec @ReturnCode = pr_Messages_ErrorHandler @MessageName;
+--
+--ExitHandler:
+--  return(coalesce(@ReturnCode, 0));
+--
+--end / * pr_PickBatch_SetUpAttributes * /
+--
+--Go
+--*/

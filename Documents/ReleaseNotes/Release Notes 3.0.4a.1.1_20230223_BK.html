@@ -1,0 +1,32 @@
+<div class="csg-wrapper" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif; font-size: 14px; font-weight: 400; line-height: 24px; vertical-align: baseline;"><h1 class="csg-h1" style="font-style: inherit; color: #172B4D; font-weight: 600; margin-bottom: 0; font-size: 23px; line-height: 1.1034; margin-top: 40px; letter-spacing: -0.01em;">Release notes - Bamko - Release.BKStag.2023.Feb22(A)</h1><h2 class="csg-h2" style="font-style: inherit; color: #172B4D; font-weight: 600; margin-bottom: 0; font-size: 20px; line-height: 1.1666; margin-top: 36px; font-weight: 500; letter-spacing: -0.01em;">Sub-task</h2><h3 class="csg-h3" style="font-style: inherit; color: #172B4D; font-weight: 600; margin-bottom: 0; font-size: 16px; line-height: 1.2; margin-top: 32px; font-weight: 500; letter-spacing: -0.008em;"><a href="https://foxfireindia.atlassian.net/browse/BK-1000" class="csg-mark-link" style="border: none; background: transparent; color: #0052cc; text-decoration: none;">BK-1000</a> Send InvSnapshot Updates to Two EndPoints</h3><h3 class="csg-h3" style="font-style: inherit; color: #172B4D; font-weight: 600; margin-bottom: 0; font-size: 16px; line-height: 1.2; margin-top: 32px; font-weight: 500; letter-spacing: -0.008em;"><a href="https://foxfireindia.atlassian.net/browse/BK-1001" class="csg-mark-link" style="border: none; background: transparent; color: #0052cc; text-decoration: none;">BK-1001</a> Send the Json data for both Tracking updates</h3><h5 class="csg-h5" style="font-style: inherit; color: #172B4D; font-weight: 600; margin-bottom: 0; font-size: 11px; line-height: 1.4286; margin-top: 20px; letter-spacing: -0.003em;">Deployment Notes</h5><p class="csg-p" style="margin: 0; padding: 0px; margin-bottom: 7px; padding-top: 7px; mso-line-height-rule: exactly; line-height: 24px; font-size: 14px;">1. Delete all previous task scheduler jobs for INTEGRATIONNAME=CIMSUBE_FEDEX / CIMSUBE_UPS / CIMSUBE_USPS.<br>2. Need 2 new task scheduler jobs to process with parameters: <br>Use .xml job plans but schedule it to run for every 1 min; for dev it is scheduled to run for every 5 mins<br>RUNMODE=STANDALONE INTEGRATIONNAME=CIMSUBE MESSAGETYPE=PostCarrierTracking BUSINESSUNIT=BK<br>RUNMODE=STANDALONE INTEGRATIONNAME=CIMSBAMKOM MESSAGETYPE=PostCarrierTracking BUSINESSUNIT=BK</p></div>
+
+<!DOCTYPE html>
+<html>
+	<body>
+    <p><h3>Code Changes</h3></p>
+		<p>D D:/SVN/BK/branches/Prod/Deploy/TaskSchedulerJobs/Onsite/OutboundAPIProcessor_ExportCT.xml
+			<br/>
+A D:/SVN/BK/branches/Prod/Deploy/TaskSchedulerJobs/Onsite/OutboundAPIProcessor_ExportCT_CIMSBAMKOM.xml
+			<br/>
+A D:/SVN/BK/branches/Prod/Deploy/TaskSchedulerJobs/Onsite/OutboundAPIProcessor_ExportCT_CIMSUBE.xml
+			<br/>
+Checkin created revision 1563
+			<br/>
+M D:/SVN/BK/branches/Prod/API/SQL/InitScripts/init_APIConfiguration.sql
+			<br/>
+M D:/SVN/BK/branches/Prod/API/SQL/InitScripts/init_APIIntegrations.sql
+			<br/>
+Checkin created revision 1561
+			<br/>
+M D:/SVN/BK/branches/Prod/SQL/WMS/InitScripts/Init_Jobs.sql
+			<br/>
+Checkin created revision 1560
+			<br/>
+M D:/SVN_MS/BK/branches/Prod/API/SQL/InitScripts/init_APIConfiguration.sql
+			<br/>
+M D:/SVN_MS/BK/branches/Prod/API/SQL/InitScripts/init_APIIntegrations.sql
+			<br/>
+Checkin created revision 1559
+		</p>
+	</body>
+</html>

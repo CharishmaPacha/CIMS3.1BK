@@ -1,0 +1,73 @@
+--/*------------------------------------------------------------------------------
+--  Copyright (c) Foxfire Technologies (India) Ltd.  All rights reserved
+--
+--  Revision History:
+--
+--  Date        Person  Comments
+--
+--  triggers(tr_Users_IOI_AddUser,tr_Users_IOU_UpdateUser).
+--------------------------------------------------------------------------------*/
+--
+--Go
+--
+--if object_id('tr_Users_IOI_AddUser') is not null
+--  drop Trigger tr_Users_IOI_AddUser;
+--Go
+--
+--
+--Create Trigger [tr_Users_IOI_AddUser] on [Users]  Instead of Insert
+--As
+--  declare @sPassword     varchar(50),
+--          @sProfileName  sysname,
+--          @sEmail        varchar(50),
+--          @sUserName     varchar(50),
+--          @sEmailBody    varchar(max),
+--          @sEmailSubject varchar(200);
+--begin
+--  /* The following logic really only works for inserting of one row at a
+--     time. So, if that is not the case, then don't bother coming in here.
+--     Since we really only generate one insert statement per row for tblUser,
+--     this shouldn't pose any problem. */
+--  if (@@rowcount = 0) or (@@rowcount > 1) return;
+--
+--  /* Recipients */
+--  select @sEMail    = INS.Email + ';',
+--         @sUserName = INS.UserName
+--  from Inserted INS;
+--
+--  /* The formula generates random number between 10000 and 99999 */
+--  set @sPassword = ROUND(((99999 - 10000 -1) * RAND() + 10000), 0);
+--
+--  insert into [Users] (UserName, Password, FirstName, LastName, Email)
+--    select  INS.UserName, @sPassword, INS.FirstName, INS.LastName, INS.Email
+--    from Inserted INS;
+--
+--  select @sEmailSubject = 'RFC Dev - Login Details',
+--         @sEmailBody  = 'Your RFC Login is ' + @sUserName + ' and Password is ' + @sPassword;
+--
+--  select @sProfileName = ProfileName from vwEmailControl
+--
+--  /* Send Mail */
+--  /* SQL Server has the mail sending utility in msdb database */
+--  exec msdb.dbo.sp_send_dbmail @profile_name           = @sProfileName,
+--                               @recipients             = @sEMail,
+--                               /* @copy_recipients        = @psCCRecipients,
+--                               @blind_copy_recipients  = @psBCCRecipients,  */
+--                               @body_format            = 'HTML',
+--                               @subject                = @sEmailSubject,
+--                               @body                   = @sEmailBody;
+--
+--  /* This select is required here for the LinqToSQL implementation of
+--     RFC Web Service to work */
+--  select [U].[UserId], [U].[Version], [U].Password
+--  from [Users] AS [U]
+--  where [U].[UserId] = (SCOPE_IDENTITY());
+--
+--end
+--
+--Go
+--
+--/*------------------------------------------------------------------------------
+--  Instead of update Trigger tr_Users_IOU_UpdateUser
+--------------------------------------------------------------------------------*/
+--

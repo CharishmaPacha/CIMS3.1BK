@@ -1,0 +1,258 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Dashboard>
+  <Title Text="Track Receivers" />
+  <DataSources>
+    <SqlDataSource ComponentName="DataSource1">
+      <Name>pr_Report_ReceiverActivity</Name>
+      <Connection Name="DbConnection" FromAppConfig="true" />
+      <Query Type="StoredProcQuery" Name="pr_Report_ReceiverActivity">
+        <ProcName>pr_Report_ReceiverActivity</ProcName>
+      </Query>
+      <ConnectionOptions CloseConnection="true" />
+      <CalculatedFields>
+        <CalculatedField Name="RECEIVING DONE %" Expression="Sum([NumCartonsScanned] * 1.0) / Sum([NumCartons])" DataType="Double" DataMember="pr_Report_ReceiverActivity" />
+      </CalculatedFields>
+    </SqlDataSource>
+  </DataSources>
+  <Items>
+    <Card ComponentName="cardDashboardItem1" Name="CONTAINER" DataSource="DataSource1" DataMember="pr_Report_ReceiverActivity">
+      <DataItems>
+        <Measure DataMember="NumCartons" DefaultId="DataItem1" />
+        <Measure DataMember="NumCartonsScanned" DefaultId="DataItem0">
+          <NumericFormat FormatType="Number" Precision="0" />
+        </Measure>
+        <Dimension DataMember="Container" DefaultId="DataItem3" />
+      </DataItems>
+      <SeriesDimensions>
+        <SeriesDimension DefaultId="DataItem3" />
+      </SeriesDimensions>
+      <Card>
+        <ActualValue DefaultId="DataItem0" />
+        <TargetValue DefaultId="DataItem1" />
+        <AbsoluteVariationNumericFormat />
+        <PercentVariationNumericFormat />
+        <PercentOfTargetNumericFormat />
+        <SparklineOptions HighlightMinMaxPoints="false" HighlightStartEndPoints="false" />
+        <LayoutTemplate MinWidth="100" Type="Stretched">
+          <TopValue Visible="true" ValueType="ActualValue" DimensionIndex="0" />
+          <MainValue Visible="true" ValueType="Title" DimensionIndex="0" />
+          <SubValue Visible="true" ValueType="Subtitle" DimensionIndex="0" />
+          <BottomValue1 Visible="true" ValueType="PercentVariation" DimensionIndex="0" />
+          <BottomValue2 Visible="true" ValueType="AbsoluteVariation" DimensionIndex="0" />
+          <DeltaIndicator Visible="true" />
+          <Sparkline Visible="false" />
+        </LayoutTemplate>
+      </Card>
+    </Card>
+    <Chart ComponentName="chartDashboardItem1" Name="Carton Counts" DataSource="DataSource1" DataMember="pr_Report_ReceiverActivity">
+      <DataItems>
+        <Dimension DataMember="LPNStatusDesc" DefaultId="DataItem3" />
+        <Measure DataMember="NumCartons" DefaultId="DataItem0" />
+      </DataItems>
+      <SeriesDimensions>
+        <SeriesDimension DefaultId="DataItem3" />
+      </SeriesDimensions>
+      <Panes>
+        <Pane Name="Pane 1">
+          <AxisY Title="# Cartons" />
+          <Series>
+            <Simple>
+              <Value DefaultId="DataItem0" />
+              <PointLabelOptions ContentType="Value" />
+            </Simple>
+          </Series>
+        </Pane>
+      </Panes>
+      <ChartLegend OutsidePosition="TopRightVertical" />
+      <AxisX Visible="false" Title="Status" />
+    </Chart>
+    <Gauge ComponentName="gaugeDashboardItem1" Name="TIme Elapsed In Hours" Group="groupDashboardItem1" DataSource="DataSource1" DataMember="pr_Report_ReceiverActivity" ViewType="CircularThreeFourth" ShowGaugeCaptions="false">
+      <DataItems>
+        <Measure DataMember="TimeElapsedInHours" SummaryType="Max" DefaultId="DataItem0" />
+      </DataItems>
+      <GaugeElement Name="Time In Hours">
+        <ActualValue DefaultId="DataItem0" />
+        <DeltaOptions ValueType="ActualValue" />
+        <AbsoluteVariationNumericFormat />
+        <PercentVariationNumericFormat />
+        <PercentOfTargetNumericFormat />
+      </GaugeElement>
+    </Gauge>
+    <Card ComponentName="cardDashboardItem2" Name="Start Time" Group="groupDashboardItem1" DataSource="DataSource1" DataMember="pr_Report_ReceiverActivity">
+      <DataItems>
+        <Dimension DataMember="StartTime" DateTimeGroupInterval="DateHourMinuteSecond" DefaultId="DataItem1">
+          <DateTimeFormat DateTimeFormat="TimeOnly" />
+        </Dimension>
+        <Measure DataMember="StartTime" SummaryType="CountDistinct" DefaultId="DataItem0" />
+      </DataItems>
+      <SeriesDimensions>
+        <SeriesDimension DefaultId="DataItem1" />
+      </SeriesDimensions>
+      <Card>
+        <ActualValue DefaultId="DataItem0" />
+        <AbsoluteVariationNumericFormat />
+        <PercentVariationNumericFormat />
+        <PercentOfTargetNumericFormat />
+        <LayoutTemplate Type="Stretched">
+          <TopValue Visible="false" ValueType="ActualValue" DimensionIndex="0" />
+          <MainValue Visible="true" ValueType="Title" DimensionIndex="0" />
+          <SubValue Visible="true" ValueType="Subtitle" DimensionIndex="0" />
+          <BottomValue1 Visible="true" ValueType="PercentVariation" DimensionIndex="0" />
+          <BottomValue2 Visible="true" ValueType="AbsoluteVariation" DimensionIndex="0" />
+          <DeltaIndicator Visible="true" />
+          <Sparkline Visible="true" />
+        </LayoutTemplate>
+      </Card>
+    </Card>
+    <Chart ComponentName="chartDashboardItem2" Name="Status %" DataSource="DataSource1" DataMember="pr_Report_ReceiverActivity">
+      <DataItems>
+        <Dimension DataMember="LPNStatusDesc" DefaultId="DataItem3" />
+        <Measure DataMember="NumCartons" DefaultId="DataItem0" />
+      </DataItems>
+      <SeriesDimensions>
+        <SeriesDimension DefaultId="DataItem3" />
+      </SeriesDimensions>
+      <Panes>
+        <Pane Name="Pane 1">
+          <AxisY Title="# Cartons" />
+          <Series>
+            <Simple SeriesType="FullStackedBar">
+              <Value DefaultId="DataItem0" />
+              <PointLabelOptions ContentType="Percent" />
+            </Simple>
+          </Series>
+        </Pane>
+      </Panes>
+      <ChartLegend OutsidePosition="TopRightVertical" />
+      <AxisX Visible="false" Title="Status" />
+    </Chart>
+    <Card ComponentName="cardDashboardItem3" Name="RECEIVER NUMBER" DataSource="DataSource1" DataMember="pr_Report_ReceiverActivity">
+      <DataItems>
+        <Dimension DataMember="ReceiverNumber" DefaultId="DataItem2" />
+        <Measure DataMember="NumCartonsScanned" DefaultId="DataItem0" />
+        <Measure DataMember="NumCartons" DefaultId="DataItem1" />
+      </DataItems>
+      <SeriesDimensions>
+        <SeriesDimension DefaultId="DataItem2" />
+      </SeriesDimensions>
+      <Card>
+        <ActualValue DefaultId="DataItem0" />
+        <TargetValue DefaultId="DataItem1" />
+        <AbsoluteVariationNumericFormat />
+        <PercentVariationNumericFormat />
+        <PercentOfTargetNumericFormat />
+        <LayoutTemplate Type="Stretched">
+          <TopValue Visible="true" ValueType="ActualValue" DimensionIndex="0" />
+          <MainValue Visible="true" ValueType="Title" DimensionIndex="0" />
+          <SubValue Visible="true" ValueType="Subtitle" DimensionIndex="0" />
+          <BottomValue1 Visible="true" ValueType="PercentVariation" DimensionIndex="0" />
+          <BottomValue2 Visible="true" ValueType="AbsoluteVariation" DimensionIndex="0" />
+          <DeltaIndicator Visible="true" />
+          <Sparkline Visible="true" />
+        </LayoutTemplate>
+      </Card>
+    </Card>
+    <Grid ComponentName="gridDashboardItem1" Name="Grid 1" ShowCaption="false" DataSource="DataSource1" DataMember="pr_Report_ReceiverActivity">
+      <DataItems>
+        <Measure DataMember="NumCartons" DefaultId="DataItem0" />
+        <Measure DataMember="NumCartonsScanned" DefaultId="DataItem1" />
+        <Measure DataMember="NumCartonsInTransit" DefaultId="DataItem2" />
+        <Dimension DataMember="ReceiptNumber" DefaultId="DataItem3" />
+      </DataItems>
+      <GridColumns>
+        <GridDimensionColumn Name="RECEIPT" Weight="105.25328330206379">
+          <Dimension DefaultId="DataItem3" />
+        </GridDimensionColumn>
+        <GridMeasureColumn Name="Total Cartons" Weight="63.602251407129458">
+          <Measure DefaultId="DataItem0" />
+        </GridMeasureColumn>
+        <GridMeasureColumn Name="Scanned" Weight="72.6078799249531">
+          <Measure DefaultId="DataItem1" />
+        </GridMeasureColumn>
+        <GridMeasureColumn Name="Pending" Weight="58.536585365853661">
+          <Measure DefaultId="DataItem2" />
+        </GridMeasureColumn>
+      </GridColumns>
+      <GridOptions ColumnWidthMode="Manual" />
+    </Grid>
+    <Card ComponentName="cardDashboardItem4" Name="RECEIVING DONE %" DataSource="DataSource1" DataMember="pr_Report_ReceiverActivity">
+      <DataItems>
+        <Measure DataMember="NumCartons" DefaultId="DataItem1" />
+        <Measure DataMember="NumCartonsScanned" DefaultId="DataItem0" />
+      </DataItems>
+      <Card>
+        <ActualValue DefaultId="DataItem0" />
+        <TargetValue DefaultId="DataItem1" />
+        <AbsoluteVariationNumericFormat />
+        <PercentVariationNumericFormat />
+        <PercentOfTargetNumericFormat />
+        <LayoutTemplate MinWidth="100" Type="Lightweight">
+          <MainValue Visible="true" ValueType="PercentOfTarget" DimensionIndex="0" />
+          <SubValue Visible="false" ValueType="Title" DimensionIndex="0" />
+          <BottomValue Visible="false" ValueType="Subtitle" DimensionIndex="0" />
+          <DeltaIndicator Visible="false" />
+          <Sparkline Visible="false" />
+        </LayoutTemplate>
+      </Card>
+    </Card>
+  </Items>
+  <Groups>
+    <Group ComponentName="groupDashboardItem1" Name="Time Elapsed &amp; Start Time" ShowCaption="false" />
+  </Groups>
+  <ColorScheme>
+    <Entry DataSource="DataSource1" DataMember="pr_Report_ReceiverActivity" Color="-11748782">
+      <DimensionKeys>
+        <DimensionKey>
+          <Definition DataMember="LPNStatusDesc" />
+          <Value Type="System.String" Value="Received" />
+        </DimensionKey>
+      </DimensionKeys>
+    </Entry>
+    <Entry DataSource="DataSource1" DataMember="pr_Report_ReceiverActivity" Color="-4380101">
+      <DimensionKeys>
+        <DimensionKey>
+          <Definition DataMember="LPNStatusDesc" />
+          <Value Type="System.String" Value="In Transit" />
+        </DimensionKey>
+      </DimensionKeys>
+    </Entry>
+  </ColorScheme>
+  <LayoutTree>
+    <LayoutGroup Weight="100">
+      <LayoutGroup Orientation="Vertical" Weight="100">
+        <LayoutGroup Weight="100">
+          <LayoutGroup Orientation="Vertical" Weight="100">
+            <LayoutGroup Weight="100">
+              <LayoutGroup Orientation="Vertical" Weight="162.87404068870603">
+                <LayoutGroup Weight="102.85012509220321">
+                  <LayoutGroup Orientation="Vertical" Weight="102.85012509220321">
+                    <LayoutGroup Weight="102.85012509220321">
+                      <LayoutGroup Orientation="Vertical" Weight="102.85012509220321">
+                        <LayoutGroup Weight="94.5907949456835">
+                          <LayoutItem DashboardItem="cardDashboardItem3" Weight="72.004711783377076" />
+                          <LayoutItem DashboardItem="cardDashboardItem1" Weight="72.3854571547337" />
+                          <LayoutItem DashboardItem="cardDashboardItem4" Weight="79.706910527030345" />
+                          <LayoutItem DashboardItem="chartDashboardItem1" Weight="84.522357498520165" />
+                        </LayoutGroup>
+                        <LayoutGroup Weight="115.44371388457805">
+                          <LayoutGroup DashboardItem="groupDashboardItem1" Weight="143.24239887681856">
+                            <LayoutGroup Orientation="Vertical" Weight="95.665741354144913">
+                              <LayoutItem DashboardItem="cardDashboardItem2" Weight="65.681522571376959" />
+                              <LayoutItem DashboardItem="gaugeDashboardItem1" Weight="125.64996013691287" />
+                            </LayoutGroup>
+                          </LayoutGroup>
+                          <LayoutItem DashboardItem="gridDashboardItem1" Weight="148.2203513344858" />
+                          <LayoutItem DashboardItem="chartDashboardItem2" Weight="110.28405121486475" />
+                        </LayoutGroup>
+                      </LayoutGroup>
+                    </LayoutGroup>
+                  </LayoutGroup>
+                </LayoutGroup>
+              </LayoutGroup>
+            </LayoutGroup>
+          </LayoutGroup>
+        </LayoutGroup>
+      </LayoutGroup>
+    </LayoutGroup>
+  </LayoutTree>
+</Dashboard>

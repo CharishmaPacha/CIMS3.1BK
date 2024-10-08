@@ -1,0 +1,64 @@
+<div class="csg-wrapper" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif; font-size: 14px; font-weight: 400; line-height: 24px; vertical-align: baseline;"><h1 class="csg-h1" style="font-style: inherit; color: #172B4D; font-weight: 600; margin-bottom: 0; font-size: 23px; line-height: 1.1034; margin-top: 40px; letter-spacing: -0.01em;">Release notes - Bamko - Release.BK.2023.Feb24(A)</h1><h2 class="csg-h2" style="font-style: inherit; color: #172B4D; font-weight: 600; margin-bottom: 0; font-size: 20px; line-height: 1.1666; margin-top: 36px; font-weight: 500; letter-spacing: -0.01em;">Task</h2><h3 class="csg-h3" style="font-style: inherit; color: #172B4D; font-weight: 600; margin-bottom: 0; font-size: 16px; line-height: 1.2; margin-top: 32px; font-weight: 500; letter-spacing: -0.008em;"><a href="https://foxfireindia.atlassian.net/browse/BK-1025" class="csg-mark-link" style="border: none; background: transparent; color: #0052cc; text-decoration: none;">BK-1025</a> Exporting CarrierTracking - UBE Source to UBE endpoint and BAMKOM Source to Bamkom endpoint</h3><h5 class="csg-h5" style="font-style: inherit; color: #172B4D; font-weight: 600; margin-bottom: 0; font-size: 11px; line-height: 1.4286; margin-top: 20px; letter-spacing: -0.003em;">Deployment Notes</h5><p class="csg-p" style="margin: 0; padding: 0px; margin-bottom: 7px; padding-top: 7px; mso-line-height-rule: exactly; line-height: 24px; font-size: 14px;">1. add new column<br>begin tran<br>alter table CarrierTrackingInfo add SourceSystem             TName;<br>rollback tran</p><p class="csg-p" style="margin: 0; padding: 0px; margin-bottom: 7px; padding-top: 7px; mso-line-height-rule: exactly; line-height: 24px; font-size: 14px;">2. Alter index<br>begin tran<br>drop index ix_CarrierTrackingInfo_Archived        on CarrierTrackingInfo;<br>create index ix_CarrierTrackingInfo_Archived        on CarrierTrackingInfo (Archived, ExportStatus, BusinessUnit) include (Carrier, SourceSystem, DeliveryStatus, DeliveredOn, ActivityInfo);</p><p class="csg-p" style="margin: 0; padding: 0px; margin-bottom: 7px; padding-top: 7px; mso-line-height-rule: exactly; line-height: 24px; font-size: 14px;">create index ix_CarrierTrackingInfo_DeliveryStatus  on CarrierTrackingInfo (DeliveryStatus, Archived) Include(OrderId, RecordId);</p><p class="csg-p" style="margin: 0; padding: 0px; margin-bottom: 7px; padding-top: 7px; mso-line-height-rule: exactly; line-height: 24px; font-size: 14px;">create index ix_Loads_LoadGroup  on Loads (LoadGroup, Archived) include (Status);</p><p class="csg-p" style="margin: 0; padding: 0px; margin-bottom: 7px; padding-top: 7px; mso-line-height-rule: exactly; line-height: 24px; font-size: 14px;">rollback tran<br>--commit</p><h2 class="csg-h2" style="font-style: inherit; color: #172B4D; font-weight: 600; margin-bottom: 0; font-size: 20px; line-height: 1.1666; margin-top: 36px; font-weight: 500; letter-spacing: -0.01em;">Task</h2><h3 class="csg-h3" style="font-style: inherit; color: #172B4D; font-weight: 600; margin-bottom: 0; font-size: 16px; line-height: 1.2; margin-top: 32px; font-weight: 500; letter-spacing: -0.008em;"><a href="https://foxfireindia.atlassian.net/browse/BK-1026" class="csg-mark-link" style="border: none; background: transparent; color: #0052cc; text-decoration: none;">BK-1026</a> Inventory Updates: UBE Source to UBE endpoint and BAMKOM Source to Bamkom endpoint</h3></div>
+
+<br/>
+<br/>
+<br/>
+<!DOCTYPE html>
+<html>
+	<body>
+    <p><h3>CODE CHANGES</h3></p>
+		<p>3.0.4a.1.1
+			<br/>
+			<br/>
+M D:/SVN_MS/CIMS3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/sp_Inventory.sql
+			<br/>
+Checkin created revision 72222
+			<br/>
+			<br/>
+M D:/SVN_MS/CIMS3.0/branches/CIMS3.0.4a.1/SQL/WMS/sp_Inventory.sql
+			<br/>
+Checkin created revision 72221
+			<br/>
+			<br/>
+M D:/SVN/CIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/Domains_Shipping.sql
+			<br/>
+Checkin created revision 72220
+			<br/>
+			<br/>
+M D:/SVN/CIMS 3.0/branches/CIMS3.0.4a.1.1/API/SQL/sp_API_CarrierTracking.sql
+			<br/>
+M D:/SVN/CIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/def_Shipping.sql
+			<br/>
+M D:/SVN/CIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/sp_Shipping.sql
+			<br/>
+A D:/SVN/CIMS 3.0/branches/CIMS3.0.4a.1.1/SQL/WMS/trig_LPNs.sql
+			<br/>
+Checkin created revision 72215
+			<br/>
+			<br/>
+BK Prod
+			<br/>
+M D:/SVN_MS/BK/branches/Prod/SQL/WMS/sp_Custom.sql
+			<br/>
+M D:/SVN_MS/BK/branches/Prod/SQL/WMS/trig_Invsnapshot.sql
+			<br/>
+Checkin created revision 1573
+			<br/>
+			<br/>
+			<br/>
+M D:/SVN/BK/branches/Prod/SQL/WMS/sp_Custom.sql
+			<br/>
+Checkin created revision 1572
+			<br/>
+			<br/>
+M D:/SVN/BK/branches/Prod/API/SQL/sp_Custom.sql
+			<br/>
+M D:/SVN/BK/branches/Prod/SQL/WMS/InitScripts/Init_Jobs.sql
+			<br/>
+Checkin created revision 1569
+			<br/>
+			<br/>
+		</p>
+	</body>
+</html>
+

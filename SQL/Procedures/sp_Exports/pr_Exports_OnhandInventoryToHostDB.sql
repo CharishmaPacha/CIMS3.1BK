@@ -1,0 +1,84 @@
+--/*------------------------------------------------------------------------------
+--  Copyright (c) Foxfire Technologies (India) Ltd.  All rights reserved
+--
+--  Revision History:
+--
+--  Date        Person  Comments
+--
+--  2014/12/31  AK      pr_Exports_ExportDataToHost, pr_Exports_OnhandInventoryToHostDB and some part of pr_Exports_OpenOrders:
+--  2014/08/12  PK      pr_Exports_OnhandInventoryToHostDB: Update the processed records before we
+--------------------------------------------------------------------------------*/
+--
+--Go
+--
+--if object_id('dbo.pr_Exports_OnhandInventoryToHostDB') is not null
+--  drop Procedure pr_Exports_OnhandInventoryToHostDB;
+--Go
+--/ *------------------------------------------------------------------------------
+--  Proc pr_Exports_OnhandInventoryToHostDB:
+--------------------------------------------------------------------------------* /
+--Create Procedure pr_Exports_OnhandInventoryToHostDB
+--  (@Warehouse         TWarehouse = null,
+--   @SKU               TSKU       = null,
+--   @SKU1              TSKU       = null,
+--   @SKU2              TSKU       = null,
+--   @SKU3              TSKU       = null,
+--   @SKU4              TSKU       = null,
+--   @SKU5              TSKU       = null,
+--   @BusinessUnit      TBusinessUnit,
+--   @UserId            TUserId,
+--   @OutputZeroQtySKUs TBoolean   = 0 / * No * /)
+--as
+--  declare @vIntegrationType TControlValue;
+--begin / * pr_Exports_OnhandInventoryToHostDB * /
+--  select @vIntegrationType = dbo.fn_Controls_GetAsString ('Exports', 'IntegrationType',  'DB',
+--                                                          @BusinessUnit, @UserId);
+--
+--  / * if the integration type is not database, then exit as this procedure is only
+--     for DB integration * /
+--  if (@vIntegrationType <> 'DB')
+--    return;
+--
+--  declare @ttOnhandInventory table (SKU                TSKU,
+--                                    SKU1               TSKU,
+--                                    SKU2               TSKU,
+--                                    SKU3               TSKU,
+--                                    SKU4               TSKU,
+--                                    SKU5               TSKU,
+--                                    LPN                TLPN,
+--                                    Location           TLocation,
+--                                    Ownership          TOwnership,
+--                                    Warehouse          TWarehouse,
+--                                    Lot                TLot,
+--                                    ExpiryDate         TDate,
+--                                    LPNType            TTypeCode,
+--                                    LPNTypeDescription TDescription,
+--                                    AvailableQty       TQuantity,
+--                                    ReservedQty        TQuantity,
+--                                    OnhandQuantity     TQuantity,
+--                                    ReceivedQuantity   TQuantity,
+--                                    TransDateTime      TDateTime);
+--
+--  / * Inserting data into temp table from pr_Exports_ExportOnHandInvToHost based on Inputparamters * /
+--  insert into @ttOnhandInventory
+--    exec pr_Exports_OnhandInventory @Warehouse, @SKU, @SKU1, @SKU2, @SKU3, @SKU4, @SKU5, @OutputZeroQtySKUs;
+--
+--  / * As per GNC request, Update the processed records * /
+--  update HostExportInventory
+--  set processed_flg = 1
+--  where coalesce(processed_flg, 0) = 0;
+--
+--  / * insert into external table from temp table * /
+--  insert into HostExportInventory
+--           (SKU, SKU1, SKU2, SKU3, SKU4, SKU5, LPN, Location, Ownership, Warehouse,
+--           LotNumber, ExpiryDate, LPNType, LPNTypeDescription, AvailableQty,
+--           ReservedQty, OnhandQuantity, ReceivedQuantity, TransDateTime)
+--    select OI.SKU, OI.SKU1, OI.SKU2, OI.SKU3, OI.SKU4, OI.SKU5, OI.LPN, OI.Location, OI.Ownership, OI.Warehouse,
+--           OI.Lot as LotNumber, OI.ExpiryDate, OI.LPNType, OI.LPNTypeDescription, OI.AvailableQty,
+--           OI.ReservedQty, OI.OnhandQuantity, OI.ReceivedQuantity, OI.TransDateTime
+--    from @ttOnhandInventory OI;
+--
+--end / * pr_Exports_OnhandInventoryToHostDB * /
+--*/
+--
+--Go

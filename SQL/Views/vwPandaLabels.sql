@@ -1,0 +1,75 @@
+--/*------------------------------------------------------------------------------
+--  Copyright (c) Foxfire Technologies (India) Ltd.  All rights reserved
+--
+--  Revision History:
+--
+--  Date        Person  Comments
+--
+--  2014/04/14  AY      OutBarcode -> LabelVerify
+--  2012/11/27  AA      Added StationName
+--  2012/04/16  AA      Initial Revision.
+--------------------------------------------------------------------------------*/
+--Go
+--
+--if object_id('dbo.vwPandALabels') is not null
+--  drop View dbo.vwPandALabels;
+--Go
+--
+--Create View dbo.vwPandALabels (
+--  RecordId,
+--
+--  LPNId,
+--  LPN,
+--
+--  InBarcode,
+--  LabelVerify,
+--  LabelData,
+--
+--  LabelType,
+--  LabelFormatName,
+--  DeviceId,
+--  StationName,
+--
+--  ExportStatus,
+--  InductionStatus,
+--  ConfirmationStatus,
+--  PandAStation,
+--  ErrorMessage,
+--
+--  BusinessUnit,
+--  Archived,
+--  CreatedDate,
+--  ModifiedDate,
+--  CreatedBy,
+--  ModifiedBy)
+--as
+--select
+--  PL.RecordId,
+--
+--  PL.LPNId,
+--  PL.LPN,
+--
+--  PL.InBarcode,
+--  PL.LabelVerify,
+--  PL.LabelData,
+--
+--  PL.LabelType,
+--  PL.LabelFormatName,
+--  PL.DeviceId,
+--  PL.StationName,
+--
+--  PL.ExportStatus,
+--  PL.InductionStatus,
+--  PL.ConfirmationStatus,
+--  PL.PandAStation,
+--  PL.ErrorMessage,
+--
+--  PL.BusinessUnit,
+--  PL.Archived,
+--  PL.CreatedDate,
+--  PL.ModifiedDate,
+--  PL.CreatedBy,
+--  PL.ModifiedBy
+--from PandALabels PL
+--where Archived = 'N';
+--Go

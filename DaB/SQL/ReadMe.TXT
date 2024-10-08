@@ -1,0 +1,1 @@
+This folder contains the custom SQL implementation related to CIMS, for Dashboards Solution

@@ -1,0 +1,85 @@
+--/*------------------------------------------------------------------------------
+--  Copyright (c) Foxfire Technologies (India) Ltd.  All rights reserved
+--
+--  Revision History:
+--
+--  Date        Person  Comments
+--
+--  2021/03/01  TK      tr_TaskDetails_AU_UpdateTaskDetailDependencyFlag: Ignore cancelled task details (CID-Support)
+--  2021/02/13  TK      tr_TaskDetails_AU_UpdateTaskDetailDependencyFlag & tr_TaskDetails_AU_UpdateTaskDetailStatus:
+--  2021/02/12  TK      tr_TaskDetails_AU_UpdateTaskDetailDependencyFlag & tr_TaskDetails_AU_UpdateTaskDetailStatus:
+--  2021/02/09  TK      tr_TaskDetails_AU_UpdateTaskDetailDependencyFlag: Export picks when dependency 'M' is cleared (CID-1699)
+--  2020/12/30  TK      tr_TaskDetails_AU_UpdateTaskDetailDependencyFlag: Initial revision (CID-1575)
+--------------------------------------------------------------------------------*/
+--
+--Go
+--
+--if object_id('tr_TaskDetails_AU_UpdateTaskDetailDependencyFlag') is not null
+--  drop Trigger tr_TaskDetails_AU_UpdateTaskDetailDependencyFlag;
+--Go
+--/*------------------------------------------------------------------------------
+--  tr_TaskDetails_AU_UpdateTaskDetailDependencyFlag: Whenever the dependency on a Pick is cleared
+--    then we need to generate APIOutboundTransaction for the complete order
+--------------------------------------------------------------------------------*/
+--Create Trigger tr_TaskDetails_AU_UpdateTaskDetailDependencyFlag on TaskDetails After Update
+--as
+--begin
+--  declare @ttOrdersToExport   TRecountKeysTable;
+--
+--  /* If TaskDetails table was modified, but DependencyFlags was not part of the update statement, then exit */
+--  if not update(DependencyFlags) return;
+--
+--  /* Get all the Picks when there is a change in DependencyFlags */
+--  select distinct INS.TaskId, INS.TaskDetailId, INS.OrderId, OH.PickTicket, INS.Status as NewStatus, DEL.Status as OldStatus, W.PickMethod, INS.BusinessUnit
+--  into #PicksModified
+--  from Inserted INS
+--    join Deleted      DEL on (INS.TaskDetailId = DEL.TaskDetailId)
+--    join OrderHeaders OH  on (INS.OrderId = OH.OrderId)
+--    join Waves        W   on (INS.WaveId = W.WaveId)
+--    join TaskDetails  TD  on (INS.TaskDetailId = TD.TaskDetailId)
+--  where (W.PickMethod <> 'CIMSRF') and
+--        (TD.PickGroup not like 'CIMSRF%') and
+--        (TD.ExportStatus <> 'NotRequired') and
+--        (INS.Status not in ('X', 'C' /* Canceled, Completed */)) and
+--        (DEL.DependencyFlags in ('M', 'R', 'S' /* Replen, Short */)) and
+--        (INS.DependencyFlags not in ('M', 'R', 'S' /* Replen, Short */));
+--
+--  /* If none of the task details had changes, then exit */
+--  if not exists (select * from #PicksModified) return;
+--
+--  /* Update export status on task details as those needs to be processed again
+--     We will be exporting task details on order level, so if there is one pick that is
+--     waiting on replen then system will not export all the picks for that order so joined with OrderId */
+-- ;with OrdersWithNoDependency as
+--  (
+--    select distinct PM.OrderId
+--    from #PicksModified PM
+--      left outer join TaskDetails TD on (PM.OrderId = TD.OrderId) and
+--                                        (TD.DependencyFlags in ('M', 'R', 'S' /* Replen, Short */)) and
+--                                        (TD.Status not in ('X', 'C' /* Canceled, Completed */))
+--    where (TD.TaskDetailId is null)
+--  )
+--  update TD
+--  set ExportStatus = 'ReadyToExport'
+--  output inserted.OrderId into @ttOrdersToExport (EntityId)
+--  from TaskDetails TD
+--    join OrdersWithNoDependency OWND on (TD.OrderId = OWND.OrderId)
+--  where (TD.Status not in ('X', 'C' /* Canceled, Completed */)) and
+--        (TD.ExportStatus = 'WaitingOnReplen') and
+--        (TD.PickGroup not like 'CIMSRF%') and
+--        (TD.ExportStatus <> 'NotRequired');
+--
+--  /* Generate required API transaction for the orders */
+--  insert into APIOutboundTransactions (IntegrationName, MessageType, EntityType, EntityId, EntityKey, BusinessUnit, CreatedBy)
+--    select distinct 'CIMS' + PickMethod, 'PickWave', 'PickTicket', OrderId, PickTicket, BusinessUnit, system_user
+--    from @ttOrdersToExport OTE
+--      join #PicksModified PM on (OTE.EntityId = PM.OrderId);
+--
+--end /* tr_TaskDetails_AU_UpdateTaskDetailDependencyFlag */
+--
+--Go
+--
+--alter table TaskDetails Disable trigger tr_TaskDetails_AU_UpdateTaskDetailDependencyFlag;
+--
+--Go
+--

@@ -1,0 +1,357 @@
+/*==============================================================================
+  VM_20201210 (CIMS-3140): 
+    Commented all lines of this file because while setting up of processing rule files via Folder instead of _init_All_Rules.sql to build blank DB, 
+    I found this file is eisther not listed or commented in _Init_All_Rules.sql. 
+                
+    If it is require to be used, you can remove comments (==) from each line and use it
+==============================================================================*/
+--/*------------------------------------------------------------------------------
+--  Copyright (c) Foxfire Technologies (India) Ltd.  All rights reserved
+--
+--  Revision History:
+--
+--  Date        Person  Comments
+--
+--  2017/11/15  TD      Initial version
+--------------------------------------------------------------------------------*/
+--
+--declare @vRuleSetType  TRuleSetType = 'RoutingRules';
+--
+--Delete R from Rules R join RuleSets RS on (R.RuleSetName = RS.RuleSetName) where (RS.RuleSetType = @vRuleSetType);
+--delete from RuleSets where RuleSetType = @vRuleSetType;
+--
+--  declare @vRecordId           TRecordId,
+--          @vRuleSetId          TRecordId,
+--          @vRuleSetName        TName,
+--          @vRuleSetDescription TDescription,
+--          @vRuleSetFilter      TQuery,
+
+--          @vBusinessUnit       TBusinessUnit,
+--
+--          @vRuleCondition      TQuery,
+--          @vRuleQuery          TQuery,
+--          @vRuleDescription    TDescription,
+--
+--          @vSortSeq            TSortSeq,
+--          @vStatus             TStatus;
+--
+--  declare @RuleSets           TRuleSetsTable,
+--          @Rules              TRulesTable;
+--
+--/******************************************************************************/
+--/* SOME SAMPLE RULES ARE SETUP BELOW AND HAVE TO BE CONFIGURED BASED ON CLIENT NEED */
+--/******************************************************************************/
+--
+--
+--/******************************************************************************/
+--/* Rule Set #1 - Get shipVia for  ShipToId/SoldToId  and shipvia*/
+--/******************************************************************************/
+--select @vRuleSetDescription = 'Determine ShipVia for the given criteria/inputs',
+--       @vRuleSetName        = 'GetShipVia',
+--       @vRuleSetFilter      = null,
+--       @vSortSeq            = null,
+--       @vStatus             = 'A'  /* Active */;
+--
+--insert into @RuleSets (RuleSetName, RuleSetDescription, RuleSetType, RuleSetFilter, SortSeq, Status, BusinessUnit)
+--  select @vRuleSetName, @vRuleSetDescription, @vRuleSetType, @vRuleSetFilter, coalesce(@vSortSeq, 0), @vStatus, @vBusinessUnit;
+--
+--/*----------------------------------------------------------------------------*/
+--/* Determine new ShipVia based upon existing ShipVia and SoldTo, ShipTo, ShipToState & Weight */
+--select @vRuleDescription = 'Determine new ShipVia based upon existing ShipVia and Customer, ShipToState & Weight',
+--       @vRuleCondition   = null,
+--       @vRuleQuery       = 'select top 1 ShipVia
+--                            from RoutingRules
+--                            where coalesce(Account,  '''') = coalesce(~Account~,  '''') and
+--                                  coalesce(SoldToId, '''') = coalesce(~SoldToId~, '''') and
+--                                  coalesce(ShipToId, '''') = coalesce(~ShipToId~, '''') and
+--                                  ShipToState = ~ShipToState~ and
+--                                  ~OrderWeight~ between MinWeight and MaxWeight and
+--                                  InputShipVia = ~ShipVia~ and Status = ''A''
+--                            order by SortSeq',
+--       @vStatus          = 'A'/* Active */,
+--       @vSortSeq         = null;
+--
+--insert into @Rules (RuleSetName, RuleDescription, RuleCondition, RuleQuery, SortSeq, Status)
+--  select @vRuleSetName, @vRuleDescription, @vRuleCondition, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus;
+--
+--/*----------------------------------------------------------------------------*/
+--/* Determine new ShipVia based upon existing ShipVia and SoldTo, ShipTo, ShipToState */
+--select @vRuleDescription = 'Determine new ShipVia based upon existing ShipVia and Customer, ShipToState',
+--       @vRuleCondition   = null,
+--       @vRuleQuery       = 'select top 1 ShipVia
+--                            from RoutingRules
+--                            where coalesce(Account,  '''') = coalesce(~Account~,  '''') and
+--                                  coalesce(SoldToId, '''') = coalesce(~SoldToId~, '''') and
+--                                  coalesce(ShipToId, '''') = coalesce(~ShipToId~, '''') and
+--                                  ShipToState = ~ShipToState~ and
+--                                  InputShipVia = ~ShipVia~ and Status = ''A''
+--                            order by SortSeq',
+--       @vStatus          = 'A'/* Active */,
+--       @vSortSeq         = null;
+--
+--insert into @Rules (RuleSetName, RuleDescription, RuleCondition, RuleQuery, SortSeq, Status)
+--  select @vRuleSetName, @vRuleDescription, @vRuleCondition, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus;
+--
+--/*----------------------------------------------------------------------------*/
+--/* Determine new ShipVia based upon existing ShipVia and Customer, ShipToZip & Weight */
+--select @vRuleDescription = 'Determine new ShipVia based upon existing ShipVia and Customer, ShipToZip & Weight',
+--       @vRuleCondition   = null,
+--       @vRuleQuery       = 'select top 1 ShipVia
+--                            from RoutingRules
+--                            where coalesce(Account,  '''') = coalesce(~Account~,  '''') and
+--                                  coalesce(SoldToId, '''') = coalesce(~SoldToId~, '''') and
+--                                  coalesce(ShipToId, '''') = coalesce(~ShipToId~, '''') and
+--                                  ShipToZip like ~ShipToZip~ + ''%'' and
+--                                  ~OrderWeight~ between MinWeight and MaxWeight and
+--                                  InputShipVia = ~ShipVia~ and Status = ''A''
+--                            order by SortSeq',
+--       @vStatus          = 'A'/* Active */,
+--       @vSortSeq         = null;
+--
+--insert into @Rules (RuleSetName, RuleDescription, RuleCondition, RuleQuery, SortSeq, Status)
+--  select @vRuleSetName, @vRuleDescription, @vRuleCondition, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus;
+--
+--/*----------------------------------------------------------------------------*/
+--/* Determine new ShipVia based upon existing ShipVia and Customer, ShipToZip */
+--select @vRuleDescription = 'Determine new ShipVia based upon existing ShipVia and Customer, ShipToZip',
+--       @vRuleCondition   = null,
+--       @vRuleQuery       = 'select top 1 ShipVia
+--                            from RoutingRules
+--                            where coalesce(Account,  '''') = coalesce(~Account~,  '''') and
+--                                  coalesce(SoldToId, '''') = coalesce(~SoldToId~, '''') and
+--                                  coalesce(ShipToId, '''') = coalesce(~ShipToId~, '''') and
+--                                  ShipToZip like ~ShipToZip~ + ''%'' and
+--                                  InputShipVia = ~ShipVia~ and Status = ''A''
+--                            order by SortSeq',
+--       @vStatus          = 'A'/* Active */,
+--       @vSortSeq         = null;
+--
+--insert into @Rules (RuleSetName, RuleDescription, RuleCondition, RuleQuery, SortSeq, Status)
+--  select @vRuleSetName, @vRuleDescription, @vRuleCondition, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus;
+--
+--/*----------------------------------------------------------------------------*/
+--/* Determine new ShipVia based upon existing FreightTerms, Customer & ShipToZip */
+--select @vRuleDescription = 'Determine new ShipVia based upon existing FreightTerms, Customer & ShipToZip',
+--       @vRuleCondition   = null,
+--       @vRuleQuery       = 'select top 1 ShipVia
+--                            from RoutingRules
+--                            where coalesce(Account,  '''') = coalesce(~Account~,  '''') and
+--                                  coalesce(SoldToId, '''') = coalesce(~SoldToId~, '''') and
+--                                  coalesce(ShipToId, '''') = coalesce(~ShipToId~, '''') and
+--                                  ShipToZip like ~ShipToZip~ + ''%'' and
+--                                  InputFreightTerms = ~InputFreightTerms~ and Status = ''A''
+--                            order by SortSeq',
+--       @vStatus          = 'A'/* Active */,
+--       @vSortSeq         = null;
+--
+--insert into @Rules (RuleSetName, RuleDescription, RuleCondition, RuleQuery, SortSeq, Status)
+--  select @vRuleSetName, @vRuleDescription, @vRuleCondition, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus;
+--
+--/*----------------------------------------------------------------------------*/
+--/* Determine new ShipVia based upon Customer & ShipToState */
+--select @vRuleDescription = 'Determine new ShipVia based upon Customer, ShipTo State & Weight',
+--       @vRuleCondition   = null,
+--       @vRuleQuery       = 'select top 1 ShipVia
+--                            from RoutingRules
+--                            where coalesce(Account,  '''') = coalesce(~Account~,  '''') and
+--                                  coalesce(SoldToId, '''') = coalesce(~SoldToId~, '''') and
+--                                  coalesce(ShipToId, '''') = coalesce(~ShipToId~, '''') and
+--                                  ShipToState = ~ShipToState~ and
+--                                  ~OrderWeight~ between MinWeight and MaxWeight and
+--                                  Status = ''A''
+--                            order by SortSeq',
+--       @vStatus          = 'A'/* Active */,
+--       @vSortSeq         = null;
+--
+--insert into @Rules (RuleSetName, RuleDescription, RuleCondition, RuleQuery, SortSeq, Status)
+--  select @vRuleSetName, @vRuleDescription, @vRuleCondition, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus;
+--
+--/*----------------------------------------------------------------------------*/
+--/* Determine new ShipVia based upon Customer & ShipToState */
+--select @vRuleDescription = 'Determine new ShipVia based upon Customer & ShipTo State',
+--       @vRuleCondition   = null,
+--       @vRuleQuery       = 'select top 1 ShipVia
+--                            from RoutingRules
+--                            where coalesce(Account,  '''') = coalesce(~Account~,  '''') and
+--                                  coalesce(SoldToId, '''') = coalesce(~SoldToId~, '''') and
+--                                  coalesce(ShipToId, '''') = coalesce(~ShipToId~, '''') and
+--                                  ShipToState = ~ShipToState~ and
+--                                  Status = ''A''
+--                            order by SortSeq',
+--       @vStatus          = 'A'/* Active */,
+--       @vSortSeq         = null;
+--
+--insert into @Rules (RuleSetName, RuleDescription, RuleCondition, RuleQuery, SortSeq, Status)
+--  select @vRuleSetName, @vRuleDescription, @vRuleCondition, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus;
+--
+--/*----------------------------------------------------------------------------*/
+--/* Determine new ShipVia based upon Customer, ShipToZip & Weight */
+--select @vRuleDescription = 'Determine new ShipVia based upon Customer, ShipToZip & Weight',
+--       @vRuleCondition   = null,
+--       @vRuleQuery       = 'select top 1 ShipVia
+--                            from RoutingRules
+--                            where coalesce(Account,  '''') = coalesce(~Account~,  '''') and
+--                                  coalesce(SoldToId, '''') = coalesce(~SoldToId~, '''') and
+--                                  coalesce(ShipToId, '''') = coalesce(~ShipToId~, '''') and
+--                                  ShipToZip like ~ShipToZip~ + ''%'' and
+--                                  ~OrderWeight~ between MinWeight and MaxWeight and
+--                                  Status = ''A''
+--                            order by SortSeq',
+--       @vStatus          = 'A'/* Active */,
+--       @vSortSeq         = null;
+--
+--insert into @Rules (RuleSetName, RuleDescription, RuleCondition, RuleQuery, SortSeq, Status)
+--  select @vRuleSetName, @vRuleDescription, @vRuleCondition, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus;
+--
+--/*----------------------------------------------------------------------------*/
+--/* Determine new ShipVia based upon Customer & ShipToZip */
+--select @vRuleDescription = 'Determine new ShipVia based upon Customer, ShipToZip',
+--       @vRuleCondition   = null,
+--       @vRuleQuery       = 'select top 1 ShipVia
+--                            from RoutingRules
+--                            where coalesce(Account,  '''') = coalesce(~Account~,  '''') and
+--                                  coalesce(SoldToId, '''') = coalesce(~SoldToId~, '''') and
+--                                  coalesce(ShipToId, '''') = coalesce(~ShipToId~, '''') and
+--                                  ShipToZip like ~ShipToZip~ + ''%'' and
+--                                  Status = ''A''
+--                            order by SortSeq',
+--       @vStatus          = 'A'/* Active */,
+--       @vSortSeq         = null;
+--
+--insert into @Rules (RuleSetName, RuleDescription, RuleCondition, RuleQuery, SortSeq, Status)
+--  select @vRuleSetName, @vRuleDescription, @vRuleCondition, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus;
+--
+--/******************************************************************************/
+--/* Rule Set #2 - Determine Freight Terms */
+--/******************************************************************************/
+--select @vRuleSetDescription = 'Determine FreightTerms for the given criteria/inputs',
+--       @vRuleSetName        = 'GetFreightTerms',
+--       @vRuleSetFilter      = null,
+--       @vSortSeq            = null,
+--       @vStatus             = 'A'  /* Active */;
+--
+--insert into @RuleSets (RuleSetName, RuleSetDescription, RuleSetType, RuleSetFilter, SortSeq, Status, BusinessUnit)
+--  select @vRuleSetName, @vRuleSetDescription, @vRuleSetType, @vRuleSetFilter, coalesce(@vSortSeq, 0), @vStatus, @vBusinessUnit;
+--
+--/*----------------------------------------------------------------------------*/
+--/* Determine FreightTerms based upon ShipVia, Customer and Zip */
+--select @vRuleDescription = 'Determine FreightTerms based upon ShipVia, Customer',
+--       @vRuleCondition   = null,
+--       @vRuleQuery       = 'select top 1 FreightTerms
+--                            from RoutingRules
+--                            where coalesce(Account,  '''') = coalesce(~Account~,  '''') and
+--                                  coalesce(SoldToId, '''') = coalesce(~SoldToId~, '''') and
+--                                  coalesce(ShipToId, '''') = coalesce(~ShipToId~, '''') and
+--                                  InputShipVia = ~ShipVia~ and Status = ''A''
+--                            order by SortSeq',
+--       @vStatus          = 'A'/* Active */,
+--       @vSortSeq         = null;
+--
+--insert into @Rules (RuleSetName, RuleDescription, RuleCondition, RuleQuery, SortSeq, Status)
+--  select @vRuleSetName, @vRuleDescription, @vRuleCondition, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus;
+--
+--/*----------------------------------------------------------------------------*/
+--/* Determine FreightTerms based upon existing Freight Terms, Customer */
+--select @vRuleDescription = 'Determine FreightTerms based upon existing Freight Terms, Customer',
+--       @vRuleCondition   = null,
+--       @vRuleQuery       = 'select top 1 FreightTerms
+--                            from RoutingRules
+--                            where coalesce(Account,  '''') = coalesce(~Account~,  '''') and
+--                                  coalesce(SoldToId, '''') = coalesce(~SoldToId~, '''') and
+--                                  coalesce(ShipToId, '''') = coalesce(~ShipToId~, '''') and
+--                                  InputFreightTerms = ~FreightTerms~ and Status = ''A''
+--                            order by SortSeq',
+--       @vStatus          = 'A'/* Active */,
+--       @vSortSeq         = null;
+--
+--insert into @Rules (RuleSetName, RuleDescription, RuleCondition, RuleQuery, SortSeq, Status)
+--  select @vRuleSetName, @vRuleDescription, @vRuleCondition, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus;
+--
+--/*----------------------------------------------------------------------------*/
+--/* Determine FreightTerms based upon Customer */
+--select @vRuleDescription = 'Determine FreightTerms based upon existing Freight Terms, Customer',
+--       @vRuleCondition   = null,
+--       @vRuleQuery       = 'select top 1 FreightTerms
+--                            from RoutingRules
+--                            where coalesce(Account,  '''') = coalesce(~Account~,  '''') and
+--                                  coalesce(SoldToId, '''') = coalesce(~SoldToId~, '''') and
+--                                  coalesce(ShipToId, '''') = coalesce(~ShipToId~, '''') and
+--                                  Status = ''A''
+--                            order by SortSeq',
+--       @vStatus          = 'A'/* Active */,
+--       @vSortSeq         = null;
+--
+--insert into @Rules (RuleSetName, RuleDescription, RuleCondition, RuleQuery, SortSeq, Status)
+--  select @vRuleSetName, @vRuleDescription, @vRuleCondition, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus;
+--
+--/******************************************************************************/
+--/* Rule Set #3 - Determine BillToAccount */
+--/******************************************************************************/
+--select @vRuleSetDescription = 'Determine BillToAccount for the given criteria/input',
+--       @vRuleSetName        = 'GetBillToAccount',
+--       @vRuleSetFilter      = null,
+--       @vSortSeq            = null,
+--       @vStatus             = 'A'  /* Active */;
+--
+--insert into @RuleSets (RuleSetName, RuleSetDescription, RuleSetType, RuleSetFilter, SortSeq, Status, BusinessUnit)
+--  select @vRuleSetName, @vRuleSetDescription, @vRuleSetType, @vRuleSetFilter, coalesce(@vSortSeq, 0), @vStatus, @vBusinessUnit;
+--
+--/*----------------------------------------------------------------------------*/
+--/* Determine BillToAccount based upon Customer, ShipVia & FreightTerms */
+--select @vRuleDescription = 'Determine BillToAccount based upon Customer, ShipVia & FreightTerms',
+--       @vRuleCondition   = null,
+--       @vRuleQuery       = 'select top 1 BillToAccount
+--                            from RoutingRules
+--                            where coalesce(Account,  '''') = coalesce(~Account~,  '''') and
+--                                  coalesce(SoldToId, '''') = coalesce(~SoldToId~, '''') and
+--                                  coalesce(ShipToId, '''') = coalesce(~ShipToId~, '''') and
+--                                  Status = ''A'' and
+--                                  InputShipVia = ~ShipVia~ and InputFreightTerms = ~FrieghtTerms~ and
+--                            order by SortSeq',
+--       @vStatus          = 'A'/* Active */,
+--       @vSortSeq         = null;
+--
+--insert into @Rules (RuleSetName, RuleDescription, RuleCondition, RuleQuery, SortSeq, Status)
+--  select @vRuleSetName, @vRuleDescription, @vRuleCondition, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus;
+--
+--/*----------------------------------------------------------------------------*/
+--/* Determine BillToAccount based upon Customer and ShipVia */
+--select @vRuleDescription = 'Determine BillToAccount based upon Customer and ShipVia',
+--       @vRuleCondition   = null,
+--       @vRuleQuery       = 'select top 1 BillToAccount
+--                            from RoutingRules
+--                            where coalesce(Account,  '''') = coalesce(~Account~,  '''') and
+--                                  coalesce(SoldToId, '''') = coalesce(~SoldToId~, '''') and
+--                                  coalesce(ShipToId, '''') = coalesce(~ShipToId~, '''') and
+--                                  Status = ''A'' and
+--                                  InputShipVia = ~ShipVia~
+--                            order by SortSeq',
+--       @vStatus          = 'A'/* Active */,
+--       @vSortSeq         = null;
+--
+--insert into @Rules (RuleSetName, RuleDescription, RuleCondition, RuleQuery, SortSeq, Status)
+--  select @vRuleSetName, @vRuleDescription, @vRuleCondition, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus;
+--
+--/*----------------------------------------------------------------------------*/
+--/* Determine BillToAccount based upon Customer and Carrier */
+--select @vRuleDescription = 'Determine BillToAccount based upon Customer and Carrier',
+--       @vRuleCondition   = null,
+--       @vRuleQuery       = 'select top 1 BillToAccount
+--                            from RoutingRules
+--                            where coalesce(Account,  '''') = coalesce(~Account~,  '''') and
+--                                  coalesce(SoldToId, '''') = coalesce(~SoldToId~, '''') and
+--                                  coalesce(ShipToId, '''') = coalesce(~ShipToId~, '''') and
+--                                  Status = ''A''
+--                                  Carrier = ~Carrier~ and Status = ''A''
+--                            order by SortSeq',
+--       @vStatus          = 'A'/* Active */,
+--       @vSortSeq         = null;
+--
+--insert into @Rules (RuleSetName, RuleDescription, RuleCondition, RuleQuery, SortSeq, Status)
+--  select @vRuleSetName, @vRuleDescription, @vRuleCondition, @vRuleQuery, coalesce(@vSortSeq, 0), @vStatus;
+--
+--/******************************************************************************/
+--exec pr_Rules_Setup @RuleSets, @Rules;
+--
+--Go
+--

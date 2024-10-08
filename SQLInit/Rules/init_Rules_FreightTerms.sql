@@ -1,0 +1,82 @@
+/*==============================================================================
+  VM_20201210 (CIMS-3140):
+    Commented all lines of this file because while setting up of processing rule files via Folder instead of _init_All_Rules.sql to build blank DB,
+    I found this file is eisther not listed or commented in _Init_All_Rules.sql.
+
+    If it is require to be used, you can remove comments (==) from each line and use it
+==============================================================================*/
+--/*------------------------------------------------------------------------------
+--  Copyright (c) Foxfire Technologies (India) Ltd.  All rights reserved
+--
+--  Revision History:
+--
+--  Date        Person  Comments
+--
+--  2019/07/17  AY      Corrections to rule (CID-GoLive)
+--  2019/07/09  MS      Initial version (CID-734)
+--------------------------------------------------------------------------------*/
+--
+--Go
+--
+--declare @vRecordId            TRecordId,
+--        @vRuleSetType         TRuleSetType,
+--        @vRuleSetName         TName,
+--        @vRuleSetDescription  TDescription,
+--        @vRuleSetFilter       TQuery,
+
+--        @vBusinessUnit        TBusinessUnit,
+--
+--        @vRuleCondition       TQuery,
+--        @vRuleQuery           TQuery,
+--        @vRuleQueryType       TTypeCode,
+--        @vRuleDescription     TDescription,
+--
+--        @vSortSeq             TSortSeq,
+--        @vStatus              TStatus;
+--
+--declare @RuleSets             TRuleSetsTable,
+--        @Rules                TRulesTable;
+--
+--/******************************************************************************/
+--/******************************************************************************/
+--/* Rules to determine FreightTems */
+--/******************************************************************************/
+--/******************************************************************************/
+--select @vRuleSetType = 'GetFreightTerms';
+--
+--delete from @RuleSets;
+--delete from @Rules;
+--
+--/******************************************************************************/
+--/* Rule Set - Determine FreightTems based on UDF20 */
+--/******************************************************************************/
+--/******************************************************************************/
+--/* Rule Set - Description of this RuleSet */
+--/******************************************************************************/
+--
+--select @vRuleSetName        = 'MapFreightTerms',
+--       @vRuleSetDescription = 'Map FreightTerms from External system to CIMS',
+--       @vRuleSetFilter      = null,
+--       @vSortSeq            = 0, -- Initialize for this set
+--       @vStatus             = 'A' /* Active */;
+--
+--insert into @RuleSets (RuleSetName, RuleSetDescription, RuleSetType, RuleSetFilter, SortSeq, Status, BusinessUnit)
+--  select @vRuleSetName, @vRuleSetDescription, @vRuleSetType, @vRuleSetFilter, coalesce(@vSortSeq, 0), @vStatus, @vBusinessUnit;
+--
+--/*----------------------------------------------------------------------------*/
+--/* Rule to map HOST -> CIMS */
+--select @vRuleCondition   = '~SourceSystem~ = ''HOST'' and (~Status~ in (''O'', ''N'', ''W''))',
+--       @vRuleDescription = 'Map Freight Terms from MAS to CIMS, but only if preprocessed',
+--       @vRuleQuery       = 'select dbo.fn_GetMappedValue(''HOST'' /* Source */, ~UDF20~, ''CIMS'' /* Target */, ''FreightTerms'' /* Entity Type */, ~Operation~ /* Operation */, ~BusinessUnit~)',
+--       @vRuleQueryType   = 'Select',
+--       @vStatus          = 'A', /* A-Active, I-In-Active, NA-Not applicable */
+--       @vSortSeq        += 1;
+--
+--insert into @Rules (RuleSetName, RuleCondition, RuleDescription, RuleQuery, RuleQueryType, SortSeq, Status)
+--  select @vRuleSetName, @vRuleCondition, @vRuleDescription, @vRuleQuery, @vRuleQueryType, coalesce(@vSortSeq, 0), @vStatus;
+--
+--/******************************************************************************/
+--exec pr_Rules_Setup @RuleSets, @Rules, 'R' /* Replace */;
+--
+--Go
+--

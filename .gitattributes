@@ -1,0 +1,8 @@
+# Set the default behavior of all files to ensure consistent line endings.
+* text=auto
+
+# For all .sql files, normalize line endings to LF
+*.sql text eol=lf
+
+# For all .txt files, normalize line endings to LF
+*.txt text eol=lf

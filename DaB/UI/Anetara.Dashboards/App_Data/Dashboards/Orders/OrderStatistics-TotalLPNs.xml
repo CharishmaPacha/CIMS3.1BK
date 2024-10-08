@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Dashboard>
+  <Title Text="Orders Statistics - Total LPNs" />
+  <DataSources>
+    <SqlDataSource ComponentName="sqlDataSource1">
+      <Name>vwCurrentOrders</Name>
+      <Connection Name="DbConnection" FromAppConfig="true" />
+      <Query Type="SelectQuery" Name="vwCurrentOrders">
+        <Tables>
+          <Table Name="vwCurrentOrders" />
+        </Tables>
+        <Columns>
+          <AllColumns />
+        </Columns>
+      </Query>
+      <ConnectionOptions CloseConnection="true" />
+    </SqlDataSource>
+  </DataSources>
+  <Items>
+    <Chart ComponentName="chartDashboardItem1" Name="Current Orders" DataSource="sqlDataSource1" DataMember="vwCurrentOrders" Rotated="true">
+      <DataItems>
+        <Dimension DataMember="StatusDescription" ColoringMode="Hue" SortByMeasure="DataItem0" DefaultId="DataItem2" />
+        <Dimension DataMember="OrderTypeDescription" ColoringMode="None" DefaultId="DataItem1" />
+        <Measure DataMember="NumLPNs" DefaultId="DataItem0" />
+      </DataItems>
+      <SeriesDimensions>
+        <SeriesDimension DefaultId="DataItem2" />
+      </SeriesDimensions>
+      <Arguments>
+        <Argument DefaultId="DataItem1" />
+      </Arguments>
+      <Panes>
+        <Pane Name="Pane 1">
+          <AxisY Title="Number of LPNs" />
+          <Series>
+            <Simple>
+              <Value DefaultId="DataItem0" />
+              <PointLabelOptions ContentType="Value" />
+            </Simple>
+          </Series>
+        </Pane>
+      </Panes>
+      <AxisX TitleVisible="true" Title="Order Types" />
+    </Chart>
+  </Items>
+  <LayoutTree>
+    <LayoutGroup Weight="100">
+      <LayoutItem DashboardItem="chartDashboardItem1" Weight="100" />
+    </LayoutGroup>
+  </LayoutTree>
+</Dashboard>

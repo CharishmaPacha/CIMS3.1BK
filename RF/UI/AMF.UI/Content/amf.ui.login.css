@@ -1,0 +1,68 @@
+﻿body{
+    background: url('./Images/AMFLoginBackground.jpg')no-repeat 0 0;
+}
+.amf-login-container {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+    .amf-login-container .container {
+        width: 60% !important;
+    }
+
+.amf-login-form-heading {
+    width: 100%;
+    float: left;
+    text-align: center;
+    margin: 50px 0 0;
+}
+
+    .amf-login-form-heading img {
+        width: 100px;
+        padding: 0;
+        text-align: center;
+    }
+
+    .amf-login-form-heading p {
+        float: left;
+        margin: 0;
+        font-size: 55px;
+        width: 100%;
+        text-align: center;
+        color: #213b59;
+    }
+
+.amf-login-input-form {
+    width: 100%;
+    float: left;
+    background: rgba(255, 255, 255, 0.75);
+    padding: 10px;
+    border-radius: 4px;
+    margin: 0 0 0;
+}
+
+    .amf-login-input-form select {
+        border-bottom: 1px solid #ccc;
+        border-top: none;
+        background: none;
+        font-size: 15px;
+        box-shadow: none;
+        border-left: 0;
+        border-radius: 0;
+        border-right: 0;
+    }
+
+.amf-login-copyright {
+    width: 100%;
+    float: left;
+    margin: 50px 0 0;
+}
+
+    .amf-login-copyright p {
+        width: 100%;
+        text-align: center;
+        color: #020a42;
+        font-size: 17px;
+        margin: 0 0 10px;
+    }

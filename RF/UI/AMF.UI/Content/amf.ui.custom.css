@@ -1,0 +1,258 @@
+/* This file shall have the CSS specific to the custom css styles, if any, desired for
+    the client specific forms. The default version in AMF Solution will be blank
+    The custom css file will be implemented in the client specific source code
+*/
+
+/******************************************************************************/
+/* CSS to clear input value */
+.cims-rfc-clear-control-button {
+ right: 0px;
+ position: absolute;
+ height:33px;
+}
+
+/***Picking Forms CSS***/
+/* Confirm Unit Pick */
+.cimsrfc-confirmunitpick-input-container {
+    width: 100%;
+    float: left;
+    padding: 0 15px;
+    position: relative;
+    /* border:1px solid #ccc; */
+}
+
+    .cimsrfc-confirmunitpick-input-container .form-group {
+        width: 100%;
+        float: left;
+        margin-bottom: 0px;
+        display: inherit;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .cimsrfc-confirmunitpick-input-container label {
+        padding: 0;
+        width: 100%;
+        float: left;
+        font-size: 12px;
+        font-weight: 400;
+        color: #020a42;
+        margin: 5px 0 2px;
+    }
+
+    .cimsrfc-confirmunitpick-input-container input {
+        border: none !important;
+        line-height: 0;
+        font-size: 17px;
+        background: #eee;
+        color: #000;
+        margin: 0 0 5px;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 5px;
+        height: 40px;
+    }
+
+    .cimsrfc-confirmunitpick-input-container .cimsrfc-confirmunitpick-pickfrom {
+        color: #000;
+        font-weight: 800;
+        font-size: 50px;
+        float: left;
+    }
+
+    .cimsrfc-confirmunitpick-input-container .cimsrfc-confirmunitpick-pickfrom-description {
+        font-size: 16px;
+        width: 100%;
+        float: left;
+        padding: 5px 0;
+    }
+
+    .cimsrfc-confirmunitpick-input-container .cimsrfc-confirmunitpick-qtyremaining {
+        color: #b41700;
+        font-weight: 800;
+        font-size: 50px;
+        float: left;
+    }
+
+    .cimsrfc-confirmunitpick-input-container .cimsrfc-confirmunitpick-totalqty {
+        width: 100%;
+        float: left;
+        font-size: 16px;
+        margin: 0px;
+        padding: 5px 0;
+    }
+
+    .cimsrfc-confirmunitpick-input-container .cimsrfc-confirmunitpick-sku {
+        color: #000;
+        font-size: 25px;
+        margin: 5px 0 5px;
+        float: left;
+        font-weight: 500;
+    }
+
+    .cimsrfc-confirmunitpick-input-container .cimsrfc-confirmunitpick-skudescription {
+        font-size: 16px;
+        width: 100%;
+        float: left;
+        margin: 5px 0px;
+    }
+
+    .cimsrfc-confirmunitpick-input-container .cimsrfc-confirmunitpick-pickto-value {
+        color: #000;
+        font-weight: 800;
+        font-size: 50px;
+        float: left;
+    }
+
+    .cimsrfc-confirmunitpick-input-container .cimsrfc-confirmunitpick-buttons {
+        margin: 20px 0 0;
+        width: 100%;
+        float: left;
+    }
+
+        .cimsrfc-confirmunitpick-input-container .cimsrfc-confirmunitpick-buttons .btn {
+            width: 100%;
+            float: left;
+            margin: 5px 0 5px;
+            font-size: 16px;
+            background: #959aa0;
+            color: #fff;
+            border-radius: 0px;
+        }
+
+    .cimsrfc-confirmunitpick-input-container .cimsrfc-confirmunitpick-picking-timer {
+        float: right;
+        font-size: 18px;
+        position: absolute;
+        right: 2%;
+        bottom: 0;
+        top: 150px;
+    }
+
+/******************************************************************************/
+/* CSS for data panel (which shows a grid of data elements) */
+.cimsrfc-datapanel-container {
+    background: #f9f9f9;
+    width: 100%;
+    float: left;
+}
+
+.cimsrfc-datapanel-container .cimsrfc-datapanel-details {
+    margin: 0;
+    border-bottom: 1px solid #e6e6e5;
+    padding: 8px 0;
+    width: 100%;
+    float: left;
+}
+
+.cimsrfc-datapanel-details .cimsrfc-border-separate {
+    position: relative;
+}
+
+.cimsrfc-datapanel-details .cimsrfc-border-separate:before {
+    content: " ";
+    position: absolute;
+    z-index: 0;
+    top: 10px;
+    left: 10px;
+    right: 0px;
+    bottom: 10px;
+    border-right: 1px solid #e6e6e5;
+}
+
+.cimsrfc-datapanel-details label.col-form-label {
+    padding: 0;
+    width: 100%;
+    float: left;
+    font-size: 14px;
+    color: #020a42;
+    margin: 5px 0 2px;
+    font-weight: 400;
+}
+
+.cimsrfc-datapanel-details span.cimsrfc-display-value {
+    font-size: 20px;
+    font-weight: 600;
+    color: #000;
+}
+
+/* Validate and Drop Pallet, Build Cart classes */
+.cimsrfc-droppallet-palletdetails-container, .cimsrfc-buildcart-taskdetails-container {
+    background: #f9f9f9;
+    width: 100%;
+    float: left;
+}
+
+    .cimsrfc-droppallet-palletdetails-container .cimsrfc-droppallet-palletdetails,
+    .cimsrfc-buildcart-taskdetails-container .cimsrfc-buildcart-taskdetails {
+        margin: 0;
+        border-bottom: 1px solid #e6e6e5;
+        padding: 8px 0;
+        width: 100%;
+        float: left;
+    }
+
+.cimsrfc-droppallet-palletdetails .cimsrfc-border-separate,
+.cimsrfc-buildcart-taskdetails .cimsrfc-border-separate {
+    position: relative;
+}
+
+    .cimsrfc-droppallet-palletdetails .cimsrfc-border-separate:before,
+    .cimsrfc-buildcart-taskdetails .cimsrfc-border-separate:before {
+        content: " ";
+        position: absolute;
+        z-index: 0;
+        top: 10px;
+        left: 10px;
+        right: 0px;
+        bottom: 10px;
+        border-right: 1px solid #e6e6e5;
+    }
+
+.cimsrfc-droppallet-palletdetails label.col-form-label,
+.cimsrfc-buildcart-taskdetails label.col-form-label {
+    padding: 0;
+    width: 100%;
+    float: left;
+    font-size: 14px;
+    color: #020a42;
+    margin: 5px 0 2px;
+    font-weight: 400;
+}
+
+.cimsrfc-droppallet-palletdetails span.cimsrfc-display-value,
+.cimsrfc-buildcart-taskdetails span.cimsrfc-display-value {
+    font-size: 20px;
+    font-weight: 600;
+    color: #000;
+}
+
+/* CLEAN UP AFTER CHANGES TO FORM TO USE GENERIC CSS */
+
+/*VAS instructions Start*/
+.cimsrfc-vas-instructions-container {background: #f9f9f9; width: 100%; float: left}
+.cimsrfc-vas-instructions-container .cimsrfc-vas-instructions-detail{margin: 0; border-bottom: 1px solid #e6e6e5;	padding: 8px 0;	width: 100%; float: left}
+.cimsrfc-vas-instructions-detail .cimsrfc-border-separate{position: relative;}
+.cimsrfc-vas-instructions-detail .cimsrfc-border-separate:before {content: " "; position: absolute; z-index: 0; top: 10px; left: 10px; right: 0; bottom: 10px; border-right: 1px solid #e6e6e5;}
+.cimsrfc-vas-instructions-detail label.col-form-label{padding: 0; width: 100%; float: left; font-size: 14px; color: #020a42; margin: 5px 0 2px; font-weight: 400;}
+.cimsrfc-vas-instructions-detail span.cimsrfc-display-value{font-size: 20px; font-weight: 600; color: #000; float:left;}
+.cimsrfc-vas-instructions-details{ background: #f9f9f9; width: 100%; float: left;}
+.cimsrfc-vas-instructions-container .cimsrfc-vas-instructions-order-label{float: left; width: auto !important; padding: 0 16px 0 0 !important;}
+.cimsrfc-vas-instructions-display-ship-value{width:100%; float:left; font-size:16px}
+.cimsrfc-vas-instructions-display-value{text-align:center; width:100%;}
+/*VAS instructions End*/
+
+/*Inquiry screens start*/
+
+.cimsrfc-inquiry-container {background: #f9f9f9; width: 100%; float: left}
+.cimsrfc-inquiry-details { background: #f9f9f9; width: 100%; float: left;}
+.cimsrfc-inquiry-container .cimsrfc-inquiry-detail{margin: 0; border-bottom: 1px solid #e6e6e5;	padding: 8px 0;	width: 100%; float: left}
+.cimsrfc-inquiry-detail .cimsrfc-border-separate:before {content: " "; position: absolute; z-index: 0; top: 10px; left: 10px; right: 0; bottom: 10px; border-right: 1px solid #e6e6e5;}
+.cimsrfc-inquiry-detail label.col-form-label{padding: 0; width: 100%; float: left; font-size: 14px; color: #020a42; margin: 5px 0 2px; font-weight: 400;}
+.cimsrfc-inquiry-detail span.cimsrfc-display-value{font-size: 20px; font-weight: 600; color: #000; float:left;}
+.cimsrfc-inquiry-detail .col-form-label{width:auto; float:left; padding:0 20px 0 0;}
+.cimsrfc-inquiry-details .cimsrfc-inquiry-margin{margin:0 0 8px;}
+.cimsrfc-display-value-small{ font-size: 20px; font-weight: normal;}
+
+/*Inquiry screens end*/
+
+/* CLEAN UP AFTER CHANGES TO FORM TO USE GENERIC CSS */

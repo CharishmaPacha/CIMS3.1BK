@@ -1,0 +1,79 @@
+--/*------------------------------------------------------------------------------
+--  Copyright (c) Foxfire Technologies (India) Ltd.  All rights reserved
+--
+--  Revision History:
+--
+--  Date        Person  Comments
+--
+--------------------------------------------------------------------------------*/
+--
+--Go
+--
+--if object_id('tr_LPNs_AU_ErrorifWarehouseisNull') is not null
+--  drop Trigger tr_LPNs_AU_ErrorifWarehouseisNull;
+--Go
+--/*------------------------------------------------------------------------------
+--  After Update initiate tr_LPNs_AU_ErrorifWarehouseisNull:
+--
+--  This is a trigger to track if LPN's Warehouse is modified to be null or empty
+--  The idea is to have this trigger as temporary and then if not needed will be dropped
+--------------------------------------------------------------------------------*/
+--Create Trigger [tr_LPNs_AU_ErrorifWarehouseisNull] on [LPNs] After Update
+--As
+--  declare @vBusinessUnit    TBusinessUnit,
+--          @vUserId          TUserId,
+--          @vxmlData         xml,
+--          @vMessage         TDescription,
+--          @vActivityLogId   TRecordId,
+--          @vXMLEvent        TXML,
+--          @vXMLLogData      TXML;
+--begin
+--  SET NOCOUNT ON;
+--
+--  /* Check if the update condition satisfies */
+--  if ((update(DestWarehouse)) and
+--      (exists(select * from Inserted where (DestWarehouse is null or DestWarehouse = '') and
+--                                           (Status in ('R' /* Received */ , 'P' /* Putaway */)))))
+--    begin
+--      /* Fetch LPN info to Log  */
+--      set @vxmlData = (select INS.LPNId,
+--                              INS.LPN,
+--                              INS.BusinessUnit,
+--                              INS.ModifiedBy,
+--                              coalesce(nullif(DEL.DestWarehouse, ''), 'null/Blank') as OldWarehouse,
+--                              coalesce(nullif(INS.DestWarehouse, ''), 'null/Blank') as NewWarehouse
+--                       from Inserted INS
+--                        join Deleted DEL on INS.LPNId = DEL.LPNId
+--                       where (DEL.DestWarehouse is not null) and
+--                             (INS.DestWarehouse is null) or (INS.DestWarehouse = '') and
+--                             (INS.Status in ('R' /* Received */ , 'P' /* Putaway */))
+--                       for XML path('LPNData'), root('LPNs'));
+--
+--      if (@vxmlData is not null)
+--        begin
+--          select @vXMLEvent   = EVENTDATA().value('(/EVENT_INSTANCE/TSQLCommand/CommandText)[1]', 'nvarchar(max)'),
+--                 @vXMLLogData = cast(@vxmlData as varchar(max));
+--
+--          rollback transaction;
+--
+--          /* LPN found to be updated/inserted with null/empty Warehouse value from non-null/emtpy value
+--             Log the info and throw an error rolling back the transaction before */
+--          exec pr_ActivityLog_AddOrUpdate @Entity         = 'LPN',
+--                                          @EntityId       = null,
+--                                          @EntityKey      = null,
+--                                          @Operation      = 'trigger',
+--                                          @Message        = @vXMLEvent, /* Event command text */
+--                                          @xmlData        = @vXMLLogData, /* all LPNs that satisfy the condition */
+--                                          @ActivityLogId  = @vActivityLogId output,
+--                                          @ProcId         = @@ProcId;
+--
+--          select @vMessage = 'ActivityId: '+cast(@vActivityLogId as varchar(10)) +' LPN Warehouse value made null/empty';
+--
+--          raiserror(@vMessage, -1, -1);
+--        end /* End..LPNId */
+--    end /* End..if */
+--end /* tr_LPNs_AU_ErrorifWarehouseisNull */
+--
+--Go
+--
+--alter table LPNs Disable trigger tr_LPNs_AU_ErrorifWarehouseisNull;
