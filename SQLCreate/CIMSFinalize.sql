@@ -12,6 +12,6 @@
 ------------------------------------------------------------------------------*/
 
 /* Base Triggers */
-Input ..\SQL_UI\SQL\Triggers\tr_LayoutFields_AI_UpdateLayoutRecordId.sql;
+Input ..\..\SQL_UI\SQL\Triggers\tr_LayoutFields_AI_UpdateLayoutRecordId.sql;
 
 /* WMS Triggers */

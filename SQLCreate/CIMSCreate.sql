@@ -202,40 +202,40 @@ exec(@sSql);
 Go
 
 /* WMS DataTypes, TableTypes, Tables, Views, Functions, Procedures, Triggers and Finalize objects */
-Input ..\SQL_CIMS\SQL\DataTypes;
-Input ..\SQL_CIMS\SQL\TableTypes;
-Input ..\SQL_CIMS\SQL\Tables;
-Input ..\SQL_CIMS\SQL\Functions|fn_*;
-Input ..\SQL_CIMS\SQL\Views;
-Input ..\SQL_CIMS\SQL\Procedures|sp_*;
-Input ..\SQL_CIMS\SQL\Triggers;
-Input ..\SQL_CIMS\SQL\Finalize;
+Input ..\SQL\DataTypes;
+Input ..\SQL\TableTypes;
+Input ..\SQL\Tables;
+Input ..\SQL\Functions|fn_*;
+Input ..\SQL\Views;
+Input ..\SQL\Procedures|sp_*;
+Input ..\SQL\Triggers;
+Input ..\SQL\Finalize;
 
 /* RF & AMF Framework DataTypes, TableTypes, Tables, Views, Functions, Procedures and Triggers */
-Input ..\SQL_RF_AMF\SQL\DataTypes;
-Input ..\SQL_RF_AMF\SQL\TableTypes;
-Input ..\SQL_RF_AMF\SQL\Tables;
-Input ..\SQL_RF_AMF\SQL\Functions|fn_*;
-Input ..\SQL_RF_AMF\SQL\Views;
-Input ..\SQL_RF_AMF\SQL\Procedures|sp_*;
-Input ..\SQL_RF_AMF\SQL\Triggers;
+Input ..\..\SQL_RF_AMF\SQL\DataTypes;
+Input ..\..\SQL_RF_AMF\SQL\TableTypes;
+Input ..\..\SQL_RF_AMF\SQL\Tables;
+Input ..\..\SQL_RF_AMF\SQL\Functions|fn_*;
+Input ..\..\SQL_RF_AMF\SQL\Views;
+Input ..\..\SQL_RF_AMF\SQL\Procedures|sp_*;
+Input ..\..\SQL_RF_AMF\SQL\Triggers;
 
 /* API & AAF Framework DataTypes, TableTypes, Tables, Views, Functions, Procedures and Triggers */
-Input ..\SQL_API_AAF\SQL\DataTypes;
-Input ..\SQL_API_AAF\SQL\TableTypes;
-Input ..\SQL_API_AAF\SQL\Tables;
-Input ..\SQL_API_AAF\SQL\Functions|fn_*;
-Input ..\SQL_API_AAF\SQL\Views;
-Input ..\SQL_API_AAF\SQL\Procedures|sp_*;
-Input ..\SQL_API_AAF\SQL\Triggers;
+Input ..\..\SQL_API_AAF\SQL\DataTypes;
+Input ..\..\SQL_API_AAF\SQL\TableTypes;
+Input ..\..\SQL_API_AAF\SQL\Tables;
+Input ..\..\SQL_API_AAF\SQL\Functions|fn_*;
+Input ..\..\SQL_API_AAF\SQL\Views;
+Input ..\..\SQL_API_AAF\SQL\Procedures|sp_*;
+Input ..\..\SQL_API_AAF\SQL\Triggers;
 
 /* ADP & DaB Framework DataTypes, TableTypes, Tables, Views, Functions, Procedures and Triggers */
-Input ..\SQL_DaB_ADP\SQL\DataTypes;
-Input ..\SQL_DaB_ADP\SQL\TableTypes;
-Input ..\SQL_DaB_ADP\SQL\Tables;
-Input ..\SQL_DaB_ADP\SQL\Functions|fn_*;
-Input ..\SQL_DaB_ADP\SQL\Views;
-Input ..\SQL_DaB_ADP\SQL\Procedures|sp_*;
-Input ..\SQL_DaB_ADP\SQL\Triggers;
+Input ..\..\SQL_DaB_ADP\SQL\DataTypes;
+Input ..\..\SQL_DaB_ADP\SQL\TableTypes;
+Input ..\..\SQL_DaB_ADP\SQL\Tables;
+Input ..\..\SQL_DaB_ADP\SQL\Functions|fn_*;
+Input ..\..\SQL_DaB_ADP\SQL\Views;
+Input ..\..\SQL_DaB_ADP\SQL\Procedures|sp_*;
+Input ..\..\SQL_DaB_ADP\SQL\Triggers;
 
 Go
