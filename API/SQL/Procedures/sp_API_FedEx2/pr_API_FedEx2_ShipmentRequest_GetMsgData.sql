@@ -5,6 +5,9 @@
 
   Date        Person  Comments
 
+  2024/10/01  AY      Changes to handle incorrect residential flag on address (CIMSV3-3836)
+  2024/08/27  RV      Made changes to get the message data for all the packages of the order (CIMSV3-3792)
+  2024/05/07  VS      pr_API_FedEx_ShipmentRequest_GetMsgData: Build the xmlRulesData to get the appropriate ShippingAccount (CIDV3-743)
   2024/04/26  VS      Made changes to modify the address.flag for GroundHomeDelivery service (HA-4001)
   2024/04/20  VS      Made changes to get the PackageCount from ShipLabels table instead of OrderHeaders.LPNsAssigned (OBV3-2042)
   2024/02/12  RV      Initial Version (CIMSV3-3395)
@@ -61,8 +64,12 @@ as
           @vBillToAccount                   TBillToAccount,
           @vWarehouse                       TWarehouse,
           @vTotalWeight                     TWeight,
+          @vOwnership                       TOwnership,
 
           -- Processing variables
+          @vEntityId                        TRecordId,
+          @vEntityKey                       TEntityKey,
+          @vEntityType                      TTypeCode,
           @vShipTimestamp                   TString,
           @vShipmentInfo                    TXML,
           @vRateRequestTypesJSON            TDescription,
@@ -93,7 +100,8 @@ as
           @vPackageCount                    TInteger,
           @vMasterTrackingJSON              TVarchar,
           @vInternationalDocsRequired       TVarchar,
-          @vAllHomeDeliveryIsResidential    TControlValue,
+          @vAlwaysResidentialServices       TControlValue,
+          @vNotResidentialServices          TControlValue,
           @vDebug                           TFlags,
           @vBusinessUnit                    TBusinessUnit,
           @vUserId                          TUserId;
@@ -115,18 +123,20 @@ begin /* pr_API_FEDEX2_ShipmentRequest_GetMsgData */
          @vOneLabelAtTime       = 'true',
          @vLabelResponseOptions = 'LABEL';
 
-  /* For FedEx, we always send request for each LPN, even if it is a MPS (Multi Piece Shipment)
-     In the case of MPS, the first LPN would be considered the master package and we give
-     the package count (so that 1 of .. can be printed on the first label) and subsequent LPNs
-     would refer to the master package */
-  select @vLPNId        = EntityId,
-         @vLPN          = EntityKey,
+  /* Entity could be an Order or LPN */
+  select @vEntityId   = EntityId,
+         @vEntityKey  = EntityKey,
+         @vEntityType = EntityType,
          @vBusinessUnit = BusinessUnit
   from APIOutboundTransactions
   where (RecordId = @TransactionRecordId);
 
   /* If invalid recordid, exit */
   if (@@rowcount = 0)  return;
+
+  /* Assuming that the entity type is Order, we will generate all labels at once */
+  if (@vEntityType = 'Order')
+    select @vOneLabelAtTime = 'false';
 
   exec pr_Debug_GetOptions @@ProcId, null /* Operation */, @vBusinessUnit, @vDebug output;
   if (charindex('M', @vDebug) > 0) exec pr_Markers_Save 'Start', @@ProcId;
@@ -156,13 +166,28 @@ begin /* pr_API_FEDEX2_ShipmentRequest_GetMsgData */
   union all
   select * from ShippingAccounts where (1 <> 1);
 
-  /* Get the control values */
-  select @vAllHomeDeliveryIsResidential = dbo.fn_Controls_GetAsString('Shipping_FedEx', 'AllHomeDeliveryIsResidential', 'No', @vBusinessUnit, @vUserId);
+  /* The Residential flag is by default defined at the address level. However, for many clients the info
+     on the address is not dependable and so we go by the service type. i.e. Some services are considered
+     as residential always. On the contrary, sometimes address is flagged as residential even though it is
+     not so for other than residential services we would want to override the flag at address level.ABORT
+     ResidentialServices    - should be CSV of services
+     NonResidentialServices - can be CSV of services, ALLOTHERS - meaning anything other than above or
+                              '' meaning we use the info on the address as usual */
+  select @vAlwaysResidentialServices = dbo.fn_Controls_GetAsString('Shipping_FedEx', 'ResidentialServices', 'GROUND_HOME_DELIVERY', @vBusinessUnit, @vUserId);
+  select @vNotResidentialServices    = dbo.fn_Controls_GetAsString('Shipping_FedEx', 'NonResidentialServices', 'ALLOTHERS', @vBusinessUnit, @vUserId); -- ALL except the above ones
 
-  select @vOrderId      = OrderId,
-         @vPackageSeqNo = PackageSeqNo
-  from LPNs
-  where (LPNId = @vLPNId);
+  /* Get the order info */
+  if (@vEntityType = 'Order')
+    select @vOrderId = OrderId
+    from OrderHeaders
+    where (OrderId = @vEntityId);
+  else
+  if (@vEntityType = 'LPN')
+    select @vLPNId        = LPNId,
+           @vOrderId      = OrderId,
+           @vPackageSeqNo = PackageSeqNo
+    from LPNs
+    where (LPNId = @vEntityId);
 
   /* Initialize */
   insert into #CarrierShipmentData (Carrier, LPNId, OrderId)
@@ -182,6 +207,7 @@ begin /* pr_API_FEDEX2_ShipmentRequest_GetMsgData */
          @vBillToAccount      = OH.BillToAccount,
          @vFreightTerms       = OH.FreightTerms,
          @vOrderShipVia       = OH.ShipVia,
+         @vOwnership          = OH.Ownership,
          @vPackageCount       = LPNsAssigned,
          @vPackageTotalWeight = TotalWeight,
          @vCurrency           = Currency
@@ -195,16 +221,16 @@ begin /* pr_API_FEDEX2_ShipmentRequest_GetMsgData */
          @vSmartPostEndorsement      = SmartPostEndorsement,
          @vShipToAddressRegion       = ShipToAddressRegion,
          @vInternationalDocsRequired = InternationalDocsRequired,
-         @vShipTimeStamp             = format(FutureShipDate, 'yyyy-MM-dd')
+         @vShipTimeStamp             = Format(FutureShipDate, 'yyyy-MM-dd')
   from #CarrierShipmentData
 
   /* Extract the Account details */
   select top 1 @vPackagingType = PackageType
   from #CarrierPackageInfo
 
-  /* Get Master Tracking info. If there should be and and there isn't then exit as it may not have
+  /* Get Master Tracking info while generating one label at time. If there should be and and there isn't then exit as it may not have
      been generated yet */
-  if (@vPackageSeqNo <> 1)
+  if (@vOneLabelAtTime = 'true' and @vPackageSeqNo <> 1)
     begin
       exec @vReturnCode = pr_API_FedEx2_MasterTrackingInfo @TransactionRecordId, @vOrderId, @vLPNId, @vBusinessUnit, @vUserId,
                                                            @vPackageCount out, @vMasterTrackingJSON out;
@@ -212,8 +238,20 @@ begin /* pr_API_FEDEX2_ShipmentRequest_GetMsgData */
       if (@vReturnCode > 1) goto ExitHandler;
     end
 
+  /* Build Rules data */
+  select @vRulesDataXML =  dbo.fn_XMLNode('RootNode',
+                            dbo.fn_XMLNode('ShipToId',         @vShipToId) +
+                            dbo.fn_XMLNode('SoldToId',         @vSoldToId) +
+                            dbo.fn_XMLNode('Carrier',          @vCarrier) +
+                            dbo.fn_XMLNode('ShipVia',          @vOrderShipVia) +
+                            dbo.fn_XMLNode('Account',          @vAccount) +
+                            dbo.fn_XMLNode('AccountName',      @vAccountName) +
+                            dbo.fn_XMLNode('Ownership',        @vOwnership) +
+                            dbo.fn_XMLNode('Warehouse',        @vWarehouse) +
+                            dbo.fn_XMLNode('ShipFrom',         @vShipFrom));
+
   /* Identify the shipping account to use and load details into #ShippingAccountDetails */
-  exec pr_Carrier_GetShippingAccountDetails null, @vOrderShipVia, @vBusinessUnit, @vUserId;
+  exec pr_Carrier_GetShippingAccountDetails @vRulesDataXML, @vOrderShipVia, @vBusinessUnit, @vUserId;
 
   /* Build Shipper Address json */
   exec pr_API_FedEx2_GetAddress null /* ContactId */, 'F' /* ShipFrom */, @vWarehouse, @vAccountNumber, null,
@@ -227,9 +265,13 @@ begin /* pr_API_FEDEX2_ShipmentRequest_GetMsgData */
   exec pr_API_FedEx2_GetAddress null /* ContactId */, 'S' /* ShipTo */, @vShipToId, @vAccountNumber, null,
                                 'Yes' /* ArrayRequired */, @vBusinessUnit, @vUserId, @vRecipientAddressJSON out;
 
-  /* If shipping Ground Home Delivery and if we can assume it is a residential address then change it */
-  if (@vServiceType = 'GROUND_HOME_DELIVERY') and (@vAllHomeDeliveryIsResidential = 'Yes')
+  /* Based upon the control vars, override the residential flag at the address level by
+     the service types - more detailed explanation above */
+  if (dbo.fn_IsInList(@vServiceType, @vAlwaysResidentialServices) > 0)
     select @vRecipientAddressJSON = JSON_MODIFY(@vRecipientAddressJSON, '$[0].address.residential', 'true')
+  else
+  if (@vNotResidentialServices = 'ALLOTHERS') or (dbo.fn_IsInList(@vServiceType, @vNotResidentialServices) > 0)
+    select @vRecipientAddressJSON = JSON_MODIFY(@vRecipientAddressJSON, '$[0].address.residential', 'false')
 
   /* Build Payment info json */
   exec pr_API_FedEx2_GetPaymentInfo 'ShippingChargesPayment', @vBusinessUnit, @vUserId, @vAccountInfoJSON out, @vPaymentInfoJSON out;

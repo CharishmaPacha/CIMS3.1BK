@@ -110,7 +110,7 @@ begin /* pr_API_FedEx2_GetLabelSpecifications */
   /* Get the Clearance facility */
   select @vClearanceFacility = dbo.fn_Controls_GetAsString('FEDEX_IPD', 'ClearanceFacility', 'IDSI', @BusinessUnit, @UserId);
 
-  /* If Label Origin is required, then use the return address and if that is not available,
+  /* If Label Origin is required, then use the Return address and if that is not available,
      use the ShipFrom address */
   if (charindex('PrintedLabelOrigin', @Options) > 0)
     begin

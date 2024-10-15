@@ -57,7 +57,7 @@ begin /* pr_API_UPS_GetShipFromAddress */
   from @InputXML.nodes('/SHIPPINGINFO/REQUEST') Record(Col)
   OPTION (OPTIMIZE FOR ( @InputXML = null ));
 
-  /* If ship from and Warehouse address are same then the ship from address is the Warehouse address */
+  /* If ship from and warehouse address are same then the ship from address is the warehouse address */
   if (@vWarehouse = @vShipFrom)
     /* Build Ship from json */
     select @ShipFromAddressJSON = (select Name                        = Record.Col.value('(SHIPFROM/Name)[1]',          'TName'),
@@ -75,7 +75,7 @@ begin /* pr_API_UPS_GetShipFromAddress */
                                    FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
                                    OPTION (OPTIMIZE FOR ( @InputXML = null ));
   else
-    /* Get Warehouse address */
+    /* Get warehouse address */
     exec pr_API_UPS_GetAddress null, 'F', @vWarehouse, @BusinessUnit, @UserId, @ShipFromAddressJSON out;
 
 ExitHandler:

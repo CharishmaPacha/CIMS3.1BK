@@ -5,8 +5,6 @@
 
   Date        Person  Comments
 
-  if object_id('dbo.pr_Carrier_BatchShipLabels') is null
-  exec('Create Procedure pr_Carrier_BatchShipLabels as begin return; end')
 ------------------------------------------------------------------------------*/
 
 Go

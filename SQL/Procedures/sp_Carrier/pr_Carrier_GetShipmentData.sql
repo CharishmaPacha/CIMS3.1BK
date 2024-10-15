@@ -5,9 +5,14 @@
 
   Date        Person  Comments
 
-  2024/04/24  RV      pr_Carrier_GetShipmentData: Made changes to calculate the Insured value based upon the control value (CIMSV3-3571)
-  2024/04/15  RV      pr_Carrier_GetShipmentData: Bug fixed to set the contact type as 'B' when the Bill to address is present (OBV3-2049)
+  2024/07/29  TD      Variable Mapping Corrections (OBV3-2107)
+  2024/07/12  RV      Made changes to update the ship date with the current date when the ship date is earlier than the current date (MBW-944)
+  2024/06/06  RV      Cleaned up insurance related code (CIMSV3-3659)
+  2024/05/06  RV      Update the PackageWeightOz on CarrierPackageInfo (CIMSV3-1781)
+  2024/04/24  RV      Made changes to calculate the Insured value based upon the control value (CIMSV3-3571)
+  2024/04/15  RV      Bug fixed to set the contact type as 'B' when the Bill to address is present (OBV3-2049)
   2024/02/17  RV      pr_Carrier_GetShipmentData: Added LabelReference1Type-LabelReference5Type and LabelReference1Value-LabelReference5Value (CIMSV3-3395)
+  2024/01/03  TK      pr_Carrier_GetShipmentData: Remove special characters in CustPO while generating label (MBW-677)
   2023/12/27  SRP     pr_Carrier_GetShipmentData : Back ported from onsite prod (MBW-674)
   2023/12/22  VS      pr_Carrier_GetShipmentData, pr_Carrier_UpdateCartonDetails: Made changes to improve the Performance (FBV3-1660)
   2023/12/22  MS      pr_Carrier_GetShipmentData: Changes to change futureshipdate if the order missed schedule (MBW-473)
@@ -16,6 +21,9 @@
   2023/09/08  AY      pr_Carrier_GetShipmentData: Save special services in CarrierShipmentData (MBW-464)
   2023/08/10  RV      pr_Carrier_GetShipmentData, pr_Carrier_Response_SaveShipmentData: Made changes populate the hash table instead of xml (JLFL-320)
   2023/08/22  RV      pr_Carrier_GetShipmentData: Populated the ReceiverTaxId and PickTicket (CIMSV3-2760)
+  2023/07/27  NB      pr_Carrier_GetShipmentData changes to pass in LPNCartonType to get packaging type and carton details, instead
+  2023/05/25  VS      pr_Carrier_CreateShipment, pr_Carrier_GetShipmentData: Validate Carrier validations in Create Shipment (CIMSV3-2807)
+  2023/04/13  VS      pr_Carrier_GetShipmentData: Made changes to validate the Carrier rules (OBV3-1750)
   2023/03/09  VS      pr_Carrier_GetShipmentData: Do not Validate Shipment in API Message Building (OBV3-1746)
   2023/01/06  VS      pr_Carrier_GetShipmentData: Get the BillToAddress info (OBV3-1652)
   2022/12/28  VS      pr_Carrier_GetShipmentData: Get the CommercialInvoice details (OBV3-1465)
@@ -49,7 +57,7 @@ Create Procedure pr_Carrier_GetShipmentData
   (@LPNId       TRecordId    = null,
    @OrderId     TRecordId    = null,
    @RequestedBy TDescription = 'CIMSSI',
-   @Result      TXML         output)
+   @Result      TXML         = null output)
 as
   declare @vReturnCode                 TInteger,
           @vMessageName                TMessageName,
@@ -116,7 +124,6 @@ as
           @vOwnership                  TOwnership,
           @vWarehouse                  TWarehouse,
           @vCarrierOptions             TDescription,
-          @vInsuranceRequired          TFlags,
           @vInsuredValue               TMoney,
           @vFreightTerms               TDescription,
           /* LPN Info */
@@ -145,7 +152,7 @@ as
           @vShipViaSpecialServices     TVarchar,
           @vShipViaStandardAttributes  TVarchar,
           @vIsResidential              TFlags,
-          @vFutureShipDate             TDateTime,
+          @vFutureShipDate             TDate,
           @vCutOffTime                 time,
           @vSaveCIFormInDB             TControlValue,
           @vFutureShipDateEntity       TControlValue,
@@ -215,7 +222,7 @@ begin /* pr_Carrier_GetShipmentData */
          @vShipVia            = ShipVia,
          @vCarrierOptions     = CarrierOptions,
          @vShipFrom           = ShipFrom,
-         @vCustPO             = CustPO,
+         @vCustPO             = dbo.fn_RemoveSpecialChars(CustPO),
          @vSalesOrder         = SalesOrder,
          @vPickTicket         = PickTicket,
          @vOrderType          = OrderType,
@@ -230,7 +237,6 @@ begin /* pr_Carrier_GetShipmentData */
          @vOwnership          = Ownership,
          @vWarehouse          = Warehouse,
          @vBusinessUnit       = BusinessUnit,
-         @vInsuranceRequired  = UDF13,
          @vFreightTerms       = FreightTerms
   from #OrderHeaders;
 
@@ -329,15 +335,19 @@ begin /* pr_Carrier_GetShipmentData */
 
   select @vFutureShipDate = iif(@vFutureShipDateEntity = 'Wave', @vWaveShipDate, @vDesiredShipDate);
 
+  /* If the future ship date is older than the current date, then override it with the current date */
+  if (@vFutureShipDate < @vCurrentDate)
+    select @vFutureShipDate = getdate();
+
   /* Current Date & Shipdate are same, but if the current time is passed the schedule time
      then shift the order to next day*/
-  if ((@vFutureShipDate = @vCurrentDate) and (format(getdate(),'HH:mm') > @vCutOffTime))
-    select @vFutureShipDate = dateadd(day, 1, @vFutureShipDate);
+  if ((@vFutureShipDate = @vCurrentDate) and (FORMAT(getdate(),'HH:mm') > @vCutOffTime))
+    select @vFutureShipDate = DATEADD(day, 1, @vFutureShipDate);
 
   /* Adjust the ShipDate for weekends */
   update #OrderHeaders
-  set DesiredShipDate = case when datepart(dw,@vFutureShipDate) = 7 /* Saturday */ then @vFutureShipDate + 2
-                             when datepart(dw,@vFutureShipDate) = 1 /* Sunday */ then @vFutureShipDate + 1
+  set DesiredShipDate = case when DATEPART(dw,@vFutureShipDate) = 7 /* Saturday */ then dateadd(day, 2, @vFutureShipDate)
+                             when DATEPART(dw,@vFutureShipDate) = 1 /* Sunday */ then dateadd(day, 1, @vFutureShipDate)
                              else @vFutureShipDate
                         end
   where (OrderId = @vOrderId);
@@ -424,8 +434,8 @@ begin /* pr_Carrier_GetShipmentData */
       SmartPostEndorsement = @vSmartPostEndorsement,
       /* Billing Info */
       BillToContact        = case when (coalesce(@vBillToAddress, '') <> '') then @vBillToAddress
-                                  when (@vBillToContact = 'ShipTo' )       then ShipToId
-                                  when (@vBillToContact = 'SoldTo' )       then SoldToId
+                                  when (@vBillToContact = 'ShipTo' )       then @vShipToId
+                                  when (@vBillToContact = 'SoldTo' )       then @vSoldToId
                              end,
       BillToContactType    = case when (coalesce(@vBillToAddress, '') <> '') then 'B'
                                   when (@vBillToContact = 'ShipTo' )       then 'S'

@@ -5,6 +5,7 @@
 
   Date        Person  Comments
 
+  2024/03/01  VIB     pr_Carrier_Response_SaveShipmentData: Corrected input parameter order where OnTrackingNoGenerate proc called (CIMSV3-3446)
   2023/10/09  RV      pr_Carrier_Response_SaveShipmentData: Changed the operation from UpdateTrackingNos to SummarizeShipLabelInfo (JLCA-1137)
   2023/09/28  RV      pr_Carrier_Response_SaveShipmentData: Made changes to do not override the Total packages as already evaluated while inserting (MBW-512)
   2023/08/10  RV      pr_Carrier_GetShipmentData, pr_Carrier_Response_SaveShipmentData: Made changes populate the hash table instead of xml (JLFL-320)
@@ -48,6 +49,7 @@ as
           @vLPNStatus             TStatus,
           @vOrderId               TRecordId,
           @vWaveType              TTypeCode,
+          @vIsUsDomestic          TFlags,
 
           @vRequestXML            xml,
           @vBillToAccount         TAccount,
@@ -105,8 +107,8 @@ begin /* pr_Carrier_Response_SaveShipmentData */
 
   select @vRequestXML = replace(convert(varchar(max),@vRequestXML), '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns="http://fedex.com/ws/ship/v26">', '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">');
 
-  select @vBillToAccount = Record.Col.value('AccountNumber[1]', 'varchar(100)')
-  from @vRequestXML.nodes('//*:ProcessShipmentRequest/RequestedShipment/ShippingChargesPayment/Payor/ResponsibleParty')  Record(Col)
+  /* Get the Package service: Domestic or International */
+  select @vIsUsDomestic = IsUsDomestic from #PackageInfo;
 
   /* Populate Order/Wave info on Packages */
   update PKG
@@ -116,17 +118,13 @@ begin /* pr_Carrier_Response_SaveShipmentData */
       WaveType         = W.WaveType,
       @vWaveType       = W.WaveType,
       RequestedShipVia = OH.ShipVia,
-      TotalPackages    = OH.LPNsAssigned,
-      BillToAccount    = @vBillToAccount
+      TotalPackages    = OH.LPNsAssigned
   from #Packages PKG
     join OrderHeaders OH on (OH.OrderId = PKG.OrderId)
     join Waves W         on (W.WaveId   = OH.PickBatchId);
 
   /* Get the Process Status */
   exec pr_Carrier_ProcessStatus @vNotifications, @vCarrier, @vWaveType, @vBusinessUnit, @vProcessStatus output;
-
-  --/* Distribute the Freight and Acct charges based on Carrier */
-  --exec pr_Carrier_DistributeFreightAmongstPackages @vCarrier;
 
   /* Get Carton Dims */
   update PKG
@@ -206,8 +204,13 @@ begin /* pr_Carrier_Response_SaveShipmentData */
   from ShipLabels SL
     join #Packages PKG on (PKG.ShipLabelRecordId = SL.RecordId)
 
+  /* International FEDEX multi package shipment generating labels for individual packages but freight charges
+     returning in last package only so we need to calculate and distribute to each package */
+  if (@vCarrier = 'FEDEX') and (@vIsUsDomestic = 'false' /* International Package */)
+    exec pr_Carrier_DistributeFreightAmongstPackages @vCarrier;
+
   /* Update tracking number on LPN and AutoShip of LPN should be done only when Label Type is Ship label, not when Return Label */
-  exec pr_Carrier_OnTrackingNoGenerate  @vUserId, @vBusinessUnit;
+  exec pr_Carrier_OnTrackingNoGenerate @vBusinessUnit, @vUserId;
 
   /* Get the LPN.TrackingNumber and update on OrderHeaders */
   exec pr_Entities_ExecuteInBackGround 'Order', @vOrderId, null, default /* ProcessClass */,

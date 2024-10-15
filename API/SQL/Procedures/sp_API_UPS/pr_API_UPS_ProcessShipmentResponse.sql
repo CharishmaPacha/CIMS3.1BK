@@ -5,6 +5,7 @@
 
   Date        Person  Comments
 
+  2024/04/12  VS      pr_API_UPS_ProcessShipmentResponse: Save the Carrier Response in ShipLabels.Notifications (CIMSV3-2752)
   2024/03/21  VS      pr_API_UPS_ProcessShipmentResponse: Get the Response Code and Description (BK-1100)
   2021/07/01  RV      pr_API_UPS_ProcessShipmentResponse: Bug fixed to capture the notifications
   2021/06/14  RV      pr_API_UPS_ProcessShipmentResponse: Made changes to rotate the label image based upon label type (CIMSV3-1509)
@@ -48,6 +49,7 @@ as
           @vRotatedLabelImage           TNVarchar,
 
           @vRawResponse                 TVarchar,
+          @vShipmentResult              TVarchar,
           @vShippingData                TXML,
           @vBusinessUnit                TBusinessUnit;
 
@@ -168,8 +170,12 @@ begin try
       select @vNotification = coalesce(@vNotification, '') + 'Error (Code/Message): ' +  @vErrors;
     end
 
+  /* Get the Price related info */
+  select @vShipmentResult =   json_modify(@vRawResponse, '$.ShipmentResponse.ShipmentResults.PackageResults[0].ShippingLabel.GraphicImage', '');
+
   select @vListNetCharge = coalesce(json_value(@vRawResponse, '$.ShipmentResponse.ShipmentResults.ShipmentCharges.TotalCharges.MonetaryValue'), '0.0');
   select @vAcctNetCharge = coalesce(json_value(@vRawResponse, '$.ShipmentResponse.ShipmentResults.NegotiatedRateCharges.TotalCharge.MonetaryValue'), '0.0');
+  select @vNotification  = @vNotification + @vShipmentResult;
 
   /* Modify the ListNet and AcctNet charges in shipment XML, Reference and notifications */
   set @vShipmentRequestXML.modify('replace value of (/SHIPPINGINFO/RESPONSE/LISTNETCHARGES/text())[1] with sql:variable("@vListNetCharge")');

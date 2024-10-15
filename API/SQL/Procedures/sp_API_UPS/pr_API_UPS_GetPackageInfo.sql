@@ -5,6 +5,10 @@
 
   Date        Person  Comments
 
+  2024/10/01  RV      Delete the null or empty references from temp table to not build in JSON without reference values (CIMSV3-3835)
+  2024/05/17  VS      pr_API_UPS_GetPackageInfo: For UPS Sure Post Less Than 1LB Service Weight Should be in OZS instead of LBS (CIDV3-817)
+  2024/05/06  VIB     Replaced fn_ConvertStringToDataSet with string_split function (CIMSV3-3606)
+  2023/04/27  RV      pr_API_UPS_GetPackageInfo: Made changes to convert to Ounces for Mail services (JLFL-321)
   2023/04/12  RV      pr_API_UPS_GetPackageInfo: Made changes to send the Package SKU description as Mexican shipment requires package description (BK-1042)
   2021/06/18  TK      pr_API_UPS_GetPackageInfo: Use substring only if there is a colon':' in the value (BK-369)
 ------------------------------------------------------------------------------*/
@@ -79,6 +83,7 @@ as
           @vMessageName            TMessageName,
           @vRecordId               TRecordId,
 
+          @vServiceCode            TTypeCode,
           @vDimensionUoM           TUoM,
           @vWeightUoM              TUoM,
           @vReference1             TReference,
@@ -101,6 +106,7 @@ as
                                PackageWidth    TWidth,
                                PackageHeight   THeight,
                                PackageWeight   TWeight,
+                               PackageWeightOz TWeight,
                                Reference1      TReference,
                                Reference2      TReference,
                                Reference3      TReference,
@@ -122,22 +128,31 @@ begin /* pr_API_UPS_GetPackageInfo */
          @vDimensionUoM = 'IN';
 
   /* Extract the Packages information */
-  insert into @ttPackageInfo(SKUDescription, CartonTypeDesc, PackageType, PackageLength, PackageWidth, PackageHeight, PackageWeight,
+  insert into @ttPackageInfo(SKUDescription, CartonTypeDesc, PackageType, PackageLength, PackageWidth, PackageHeight, PackageWeight, PackageWeightOz,
                              Reference1, Reference2, Reference3, Reference4, Reference5)
-    select Record.Col.value('(CONTAINERHEADER/SKUDescription)[1]', 'TDescription'),
-           Record.Col.value('(CARTONDETAILS/Description)[1]',      'TDescription'),
+    select Record.Col.value('(CONTAINERHEADER/SKUDescription)[1]',  'TDescription'),
+           Record.Col.value('(CARTONDETAILS/Description)[1]',       'TDescription'),
            dbo.fn_GetMappedValue('CIMS', Record.Col.value('(CARTONDETAILS/CarrierPackagingType)[1]', 'TDescription'), 'UPSAPI', 'PackagingType', null, @BusinessUnit),
-           Record.Col.value('(CARTONDETAILS/InnerLength)[1]',     'TLength'),
-           Record.Col.value('(CARTONDETAILS/InnerWidth)[1]',      'TWidth'),
-           Record.Col.value('(CARTONDETAILS/InnerHeight)[1]',     'THeight'),
-           Record.Col.value('(CONTAINERHEADER/PackageWeight)[1]', 'TWeight'),
-           Record.Col.value('(REFERENCE/REFERENCE1)[1]',          'TREFERENCE'),
-           Record.Col.value('(REFERENCE/REFERENCE2)[1]',          'TREFERENCE'),
-           Record.Col.value('(REFERENCE/REFERENCE3)[1]',          'TREFERENCE'),
-           Record.Col.value('(REFERENCE/REFERENCE4)[1]',          'TREFERENCE'),
-           Record.Col.value('(REFERENCE/REFERENCE5)[1]',          'TREFERENCE')
+           Record.Col.value('(CARTONDETAILS/InnerLength)[1]',       'TLength'),
+           Record.Col.value('(CARTONDETAILS/InnerWidth)[1]',        'TWidth'),
+           Record.Col.value('(CARTONDETAILS/InnerHeight)[1]',       'THeight'),
+           Record.Col.value('(CONTAINERHEADER/PackageWeight)[1]',   'TWeight'),
+           Record.Col.value('(CONTAINERHEADER/PackageWeightOz)[1]', 'TWeight'),
+           Record.Col.value('(REFERENCE/REFERENCE1)[1]',            'TREFERENCE'),
+           Record.Col.value('(REFERENCE/REFERENCE2)[1]',            'TREFERENCE'),
+           Record.Col.value('(REFERENCE/REFERENCE3)[1]',            'TREFERENCE'),
+           Record.Col.value('(REFERENCE/REFERENCE4)[1]',            'TREFERENCE'),
+           Record.Col.value('(REFERENCE/REFERENCE5)[1]',            'TREFERENCE')
     from @InputXML.nodes('/SHIPPINGINFO/REQUEST/PACKAGES/PACKAGE') Record(Col)
     OPTION (OPTIMIZE FOR ( @InputXML = null));
+
+  select @vServiceCode = dbo.fn_GetMappedValue('CIMS', Record.Col.value('CARRIERSERVICECODE[1]', 'TDescription'), 'UPSAPI', 'ShipVia', null, @BusinessUnit)
+  from @InputXML.nodes('/SHIPPINGINFO/REQUEST/SHIPVIA') Record(Col);
+
+  /* Unit of Measurement "OZS" is the only valid UOM for some of the Mail Innovations Forward Shipments and Sure post less than 1 LB
+     UPS API Document Page No:84 */
+  if (@vServiceCode in ('M2', /* UPS First-Class Mail */ '92' /* UPS Sure Post Less Than 1LB */))
+    select @vWeightUoM = 'OZS';
 
   /* Update Package's reference json for all Packages */
   while (exists(select * from @ttPackageInfo where RecordId > @vRecordId))
@@ -157,29 +172,31 @@ begin /* pr_API_UPS_GetPackageInfo */
       insert into @ttReferences (BarCodeIndicator, Code, Value)
         select null, case when charindex(':', @vReference1) > 0 then substring(Value, 1, charindex(':', Value)-1) else @vReference1 end,
                      case when charindex(':', @vReference1) > 0 then substring(Value, charindex(':', Value) +1, len(Value)- charindex(':', Value) +1) else @vReference1 end
-        from dbo.fn_ConvertStringToDataSet(@vReference1, ';')
+        from string_split(@vReference1, ';')
         union all
         select null, case when charindex(':', @vReference2) > 0 then substring(Value, 1, charindex(':', Value)-1) else @vReference2 end,
                      case when charindex(':', @vReference2) > 0 then substring(Value, charindex(':', Value) +1, len(Value)- charindex(':', Value) +1)  else @vReference2 end
-        from dbo.fn_ConvertStringToDataSet(@vReference2, ';')
+        from string_split(@vReference2, ';')
         union all
         select null, case when charindex(':', @vReference3) > 0 then substring(Value, 1, charindex(':', Value)-1) else @vReference3 end,
                      case when charindex(':', @vReference3) > 0 then substring(Value, charindex(':', Value) +1, len(Value)- charindex(':', Value) +1) else @vReference3 end
-        from dbo.fn_ConvertStringToDataSet(@vReference3, ';')
+        from string_split(@vReference3, ';')
         union all
         select null, case when charindex(':', @vReference4) > 0 then substring(Value, 1, charindex(':', Value)-1) else @vReference4 end,
                      case when charindex(':', @vReference4) > 0 then substring(Value, charindex(':', Value) +1, len(Value)- charindex(':', Value) +1) else @vReference4 end
-        from dbo.fn_ConvertStringToDataSet(@vReference4, ';')
+        from string_split(@vReference4, ';')
         union all
         select null, case when charindex(':', @vReference5) > 0 then substring(Value, 1, charindex(':', Value)-1) else @vReference5 end,
                      case when charindex(':', @vReference5) > 0 then substring(Value, charindex(':', Value) +1, len(Value)- charindex(':', Value) +1) else @vReference5 end
-        from dbo.fn_ConvertStringToDataSet(@vReference5, ';')
+        from string_split(@vReference5, ';')
+
+      /* Delete the empty or null references to prevent errors with the carrier when building the JSON */
+      delete from @ttReferences where (coalesce(Code, '') = '') or (coalesce(Value, '') = '');
 
       /* Build reference json
          Note: If the BarCodeIndicator is present then the reference numbers value will be bar coded on the label.. */
       select @vReferencesJSON = (select BarCodeIndicator, Code, Value
                                  from @ttReferences
-                                 where Value <> '-'
                                  FOR JSON PATH);
 
       /* Update the Refernces json on the respective package */
@@ -200,7 +217,7 @@ begin /* pr_API_UPS_GetPackageInfo */
                                     [Dimensions.Width]                     = cast(PackageWidth as varchar(max)),
                                     [Dimensions.Height]                    = cast(PackageHeight as varchar(max)),
                                     [PackageWeight.UnitOfMeasurement.Code] = @vWeightUoM,
-                                    [PackageWeight.Weight]                 = cast(PackageWeight as varchar(max)),
+                                    [PackageWeight.Weight]                 = cast(iif (@vWeightUoM = 'OZS', PackageWeightOz, PackageWeight) as varchar(max)),
                                     [ReferenceNumber]                      = JSON_QUERY(ReferenceJSON)
                              from @ttPackageInfo
                              FOR JSON PATH);
