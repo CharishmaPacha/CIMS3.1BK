@@ -5,6 +5,7 @@
 
   Date        Person  Comments
 
+  2024/02/29  VIB     pr_Carrier_OnTrackingNoGenerate:  Changed to Insert AutoShip into backgroundprocesses (CIMSV3-3446)
 ------------------------------------------------------------------------------*/
 
 Go
@@ -54,7 +55,7 @@ begin /* pr_Carrier_OnTrackingNoGenerate */
   /* status update on Labeling the LPN and the order of the Shipped LPN */
   select @vAutoShipOnLabel = dbo.fn_Controls_GetAsBoolean('Shipping', 'AutoShipLPNOnLabel', 'N', @BusinessUnit, @UserId);
 
-  if (@vAutoShipOnLabel =  'Y' /* Yes */) goto ExitHandler;
+  if (@vAutoShipOnLabel =  'N' /* No */) goto ExitHandler;
 
   while (exists (select * from #Packages where RecordId > @vRecordId))
     begin

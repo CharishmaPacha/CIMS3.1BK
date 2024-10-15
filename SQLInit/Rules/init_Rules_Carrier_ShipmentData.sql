@@ -5,6 +5,8 @@
 
   Date        Person  Comments
 
+  2024/08/27  RV      Made changes to update the references for all the packages for FEDEX (CIMSV3-3792)
+  2024/06/06  RV      CarrierPackages_InsuranceRequired: Default to No (CIMSV3-3659)
   2023/02/16  AY      Revise FedEx References (CIMSV3-3395)
   2023/12/23  VS      Added PROSHIP Rules and mapped with Order (JLFL-320, FBV3-1660)
   2023/08/16  RV      Initial version (JLFL-320)
@@ -70,7 +72,7 @@ select @vRuleCondition   = null,
                                                               then ''Yes''
                                                             when (dbo.fn_IsInList(''INS-NR'' /* Not Required */, CSD.CarrierOptions) > 0)
                                                               then ''No''
-                                                            else null
+                                                            else ''No''
                                                        end
                             from #CarrierPackageInfo CPI
                               join #CarrierShipmentData CSD on (CSD.OrderId = CPI.OrderId)',
@@ -243,7 +245,7 @@ select @vRuleCondition   = null,
                                 CPI.LabelReference3Type  = iif(CPI.LabelReference3Value is null, ''INVOICE_NUMBER'',     CPI.LabelReference3Type),
                                 CPI.LabelReference3Value = iif(CPI.LabelReference3Value is null, OH.PickTicket,          CPI.LabelReference3Value)
                             from #CarrierPackageInfo CPI
-                              join #CarrierShipmentData CSD on (CSD.LPNId = CPI.LPNId)
+                              join #CarrierShipmentData CSD on (CSD.OrderId= CPI.OrderId)
                               join #OrderHeaders OH on (OH.OrderId = CPI.OrderId)
                             where (CSD.Carrier = ''FEDEX'')',
        @vRuleQueryType   = 'Update',

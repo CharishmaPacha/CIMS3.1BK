@@ -5,6 +5,11 @@
 
   Date        Person  Comments
 
+  2024/09/16  VS      FedEx Request is changed to OrderLevel from LPN Level so no need to generate MasterTracking for firstPackage (CIMSV3-3824)
+  2024/08/27  RV      Made changes to generate multi package labels at once and generate single packages which are allocated after master shipment generated (CIMSV3-3792)
+  2024/06/05  RV/VS   Rules have been corrected to update the ProcessStatus to "Initial" except for processes through the Label generator (FBV3-1738)
+  2024/05/14  MS      Changes to generate labels using CLR on ModifyShipDetails (CIDV3-796)
+  2024/05/06  RV      CIMSENDICIA: Rules enabled to generate using API (CIMSV3-3612)
   2024/04/17  VS      FedEx Smart Post generate only single shipment labels (OBV3-2042)
   2024/04/06  RV      FEDEX: Generate single shipment for international services (FBV3-1726)
   2024/04/06  RV      Bug fixed to consider the evalue for Insert Required (SRIV3-488)
@@ -12,11 +17,14 @@
   2024/02/16  RV      Added rules to generate FedEx shipments using the FedEx OAuth API (CIMSV3-3395)
   2024/02/07  MS      Changes to defer label generation for large orders (JLFL-895)
   2023/11/14  SAV     Added rule to update UPC as mixed when Multiple SKUs (MBW-542)
+  2023/10/18  AY      ShipLabels_UCC128CustomChanges: Dummy rules setup (JLFL-729)
   2023/09/23  RV      Added rule to generate always single shipment for FEDEX ONE RATE services (MBW-512)
   2023/09/08  RV      Added rules to process the UPS labels through CIMSUPS2 to use new authentication OAUTH2 (MBW-438)
   2023/04/25  RV      ShipLabelsInsert_Packing: Made changes to update the Total Package count (JLCA-777)
+  2023/03/29  RV      Made changes to process CIMSFEDEX Master package through CLR to process immediately (JLCA-712)
   2023/02/16  RV      Made changes to separate the ship label validations rules from Wave Release (OBV3-1613)
   2022/11/16  RKC     Default rule to initialize the ProcessStatus as 'Canceled' (OBV3-1445)
+  2022/11/05  AY      Clean up rules for packing (OBV3-1407)
   2022/10/04  VS      Corrected the FedEx rules to support FedEx API (CIMSV3-1780)
   2022/09/12  RV      Added rules to generate SPL from packing if all the picked units are packed (OBV3-1176)
   2022/09/09  RV      Made changes to generate SPL from shipping docs if all the picked units are packed (OBV3-1141)
@@ -236,16 +244,16 @@ insert into @Rules (RuleSetName, RuleCondition, RuleDescription, RuleQuery, Rule
   select @vRuleSetName, @vRuleCondition, @vRuleDescription, @vRuleQuery, @vRuleQueryType, coalesce(@vSortSeq, 0), @vStatus;
 
 /*----------------------------------------------------------------------------*/
-/* At packing, for FedEx/UPS/ADSI - we insert only when order is completely packed */
+/* At packing, generate the ship labels for the cartons that need them. We don't need
+   any further conditions of the orderstatus etc. here because those are already
+   evaluated in rule sets and if the LPNs are not ready to be labelled, they wouldn't
+   even be inserted into #ShipLabelsToInsert to begin with */
 select @vRuleCondition   = '~Module~ in (''Packing'')',
-       @vRuleDescription = 'Packing UPS/FedEx/ADSI: Generate ship labels only when Order is packed',
+       @vRuleDescription = 'Packing UPS/FedEx/ADSI: Generate ship labels for cartons determined that need them',
        @vRuleQuery       = 'update SLI
                             set SLI.InsertRequired = ''Yes''
                             from #ShipLabelsToInsert SLI
-                              join OrderHeaders OH on (SLI.OrderId = OH.OrderId)
-                            where (SLI.InsertRequired = ''Evaluate'') and
-                                  (SLI.Carrier in (''UPS'', ''FEDEX'', ''Generic'')) and
-                                  (OH.Status = ''K'' /* Packed */);',
+                            where (SLI.InsertRequired = ''Evaluate'')',
        @vRuleQueryType   = 'Update',
        @vStatus          = 'A', /* A-Active, I-In-Active, NA-Not applicable */
        @vSortSeq        += 1;
@@ -298,6 +306,23 @@ select @vRuleCondition   = '~Operation~ in (''ShippingDocs'')',
                             where (SLI.InsertRequired = ''Evaluate'') and
                                   (SLI.Carrier in (''UPS'', ''FEDEX'', ''USPS'', ''Generic'')) and
                                   (OH.Status in (''K'' /* Packed */, ''G'' /* Staged */, ''R'' /* Ready To Ship */));',
+       @vRuleQueryType   = 'Update',
+       @vStatus          = 'A', /* A-Active, I-In-Active, NA-Not applicable */
+       @vSortSeq        += 1;
+
+insert into @Rules (RuleSetName, RuleCondition, RuleDescription, RuleQuery, RuleQueryType, SortSeq, Status)
+  select @vRuleSetName, @vRuleCondition, @vRuleDescription, @vRuleQuery, @vRuleQueryType, coalesce(@vSortSeq, 0), @vStatus;
+
+/*----------------------------------------------------------------------------*/
+/* for shipping docs, for FedEx/UPS/ADSI - we insert only when order is completely packed or staged or ready to ship */
+select @vRuleCondition   = '~Operation~ in (''ShippingDocs'')',
+       @vRuleDescription = 'ShippingDocs FedExIPD: Do not generate labels for IPD unless order is on a Load',
+       @vRuleQuery       = 'update SLI
+                            set SLI.InsertRequired = ''No''
+                            from #ShipLabelsToInsert SLI
+                              join OrderHeaders OH on (SLI.OrderId = OH.OrderId)
+                            where (SLI.ShipVia = ''FEDEXIPD'') and
+                                  (coalesce(OH.LoadId, 0) = 0);',
        @vRuleQueryType   = 'Update',
        @vStatus          = 'A', /* A-Active, I-In-Active, NA-Not applicable */
        @vSortSeq        += 1;
@@ -393,7 +418,7 @@ select @vRuleCondition   = null,
                             from #ShipLabelsToInsert SLI
                               join OrderHeaders OH on (SLI.OrderId = OH.OrderId)
                             where (SLI.InsertRequired in (''Yes'', ''Evaluate'')) and
-                                  (SLI.Carrier in (''UPS'', ''Generic''));',
+                                  (SLI.Carrier in (''UPS'', ''FEDEX'', ''Generic''));',
        @vRuleQueryType   = 'Update',
        @vStatus          = 'A', /* A-Active, I-In-Active, NA-Not applicable */
        @vSortSeq        += 1;
@@ -402,7 +427,7 @@ insert into @Rules (RuleSetName, RuleCondition, RuleDescription, RuleQuery, Rule
   select @vRuleSetName, @vRuleCondition, @vRuleDescription, @vRuleQuery, @vRuleQueryType, coalesce(@vSortSeq, 0), @vStatus;
 
 /*----------------------------------------------------------------------------*/
-/* Other than UPS, ADSI: Generate shiplabel for each LPN. i.e. we send a request
+/* Other than UPS, FEDEX and ADSI: Generate shiplabel for each LPN. i.e. we send a request
    to the carrier to generae for each package one after the other */
 select @vRuleCondition   = null,
        @vRuleDescription = 'Other than UPS, FEDEX and ADSI: Generate shiplabel for each LPN',
@@ -413,7 +438,7 @@ select @vRuleCondition   = null,
                             from #ShipLabelsToInsert SLI
                               join OrderHeaders OH on (SLI.OrderId = OH.OrderId)
                             where (SLI.InsertRequired in (''Yes'', ''Evaluate'')) and
-                                  (SLI.Carrier not in (''UPS'', ''Generic''));',
+                                  (SLI.Carrier not in (''UPS'', ''FEDEX'', ''Generic''));',
        @vRuleQueryType   = 'Update',
        @vStatus          = 'A', /* A-Active, I-In-Active, NA-Not applicable */
        @vSortSeq        += 1;
@@ -474,7 +499,7 @@ select @vRuleCondition   = null,
                             where (SLI.ShipVia like ''FEDXI%'')
                            ',
        @vRuleQueryType   = 'Update',
-       @vStatus          = 'A', /* A-Active, I-In-Active, NA-Not applicable */
+       @vStatus          = 'I', /* A-Active, I-In-Active, NA-Not applicable */
        @vSortSeq        += 1;
 
 insert into @Rules (RuleSetName, RuleCondition, RuleDescription, RuleQuery, RuleQueryType, SortSeq, Status)
@@ -492,6 +517,23 @@ select @vRuleCondition   = null,
                             where (SLI.InsertRequired in (''Yes'', ''Evaluate'')) and
                                   ((dbo.fn_IsInList(''SS-FOR'' /* FEDEX ONE RATE */, OH.CarrierOptions) > 0) or
                                    (charindex(''FEDEX_ONE_RATE'', SV.SpecialServices) > 0));',
+       @vRuleQueryType   = 'Update',
+       @vStatus          = 'A', /* A-Active, I-In-Active, NA-Not applicable */
+       @vSortSeq        += 1;
+
+insert into @Rules (RuleSetName, RuleCondition, RuleDescription, RuleQuery, RuleQueryType, SortSeq, Status)
+  select @vRuleSetName, @vRuleCondition, @vRuleDescription, @vRuleQuery, @vRuleQueryType, coalesce(@vSortSeq, 0), @vStatus;
+
+/*----------------------------------------------------------------------------*/
+/* FEDEX: Generate a single shipment label for cartons that are allocated or packaged after the master package is generated */
+select @vRuleCondition   = null,
+       @vRuleDescription = 'FEDEX: Generate a single shipment label for cartons that are allocated or packaged after the master package is generated',
+       @vRuleQuery       = 'update SLI
+                            set SLI.ShipmentType  = ''S'',
+                                SLI.TotalPackages = ''1''
+                            from #ShipLabelsToInsert SLI
+                              join LPNs L on (SLI.OrderId = L.OrderId) and (L.PackageSeqNo = ''1'')
+                            where (SLI.Carrier = ''FEDEX'') and (coalesce(L.TrackingNo, '''') <> '''')',
        @vRuleQueryType   = 'Update',
        @vStatus          = 'A', /* A-Active, I-In-Active, NA-Not applicable */
        @vSortSeq        += 1;
@@ -631,7 +673,7 @@ insert into @Rules (RuleSetName, RuleCondition, RuleDescription, RuleQuery, Rule
 select @vRuleCondition   = null,
        @vRuleDescription = 'Packing Carrier Interface-ADSI: Use for BEST* ShipVias',
        @vRuleQuery       = 'update SLI
-                            set SLI.ProcessStatus     = iif (InsertRequired = ''Yes'', ''Initial'', SLI.ProcessStatus),
+                            set SLI.ProcessStatus     = iif (InsertRequired = ''Yes'', ''N'', SLI.ProcessStatus),
                                 SLI.IntegrationMethod = ''CIMSSI'',
                                 SLI.GenerationMethod  = ''LabelGenerator'',
                                 SLI.CarrierInterface  = ''ADSI''
@@ -653,7 +695,7 @@ select @vRuleCondition   = '(~Module~ in (''Allocation'') and ~Operation~ in (''
                             (~Operation~ in (''OnChangeShipDetails'', ''RegenerateTrackingNo''))',
        @vRuleDescription = 'Carrier Interface UPS-API-Job: For labels generated in Allocation, process shipment requests thru API Job for PTS/BPP/BCP',
        @vRuleQuery       = 'update SLI
-                            set SLI.ProcessStatus     = ''Initial'',
+                            set SLI.ProcessStatus     = iif (InsertRequired = ''Yes'', ''Initial'', SLI.ProcessStatus), /* PA = Process through API */
                                 SLI.IntegrationMethod = ''API'',
                                 SLI.GenerationMethod  = ''APIJob'',
                                 SLI.CarrierInterface  = ''CIMSUPS''
@@ -675,7 +717,7 @@ select @vRuleCondition   = '(~Module~ in (''Allocation'') and ~Operation~ in (''
                             (~Operation~ in (''OnChangeShipDetails'', ''RegenerateTrackingNo''))',
        @vRuleDescription = 'Carrier Interface FedEx-API-Job: For labels generated in Allocation, process shipment requests thru API Job',
        @vRuleQuery       = 'update SLI
-                            set SLI.ProcessStatus     = ''Initial'',
+                            set SLI.ProcessStatus     = iif (InsertRequired = ''Yes'', ''Initial'', SLI.ProcessStatus), /* PA = Process through API */
                                 SLI.IntegrationMethod = ''API'',
                                 SLI.GenerationMethod  = ''APIJob'',
                                 SLI.CarrierInterface = ''CIMSFedEx2''
@@ -717,7 +759,7 @@ insert into @Rules (RuleSetName, RuleCondition, RuleDescription, RuleQuery, Rule
 select @vRuleCondition   = '~Operation~ in (''ShippingDocs'')',
        @vRuleDescription = 'Carrier Interface UPS-API: For ShippingDocs, process UPS shipment requests thru API-CLR',
        @vRuleQuery       = 'update SLI
-                            set SLI.ProcessStatus     = ''Initial'', /* PA = Process through API */
+                            set SLI.ProcessStatus     = ''Initial'',
                                 SLI.IntegrationMethod = ''API'',
                                 SLI.GenerationMethod  = ''CLR'',
                                 SLI.CarrierInterface  = ''CIMSUPS''
@@ -810,9 +852,9 @@ insert into @Rules (RuleSetName, RuleCondition, RuleDescription, RuleQuery, Rule
 /*----------------------------------------------------------------------------*/
 /* Rule to update APITransaction based on Carrier */
 select @vRuleCondition   = null,
-       @vRuleDescription = 'Irrespective of the ShipmentType, APITransactionStatus for Fedex orders will be PrepareAndSend and for UPS/USPS will be Initial.',
+       @vRuleDescription = 'Irrespective of the ShipmentType, APITransactionStatus for UPS/FEDEX/USPS will be Initial.',
        @vRuleQuery       = 'update SLI
-                            set SLI.APITransactionStatus = iif (SLI.Carrier = ''Fedex'', ''PrepareAndSend'', ''Initial'')
+                            set SLI.APITransactionStatus = ''Initial''
                             from #ShipLabelsToInsert SLI
                             where (SLI.InsertRequired in (''Yes'', ''Evaluate'')) and
                                   (SLI.IntegrationMethod = ''API'') and
@@ -880,17 +922,10 @@ insert into @Rules (RuleSetName, RuleCondition, RuleDescription, RuleQuery, Rule
   select @vRuleSetName, @vRuleCondition, @vRuleDescription, @vRuleQuery, @vRuleQueryType, coalesce(@vSortSeq, 0), @vStatus;
 
 /*----------------------------------------------------------------------------*/
-/*----------------------------------------------------------------------------*/
-/* CIMSFEDEX: Fedex master package through CLR to process immediately for API Integration */
-select @vRuleCondition   = null,
-       @vRuleDescription = 'CIMSFEDEX: Fedex master package through CLR to process immediately for API Integration',
-       @vRuleQuery       = 'update SLI
-                            set SLI.GenerationMethod = ''CLR''
-                            from #ShipLabelsToInsert SLI
-                              join LPNs L on (L.LPNId = SLI.EntityId) and (SLI.EntityType = ''L'' /* LPN */)
-                            where (SLI.CarrierInterface  = ''CIMSFEDEX2'') and
-                                  (SLI.IntegrationMethod = ''API'') and
-                                  (L.PackageSeqNo        = ''1'');',
+/* FedEXIPD : Do not generate ship labels for individual packages when FedEx IPD orders are packed */
+select @vRuleCondition   = '~Module~ in (''Packing'')',
+       @vRuleDescription = 'Do not generate ship labels for individual packages when FedEx IPD orders are packed',
+       @vRuleQuery       = 'delete from #ShipLabelsToInsert where (ShipVia = ''FedExIPD'');',
        @vRuleQueryType   = 'Update',
        @vStatus          = 'A', /* A-Active, I-In-Active, NA-Not applicable */
        @vSortSeq        += 1;
@@ -936,6 +971,35 @@ select @vRuleCondition   = '~Module~ in (''Packing'')',
 
                                 insert into #ResultMessages (MessageType, MessageName) select ''I'' /* Info */, ''PackingSPLOrdDeferLabelGen'';
                               end',
+       @vRuleQueryType   = 'Update',
+       @vStatus          = 'A', /* A-Active, I-In-Active, NA-Not applicable */
+       @vSortSeq        += 1;
+
+insert into @Rules (RuleSetName, RuleCondition, RuleDescription, RuleQuery, RuleQueryType, SortSeq, Status)
+  select @vRuleSetName, @vRuleCondition, @vRuleDescription, @vRuleQuery, @vRuleQueryType, coalesce(@vSortSeq, 0), @vStatus;
+
+/*----------------------------------------------------------------------------*/
+/* Small Package Orders: Generate SPL immediatly if Order has less cartons than threshold */
+select @vRuleCondition   = '~Operation~ in (''OnChangeShipDetails'')',
+       @vRuleDescription = 'Change ShipVia: Generate SPL immediatly if Order has less cartons than threshold',
+       @vRuleQuery       = 'declare @vNumCartons          TInteger,
+                                    @vMaxLabelsToGen      TInteger,
+                                    @vGenerationMethod    TName;
+
+                            select @vMaxLabelsToGen = dbo.fn_Controls_GetAsInteger(''ModifyShipDetails'', ''MaxCarrierLabels'', 5, ~BusinessUnit~, ~UserId~);
+
+                            select @vNumCartons = count(*) from #ShipLabelsToInsert where (InsertRequired = ''Yes'')
+
+                            select @vGenerationMethod = iif(@vNumCartons <= @vMaxLabelsToGen, ''CLR'', ''APIJob'')
+
+                            update SLI
+                            set SLI.GenerationMethod = @vGenerationMethod
+                            from #ShipLabelsToInsert SLI
+                            where (SLI.IntegrationMethod = ''API'') and
+                                  (SLI.InsertRequired = ''Yes'')
+
+                            if (@vGenerationMethod = ''APIJob'')
+                              insert into #ResultMessages (MessageType, MessageName) select ''I'' /* Info */, ''PackingSPLOrdDeferLabelGen''',
        @vRuleQueryType   = 'Update',
        @vStatus          = 'A', /* A-Active, I-In-Active, NA-Not applicable */
        @vSortSeq        += 1;

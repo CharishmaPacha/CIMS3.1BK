@@ -5,7 +5,10 @@
 
   Date        Person  Comments
 
+  2024/10/02  AY/RV   Added Shipping_FedEx-ResidentialServices and Shipping_FedEx-NonResidentialServices
+                       Removed Shipping_FedEx-AllHomeDeliveryIsResidential (CIMSV3-3836)
   2024/08/21  RV      Added AddressValidation-ExportOnAddressError (CIMSV3-3532)
+  2024/07/02  RV      Added Alerts_APIOutboundTransactions-Subject (HA-4201)
   2023/03/27  LAC     Added Wave_PreprocessOrder (BK-1036)
   2022/11/02  VM      Change all controls visible to -1, which needs to be ignored to sync up in redgate comparison (CIMSV3-2384)
   2022/10/07  AY      Archive/CarrierTrackingInfo-Days; Changed to 2 (BK-920)
@@ -577,6 +580,19 @@ union select 'CarrierTrackingInfo-Days',     'Archive delivered Carrier Tracking
 union select 'APIInboundTransactions-Days',  'Archive processed API Inbound transactions',      '1',                     'I',       1
 union select 'APIOutboundTransactions-Days', 'Archive processed API Outbound transactions',     '1',                     'I',       1
 
+exec pr_Controls_Setup @ControlCategory, @Controls, 'IU' /* Insert/Update */;
+
+Go
+
+/*----------------------------------------------------------------------------*/
+/* Alerts APIOTsStruckInInprocess */
+/*----------------------------------------------------------------------------*/
+declare @Controls TControlsTable, @ControlCategory TCategory = 'Alerts_APIOutboundTransactions';
+
+insert into @Controls
+            (ControlCode,                  Description,                              ControlValue,              DataType,  Visible)
+      select 'Subject',                    'Subject of the email',                   '!!!IMPORTANT!!! API failures ~Timestamp~',
+                                                                                                                         'S',       1
 exec pr_Controls_Setup @ControlCategory, @Controls, 'IU' /* Insert/Update */;
 
 Go
@@ -4420,8 +4436,8 @@ insert into @Controls
             (ControlCode,                  Description,                                       ControlValue,            DataType,  Visible)
       select 'BoLRequired',                'BOL required for FedEx Carrier',                  'N',                     'B',       1
 union select 'ExportCompliance',           'Default Export Compliance',                       '30.37(f)',              'S',       1
-union select 'AllHomeDeliveryIsResidential','If shipping Home delivery, do we assume it is to a residential address (Yes/No)',
-                                                                                              'Yes',                   'S',       1
+union select 'ResidentialServices',        'Residential Services',                            'GROUND_HOME_DELIVERY',  'S',       1
+union select 'NonResidentialServices',     'Non Residential Services',                        'ALLOTHERS',             'S',       1
 union select 'ETDRequired',                'Electronic Trade Documents Required?',            'No',                    'S',       1
 union select 'IsLogoRequired',             'Is Logo Required?',                               'Yes',                   'S',       1
 union select 'IsSignatureRequired',        'Is Signature Required?',                          'No',                    'S',       1
@@ -4443,6 +4459,7 @@ insert into @Controls
 exec pr_Controls_Setup @ControlCategory, @Controls, 'IU' /* Insert/Update */;
 
 Go
+
 /*----------------------------------------------------------------------------*/
 /* Shipping_UPS */
 /*----------------------------------------------------------------------------*/

@@ -22,7 +22,7 @@ Go
 
   OH.ShipFrom: (Warehouse Address Ex: OB Address, OH.WH = Denver SA.ShippingAccount = OB
 
-  drop Ship:
+  Drop Ship:
   Scenario 1:
   OH.ShipFrom: Group On Name/Address, OH.WH = Denver, OH.FreightTerms: 3rd Party, OH.BillToAccount
   Scenario 2:

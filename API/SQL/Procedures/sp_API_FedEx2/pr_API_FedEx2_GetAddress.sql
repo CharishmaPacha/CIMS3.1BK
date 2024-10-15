@@ -5,6 +5,7 @@
 
   Date        Person  Comments
 
+  2024/05/20  RV      Address lines cannot exceed 35 characters (CIMSV3-3636)
   2024/04/10  RV/VS   Company name is not accepting more than 35 Characters (SRIV3-502)
   2024/03/23  VS      Get the Default PhoneNo (SRIV3-450)
   2024/02/12  RV      Initial Version (CIMSV3-3395)
@@ -99,9 +100,9 @@ begin /* pr_API_FedEx2_GetAddress */
   /* Here Shipper address is printing on label, If we are not sending Ship from then consider the shipper is
      the Ship from address */
   select @AddressJSON = (select [address.streetLines]         = JSON_QUERY(CONCAT('["',
-                                                                AddressLine1, '","',
-                                                                AddressLine2, '","',
-                                                                AddressLine3, '"]')),
+                                                                left(AddressLine1, 35), '","', /* Max length allowed by FedEx is 35 */
+                                                                left(AddressLine2, 35), '","',
+                                                                left(AddressLine3, 35), '"]')),
                                 [address.city]                = City,
                                 [address.stateOrProvinceCode] = State,
                                 [address.postalCode]          = Zip,

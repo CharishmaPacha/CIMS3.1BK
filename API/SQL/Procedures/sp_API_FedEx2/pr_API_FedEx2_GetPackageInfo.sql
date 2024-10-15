@@ -5,6 +5,7 @@
 
   Date        Person  Comments
 
+  2024/06/06  RV      Changes have been made to send the declared value to cover the insurance based on the InsuranceRequired flag (CIMSV3-3659)
   2024/04/15  RV      Made changes to get the total declared value from commodities (FBV3-1726)
   2024/02/12  RV      Initial Version (CIMSV3-3395)
 ------------------------------------------------------------------------------*/
@@ -94,8 +95,9 @@ begin /* pr_API_FedEx2_GetPackageInfo */
                                                                                  '"value": "', LabelReference2Value, '"},',
                                                                                  '{"customerReferenceType": "', LabelReference3Type, '",',
                                                                                  '"value": "', LabelReference3Value, '"}]')),
-                                                             /* SurePost does not support declaring package values at the individual package level */
-                                  [declaredValue.amount]   = iif(@vShipVia = 'FEDXSP', 0, cast(InsuredValue as numeric(8,2))),
+                                                             /* Based on the declared value, insurance is charged.
+                                                                SurePost does not support declaring package values at the individual package level */
+                                  [declaredValue.amount]   = iif(InsuranceRequired = 'No' or @vShipVia = 'FEDXSP', 0, cast(InsuredValue as numeric(8,2))),
                                   [declaredValue.currency] = @vCurrency,
                                   [weight.units]           = 'LB',
                                   [weight.value]           = cast(LPNWeight    as numeric(5,1)),

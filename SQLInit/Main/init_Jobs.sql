@@ -5,6 +5,7 @@
 
   Date        Person  Comments
 
+  2024/07/02  RV      Added _Alerts_APIOutboundTransactions_Inprocess (HA-4201)
   2024/04/27  TK      Added Tasks_RecomputePrintStatus job (CIDV3-676)
   2024/02/12  RV      Added _API_FedExAccessTokenValidateAndCreate to generate the token (CIMSV3-3397)
   2023/09/15  RV      ~DBName~_API_UPSAccessTokenValidateAndCreate: To create the UPS access token (MBW-495)
@@ -1166,9 +1167,9 @@ select @vJobName              = '~DBName~_Alerts_APIOutboundTransactions',
 
 insert into @ttJobStepsInfo
        (StepName,                                             Command)
-values ('~DBName~_Alerts_APIOutboundTransactions_Fail',       'exec pr_Alerts_APIOutboundTransactions ''~BU~'', ''cIMSAgent'', null, null, ''Fail'''),
-       ('~DBName~_Alerts_APIOutboundTransactions_Fatal',      'exec pr_Alerts_APIOutboundTransactions ''~BU~'', ''cIMSAgent'', null, null, ''Fatal''');
-
+values ('~DBName~_Alerts_APIOutboundTransactions_Fail',       'exec pr_Alerts_APIOutboundTransactions ''~BU~'', ''cIMSAgent'', null, null, null, ''Fail'', ''''Fail'', ''Canceled'''', null'),
+       ('~DBName~_Alerts_APIOutboundTransactions_Fatal',      'exec pr_Alerts_APIOutboundTransactions ''~BU~'', ''cIMSAgent'', null, null, null, ''Fatal'', ''''Fail'', ''Canceled'''', null'),
+       ('~DBName~_Alerts_APIOutboundTransactions_Inprocess',  'exec pr_Alerts_APIOutboundTransactions ''~BU~'', ''cIMSAgent'', 15, null, null, ''Inprocess'', null, @AlertStatus = ''NotRequired''');
 exec pr_Jobs_Setup @vJobName, @vJobDescription, @vJobEnabled, @ttJobStepsInfo, @vBusinessUnit, @vSchedule;
 
 /*------------------------------------------------------------------------------

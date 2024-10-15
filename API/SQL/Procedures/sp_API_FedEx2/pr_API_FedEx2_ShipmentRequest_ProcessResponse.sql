@@ -5,6 +5,10 @@
 
   Date        Person  Comments
 
+  2024/09/25  RV      Bug fixed to get the OrderId properly (OBV3-2139)
+  2024/09/20  RV      Bug fixed to get the package sequence number properly (OBV3-2134)
+  2024/05/31  VS      Made changes to improve the performance (FBV3-1752)
+  2024/05/22  VS      Made changes to improve the performance (FBV3-1750)
   2024/03/20  RV      Included the PAYOR_LIST_PACKAGE and PAYOR_ACCOUNT_PACKAGE while fetching the shipment rates (JLFL-980)
   2024/03/09  RV      Rename the caller procedure pr_API_FedEx2_Response_SaveDocuments (CIMSV3-3478)
   2024/02/17  RV      Initial version (CIMSV3-3396)
@@ -43,10 +47,10 @@ as
           @vAcctNetCharge               TMoney,
 
           @vLabelType                   TTypeCode,
-          @vLabelRotation               TDescription,
-          @vLabelImage                  TVarchar,
-          @vZPLLabel                    TVarchar,
 
+          @vEntityId                    TRecordId,
+          @vEntityKey                   TEntityKey,
+          @vEntityType                  TTypeCode,
           @vOrderId                     TRecordId,
           @vPickTicket                  TPickTicket,
           @vPackagesCount               TCount,
@@ -68,18 +72,26 @@ as
           @vServiceType                 TDescription,
           @vIsUsDomestic                TFlags;
 
-  declare @ttCarrierResponseData        TCarrierResponseData;
-  declare @ttNotifications              TCarrierResponseNotifications;
+  declare @ttCarrierResponseData        TCarrierResponseData,
+          @ttCartonDetails              TCarrierCartonDetails,
+          @ttPackageInfo                TCarrierPackageInfo,
+          @ttPackageLabels              TCarrierPackageLabels,
+          @ttPackageRating              TCarrierRatingInfo,
+          @ttShipmentRating             TCarrierRatingInfo,
+          @ttDocuments                  TCarrierDocuments,
+          @ttNotifications              TCarrierResponseNotifications;
 
-  declare @ttCartonDetails table
-          (LPNId             TRecordId,
-           LPN               TLPN,
-           PackageLength     TLength,
-           PackageWidth      TLength,
-           PackageHeight     TLength,
-           PackageWeight     TWeight,
-           PackageVolume     TVolume,
-           unique(LPN));
+  declare @ttLPNs table
+          (LPNId                        TRecordId,
+           LPN                          TLPN,
+           Status                       TStatus,
+           OrderId                      TRecordId,
+           PickTicket                   TPickTicket,
+           PackageSeqNo                 TInteger,
+           CartonType                   TCartonType,
+           LPNWeight                    TWeight,
+           LPNVolume                    TVolume,
+           BusinessUnit                 TBusinessUnit);
 
 begin /* pr_API_FedEx_ShipmentRequest_ProcessResponse */
 begin try
@@ -96,28 +108,43 @@ begin try
   /* #Packages holds all the info related to the packages and
      #PackageDims hold the dims for each package as sent in the request
      #Notifications hold the carrier response Notifications */
-  if (object_id('tempdb..#Packages') is null) select * into #Packages from @ttCarrierResponseData;
-  if (object_id('tempdb..#PackageDims') is null) select * into #PackageDims from @ttCartonDetails;
-  if (object_id('tempdb..#Notifications') is null) select * into #Notifications from @ttNotifications;
+  if (object_id('tempdb..#LPNs')           is null) select * into #LPNs           from @ttLPNs;
+  if (object_id('tempdb..#Packages')       is null) select * into #Packages       from @ttCarrierResponseData;
+  if (object_id('tempdb..#PackageDims')    is null) select * into #PackageDims    from @ttCartonDetails;
+  if (object_id('tempdb..#Notifications')  is null) select * into #Notifications  from @ttNotifications;
+  if (object_id('tempdb..#PackageRating')  is null) select * into #PackageRating  from @ttPackageRating;
+  if (object_id('tempdb..#PackageInfo')    is null) select * into #PackageInfo    from @ttPackageInfo;
+  if (object_id('tempdb..#PackageLabels')  is null) select * into #PackageLabels  from @ttPackageLabels;
+  if (object_id('tempdb..#ShipmentRating') is null) select * into #ShipmentRating from @ttShipmentRating;
+  if (object_id('tempdb..#Documents')      is null) select * into #Documents      from @ttDocuments;
 
   /* Get Raw response and shipment request from APIOutbound transaction */
   select @vRawResponseJSON    = RawResponse,
-         @vLPNId              = EntityId,
-         @vLPN                = EntityKey,
+         @vEntityId           = EntityId,
+         @vEntityKey          = EntityKey,
+         @vEntityType         = EntityType,
          @vBusinessUnit       = BusinessUnit
   from APIOutboundTransactions
   where (RecordId = @TransactionRecordId);
 
-  /* Populate LPN Info into temp table */
-  select LPNId, LPN, Status, OrderId, PickTicketNo PickTicket, PackageSeqNo, CartonType,
-         LPNWeight, LPNVolume, BusinessUnit
-  into #LPNs
-  from LPNs
-  where (LPNId = @vLPNId);
+  /* Populate LPN Info into temp table based upon the entity type */
+  if (@vEntityType = 'Order')
+    insert into #LPNs (LPNId, LPN, Status, OrderId, PickTicket, PackageSeqNo, CartonType,
+                       LPNWeight, LPNVolume, BusinessUnit)
+      select LPNId, LPN, Status, OrderId, PickTicketNo, PackageSeqNo, CartonType,
+             LPNWeight, LPNVolume, BusinessUnit
+      from LPNs
+      where (OrderId = @vEntityId);
+  else
+    insert into #LPNs (LPNId, LPN, Status, OrderId, PickTicket, PackageSeqNo, CartonType,
+                       LPNWeight, LPNVolume, BusinessUnit)
+      select LPNId, LPN, Status, OrderId, PickTicketNo, PackageSeqNo, CartonType,
+             LPNWeight, LPNVolume, BusinessUnit
+    from LPNs
+    where (LPNId = @vEntityId);
 
-  select @vOrderId = OrderId
-  from #LPNs
-  where (LPNId = @vLPNId)
+  /* Fetch the OrderId.*/
+  select top 1 @vOrderId = OrderId from #LPNs;
 
   select @vPickTicket       = PickTicket,
          @vRequestedShipVia = ShipVia,
@@ -153,22 +180,24 @@ begin try
 
   /*-------------------- Package Info --------------------*/
   /* Extract the info from PieceRespones for each package */
-  select 0 as LPNId, cast('' as varchar(50)) as LPN, *, @vCarrier Carrier, row_number() over (order by (select null)) RecordId
-  into #PackageInfo
-  from OPENJSON(@vRawResponseJSON, '$.output.transactionShipments[0].pieceResponses')
-  with
-  (
-    PackageSequenceNumber    TInteger       '$.packageSequenceNumber',
-    TrackingNumber           TTrackingNo    '$.trackingNumber',
-    MasterTrackingNo         TTrackingNo    '$.masterTrackingNumber',
-    Reference1Type           TString        '$.customerReferences[0].customerReferenceType',
-    Reference1Value          TString        '$.customerReferences[0].value',
-    Reference2Type           TString        '$.customerReferences[1].customerReferenceType',
-    Reference2Value          TString        '$.customerReferences[1].value',
-    Reference3Type           TString        '$.customerReferences[2].customerReferenceType',
-    Reference3Value          TString        '$.customerReferences[2].value',
-    IsUsDomestic             TFlags
-  );
+  insert into #PackageInfo(PackageSequenceNumber, TrackingNumber, MasterTrackingNo, Reference1Type, Reference1Value, Reference2Type, Reference2Value,
+                           Reference3Type, Reference3Value, IsUsDomestic, Carrier, RecordId)
+    select PackageSequenceNumber, TrackingNumber, MasterTrackingNo, Reference1Type, Reference1Value, Reference2Type, Reference2Value,
+           Reference3Type, Reference3Value, IsUsDomestic, @vCarrier, row_number() over (order by (select null)) RecordId
+    from OPENJSON(@vRawResponseJSON, '$.output.transactionShipments[0].pieceResponses')
+    with
+    (
+      PackageSequenceNumber    TInteger       '$.packageSequenceNumber',
+      TrackingNumber           TTrackingNo    '$.trackingNumber',
+      MasterTrackingNo         TTrackingNo    '$.masterTrackingNumber',
+      Reference1Type           TString        '$.customerReferences[0].customerReferenceType',
+      Reference1Value          TString        '$.customerReferences[0].value',
+      Reference2Type           TString        '$.customerReferences[1].customerReferenceType',
+      Reference2Value          TString        '$.customerReferences[1].value',
+      Reference3Type           TString        '$.customerReferences[2].customerReferenceType',
+      Reference3Value          TString        '$.customerReferences[2].value',
+      IsUsDomestic             TFlags
+     );
 
   /* Discussion Point: We can't navigate back and get the value while populating the #PackageInfo, can we decide based upon the Contact? */
   update PKI
@@ -176,74 +205,82 @@ begin try
   from #PackageInfo PKI
 
   /*-------------------- Labels --------------------*/
-  select 0 as LPNId, cast('' as varchar(50)) as LPN, *, @vCarrier Carrier, @vLabelImage as RotatedLabelImage, @vZPLLabel ZPLLabel, -- create fields to be updated later
-         @vLabelRotation LabelRotation, row_number() over (order by (select null)) RecordId
-  into #PackageLabels
-  from OPENJSON (@vRawResponseJSON, '$.output.transactionShipments[0].pieceResponses')
-  with
-  (
-    PackageSequenceNumber    Tinteger       '$.sequenceNumber',
-    TrackingNumber           TTrackingNo    '$.trackingNumber',
-    PackageDocumentsJSON     TNVarchar      '$.packageDocuments' as json
-  )
-  as PackageLabels
-  CROSS APPLY OPENJSON(PackageLabels.PackageDocumentsJSON)
-  with
-  (
-    LabelType                TString        '$.contentType',
-    LabelImageType           TVarchar       '$.docType',
-    LabelImage               TVarchar       '$.encodedLabel'
-  );
+  insert into #PackageLabels(PackageSequenceNumber, TrackingNumber, PackageDocumentsJSON, LabelType, LabelImageType, LabelImage,
+                             Carrier, RecordId)
+    select PackageSequenceNumber, TrackingNumber, PackageDocumentsJSON, LabelType, LabelImageType, LabelImage,
+           @vCarrier, row_number() over (order by (select null)) RecordId
+    from OPENJSON (@vRawResponseJSON, '$.output.transactionShipments[0].pieceResponses')
+    with
+    (
+      PackageSequenceNumber    Tinteger       '$.packageSequenceNumber',
+      TrackingNumber           TTrackingNo    '$.trackingNumber',
+      PackageDocumentsJSON     TNVarchar      '$.packageDocuments' as json
+    )
+    as PackageLabels
+    CROSS APPLY OPENJSON(PackageLabels.PackageDocumentsJSON)
+    with
+    (
+      LabelType                TString        '$.contentType',
+      LabelImageType           TVarchar       '$.docType',
+      LabelImage               TVarchar       '$.encodedLabel'
+    );
 
   /*-------------------- Package Rating --------------------*/
   /* Get the PackageRateDetails into a hash table */
-  select 0 as LPNId, cast('' as varchar(50)) as LPN, *
-  into #PackageRating
-  from OPENJSON(@vRawResponseJSON, '$.output.transactionShipments[0].completedShipmentDetail.completedPackageDetails')
-  with
-  (
-    PackageSequenceNumber    Tinteger       '$.sequenceNumber',
-    TrackingNumber           TTrackingNo    '$.trackingIds[0].trackingNumber',
-    PackageRatingJSON        TNVarchar      '$.packageRating.packageRateDetails' as json
-  )
-  as PackageRateDetails
-  CROSS APPLY OPENJSON(PackageRateDetails.PackageRatingJSON)
-  with
-  (
-    RateType                 TString        '$.rateType',
-    RatedWeightMethod        TString        '$.ratedWeightMethod',
-    BillingWeight_Value      TFloat         '$.billingWeight.value',
-    DimWeight_Value          TFloat         '$.dimWeight.value', -- Not getting this node
-    BaseCharge_Amount        TMoney         '$.baseCharge',
-    NetFreight_Amount        TMoney         '$.netFreight',
-    TotalSurcharges_Amount   TMoney         '$.totalSurcharges',
-    NetCharge_Amount         TMoney         '$.netCharge'
-  );
+  insert into #PackageRating(PackageSequenceNumber, TrackingNumber, PackageRatingJSON, RateType ,RatedWeightMethod,
+                             BillingWeight_Value, DimWeight_Value, BaseCharge_Amount, NetFreight_Amount, TotalSurcharges_Amount, NetCharge_Amount)
+    select PackageSequenceNumber, TrackingNumber, PackageRatingJSON, RateType ,RatedWeightMethod,
+           BillingWeight_Value, DimWeight_Value, BaseCharge_Amount, NetFreight_Amount, TotalSurcharges_Amount, NetCharge_Amount
+    from OPENJSON(@vRawResponseJSON, '$.output.transactionShipments[0].completedShipmentDetail.completedPackageDetails')
+    with
+    (
+      PackageSequenceNumber    Tinteger       '$.sequenceNumber',
+      TrackingNumber           TTrackingNo    '$.trackingIds[0].trackingNumber',
+      PackageRatingJSON        TNVarchar      '$.packageRating.packageRateDetails' as json
+    )
+    as PackageRateDetails
+    CROSS APPLY OPENJSON(PackageRateDetails.PackageRatingJSON)
+    with
+    (
+      RateType                 TString        '$.rateType',
+      RatedWeightMethod        TString        '$.ratedWeightMethod',
+      BillingWeight_Value      TFloat         '$.billingWeight.value',
+      DimWeight_Value          TFloat         '$.dimWeight.value', -- Not getting this node
+      BaseCharge_Amount        TMoney         '$.baseCharge',
+      NetFreight_Amount        TMoney         '$.netFreight',
+      TotalSurcharges_Amount   TMoney         '$.totalSurcharges',
+      NetCharge_Amount         TMoney         '$.netCharge'
+    );
 
   /*-------------------- Shipment Rating --------------------*/
-  /* TotalNeCharge : This shipments total charges including freight, surchanges, duties and taxes */
-  /* Get the ShipmentRateDetails into a hash table */
-  select *
-  into #ShipmentRating
-  from OPENJSON (@vRawResponseJSON, '$.output.transactionShipments[0].completedShipmentDetail.shipmentRating.shipmentRateDetails')
-  with
-  (
-    RateType               TString     '$.rateType',
-    RatedWeightMethod      TString     '$.ratedWeightMethod',
-    BillingWeight_Value    TFloat      '$.totalBillingWeight.value',
-    NetCharge_Amount       TMoney      '$.totalNetCharge'
-  );
+  /* TotalNeCharge : This shipments total charges including freight, surchanges, duties and taxes
+     Get the ShipmentRateDetails into a hash table
+     Note: For international shipments, we receive the freight charges at the shipment level,
+     including freight charges in both the source country’s currency and the destination currency.
+     Since the source country rate details are provided first in the array, we will consider only
+     the source country's freight terms currency */
+  insert into #ShipmentRating(RateType, RatedWeightMethod, BillingWeight_Value, NetCharge_Amount)
+    select RateType, RatedWeightMethod, BillingWeight_Value, NetCharge_Amount
+    from OPENJSON (@vRawResponseJSON, '$.output.transactionShipments[0].completedShipmentDetail.shipmentRating.shipmentRateDetails')
+    with
+    (
+      RateType               TString     '$.rateType',
+      RatedWeightMethod      TString     '$.ratedWeightMethod',
+      BillingWeight_Value    TFloat      '$.totalBillingWeight.value',
+      NetCharge_Amount       TMoney      '$.totalNetCharge'
+    );
 
   /*-------------------- Documents --------------------*/
-  select * into #Documents
-  from OPENJSON(@vRawResponseJSON,'$.output.transactionShipments[0].shipmentDocuments')
-  with
-  (
-    DocumentType      TString       '$.contentType',
-    ImageType         TVarchar      '$.docType',
-    CopiesToPrint     TInteger      '$.copiesToPrint',
-    Image             TVarchar      '$.encodedLabel'
-  );
+  insert into #Documents(DocumentType, ImageType, CopiesToPrint, Image)
+    select DocumentType, ImageType, CopiesToPrint, Image
+    from OPENJSON(@vRawResponseJSON,'$.output.transactionShipments[0].shipmentDocuments')
+    with
+    (
+      DocumentType      TString       '$.contentType',
+      ImageType         TVarchar      '$.docType',
+      CopiesToPrint     TInteger      '$.copiesToPrint',
+      Image             TVarchar      '$.encodedLabel'
+    );
 
   /*-------------------- Notifications --------------------*/
   exec pr_API_FedEx2_Response_GetNotifications @vRawResponseJSON, @vBusinessUnit, @vUserId, @vSeverity out, @vNotifications out, @vNotificationDetails out;
@@ -305,11 +342,12 @@ begin try
 
       /* If packages do not have rates, then update the shipment rates on the first
          package - these would be distributed to other packages later */
-      update PKG
-      set ListNetCharge = coalesce(ListNetCharge, @vListNetCharge),
-          AcctNetCharge = coalesce(AcctNetCharge, @vAcctNetCharge)
-      from #Packages PKG
-      where (PKG.PackageSeqNo = 1);
+      /* This is not handled thru pr_Carrier_DistributeFreightAmongstPackages */
+      --update PKG
+      --set ListNetCharge = coalesce(ListNetCharge, @vListNetCharge),
+      --    AcctNetCharge = coalesce(AcctNetCharge, @vAcctNetCharge)
+      --from #Packages PKG
+      --where (PKG.PackageSeqNo = 1);
 
       /* Prepare the labels by transforming Base64 to appropriate image or ZPL */
       exec pr_Carrier_PrepareLabels @vBusinessUnit, @vUserId;
@@ -324,7 +362,7 @@ begin try
           CarrierInterface   = 'CIMSFEDEX2'
       from #Packages PKG
         left join #PackageLabels PL on (PL.LabelType = 'S')
-      where (PKG.Entityid = @vLPNId);
+      where (PKG.EntityId = PL.LPNId);
 
       /* Save #Documents */
       exec pr_API_FedEx2_Response_SaveDocuments 'Order', @vOrderId, @vPickTicket, @vBusinessUnit, @vUserId;
@@ -350,6 +388,11 @@ begin try
   /* Drop the tables */
   drop table #Packages
   drop table #PackageDims
+  drop table #PackageRating
+  drop table #PackageInfo
+  drop table #PackageLabels
+  drop table #ShipmentRating
+  drop table #Documents
 
 end try
 begin catch

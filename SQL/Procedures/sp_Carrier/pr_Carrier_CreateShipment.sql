@@ -5,7 +5,13 @@
 
   Date        Person  Comments
 
+  2024/05/09  TK      Changes made to ignore the existing APIOT records with 'ReadyToSend' status (SRIV3-530)
+  2024/04/12  VS      pr_Carrier_CreateShipment: Update the OH.ShipVia in ShipLabels table (CIMSV3-3475)
+  2024/03/30  RV      pr_Carrier_CreateShipment: Made changes to not generate a label again if the carrier label has already been generated.
+                        If an error occurs while processing the records (MBW-877)
+  2024/02/24  VS      pr_Carrier_CreateShipment: Update the CIMS Carrier Validations in ShipLabels table (CIMSV3-3437)
   2024/02/07  MS      pr_Carrier_CreateShipment: Changes to defer the label generation (JLFL-895)
+  2023/05/25  VS      pr_Carrier_CreateShipment, pr_Carrier_GetShipmentData: Validate Carrier validations in Create Shipment (CIMSV3-2807)
   2023/04/25  RV      pr_Carrier_CreateShipment: Made changes to insert the Total packages count (JLCA-777)
   2023/03/23  VS      pr_Carrier_CreateShipment: Made changes to add CartonType, FreightTerms, BillToAccount (JLFL-297)
   2023/03/20  RV      pr_Carrier_CreateShipment: Made changes to do not insert the record with transaction status Inprocess (JLCA-560)
@@ -36,7 +42,7 @@ Go
      Delete the records from hash table if it is not a small package carrier, already have a valid shipment.
      Validates the records using rules and deletes invalid records.
      Determine the carrier interface, shipment type and API workflow and update on the hash table.
-     update the package dimensions on the hash table and insert into ship labels if already not exists.
+     Update the package dimensions on the hash table and insert into ship labels if already not exists.
      Batches the labels if shipment create through CIMSSI
      Insert the records into APIOutboundTransactions to create shipment through API.
      Create shipment if the APIWorkflow is CLR.
@@ -82,7 +88,7 @@ begin
                            dbo.fn_XMLNode('BusinessUnit',      @BusinessUnit) +
                            dbo.fn_XMLNode('UserId',            @UserId) +
                            dbo.fn_XMLNode('MessageNamePrefix', 'ShipLabel') +
-                           dbo.fn_XMLNode('Version',           'V3')); -- CreateSPGShipment RuleSet, processed below, expects this
+                           dbo.fn_XMLNode('Version',           'V3')); -- CreateSPGShipment ruleset, processed below, expects this
 
   /* Remove Entities from temp table if not small package carriers */
   delete SLI from #ShipLabelsToInsert SLI where (SLI.IsSmallPackageCarrier = 'N');
@@ -94,6 +100,9 @@ begin
     join ShipLabels SL on (ttSI.EntityKey    = SL.EntityKey) and
                           (ttSI.BusinessUnit = SL.BusinessUnit) and
                           (SL.Status         = 'A');
+
+  /* Below rules execution will validate the orders to generate the labels */
+  exec pr_RuleSets_ExecuteAllRules 'Carrier_Validations', @xmlRulesData, @BusinessUnit;
 
   /* Evaluate rules to determine if we are ready to create shipment and to identify the interface to use
     #ShipLabelstoInsert.InsertRequired is updated to Y to indicate we are ready to create shipment */
@@ -111,13 +120,14 @@ begin
                           (SL.Status         = 'A');
 
   /* Update the CartonType, FreightTerms and BillToAccount */
-  update ttSI
+  Update ttSI
   set ttSI.CartonType    = L.CartonType,
       ttSI.FreightTerms  = OH.FreightTerms,
-      ttSI.BillToAccount = OH.BillToAccount
+      ttSI.BillToAccount = OH.BillToAccount,
+      ttSI.ShipVia       = OH.ShipVia
   from #ShipLabelsToInsert ttSI
     join LPNs L on (ttSI.EntityKey = L.LPN) and (ttSI.BusinessUnit = L.BusinessUnit)
-    join OrderHeaders OH on (OH.Orderid = L.OrderId);
+    join OrderHeaders OH on (OH.OrderId = L.OrderId);
 
   /* Batch the shiplabels to process through CIMSSI */
   exec pr_Carrier_BatchShipLabels @Module, @Operation, @BusinessUnit, @UserId;
@@ -132,6 +142,14 @@ begin
     from #ShipLabelsToInsert
     where (InsertRequired = 'Yes' /* Yes */);
 
+  /* Update the CIMS Validations in ShipLabels table */
+  Update SL
+  set Notifications = 'CIMS:' + tSL.Notifications,
+      ProcessStatus = 'LGE'
+  from ShipLabels SL
+    join #ShipLabelsToInsert tSL on tSL.EntityId = SL.EntityId
+  where tSL.Notifications is not null
+
   /* Check if API integration needs to be used for Shipment Creation. If APIWorkflow is not null
      then we assume it is some kind of API processing and so if there aren't any records
      which are to be processed via API, then exit.
@@ -144,14 +162,28 @@ begin
   /* Do not insert if the record already exist for order entity, which is not yet processed */
   delete ttSI
   from #ShipLabelsToInsert ttSI
-    join APIOutboundTransactions AOT on (AOT.EntityId = ttSI.OrderId) and (AOT.EntityType = 'Order') and (AOT.TransactionStatus in ('Initial', 'PrepareAndSend', 'Inprocess')) and
+    join APIOutboundTransactions AOT on (AOT.EntityId = ttSI.OrderId) and (AOT.EntityType = 'Order') and (AOT.TransactionStatus in ('Initial', 'ReadyToSend', 'PrepareAndSend', 'Inprocess')) and
+                                        (AOT.IntegrationName = ttSI.CarrierInterface) and (AOT.MessageType = coalesce(ttSI.MessageType, 'ShipmentRequest'))
+  where (ttSI.IntegrationMethod = 'API' /* Process through API */) and (ShipmentType = 'M' /* Multi package */)
+
+  /* For the Order entity, do not generate a label again if the carrier label has already been generated. If an error occurs while processing the records */
+  delete ttSI
+  from #ShipLabelsToInsert ttSI
+    join APIOutboundTransactions AOT on (AOT.EntityId = ttSI.OrderId) and (AOT.EntityType = 'Order') and (AOT.TransactionStatus in ('Success')) and (AOT.ProcessStatus in ('Initial', 'Fail')) and
                                         (AOT.IntegrationName = ttSI.CarrierInterface) and (AOT.MessageType = coalesce(ttSI.MessageType, 'ShipmentRequest'))
   where (ttSI.IntegrationMethod = 'API' /* Process through API */) and (ShipmentType = 'M' /* Multi package */)
 
   /* Do not insert if the record already exist for LPN entity, which is not yet processed */
   delete ttSI
   from #ShipLabelsToInsert ttSI
-    join APIOutboundTransactions AOT on (AOT.EntityId = ttSI.EntityId) and (AOT.EntityType = 'LPN') and (AOT.TransactionStatus in ('Initial', 'PrepareAndSend', 'Inprocess')) and
+    join APIOutboundTransactions AOT on (AOT.EntityId = ttSI.EntityId) and (AOT.EntityType = 'LPN') and (AOT.TransactionStatus in ('Initial', 'ReadyToSend', 'PrepareAndSend', 'Inprocess')) and
+                                        (AOT.IntegrationName = ttSI.CarrierInterface) and (AOT.MessageType = coalesce(ttSI.MessageType, 'ShipmentRequest'))
+  where (ttSI.IntegrationMethod = 'API') and (ShipmentType = 'S' /* Single package */);
+
+  /* For the LPN entity, do not generate a label again if the carrier label has already been generated. If an error occurs while processing the records */
+  delete ttSI
+  from #ShipLabelsToInsert ttSI
+    join APIOutboundTransactions AOT on (AOT.EntityId = ttSI.EntityId) and (AOT.EntityType = 'LPN') and (AOT.TransactionStatus in ('Success')) and (AOT.ProcessStatus in ('Initial', 'Fail')) and
                                         (AOT.IntegrationName = ttSI.CarrierInterface) and (AOT.MessageType = coalesce(ttSI.MessageType, 'ShipmentRequest'))
   where (ttSI.IntegrationMethod = 'API') and (ShipmentType = 'S' /* Single package */);
 

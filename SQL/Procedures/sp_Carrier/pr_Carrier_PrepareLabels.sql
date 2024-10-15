@@ -5,6 +5,8 @@
 
   Date        Person  Comments
 
+  2024/09/24  RV/TD   pr_Carrier_PrepareLabels: Made changes to process all records order by recordid (OBV3-2139)
+  2024/03/28  RV      pr_Carrier_PrepareLabels: Made changes to save PNG label when no rotation required (BK-1102)
 ------------------------------------------------------------------------------*/
 
 Go
@@ -59,7 +61,8 @@ begin /* pr_Carrier_PrepareLabels */
              @vLabelImage     = LabelImage,
              @vCarrier        = Carrier
       from #PackageLabels
-      where (RecordId > @vRecordId);
+      where (RecordId > @vRecordId)
+      order by RecordId;
 
       /* For other than ZPL image type like png, gif rotate based upon the label rotation if required by using CLR method */
       if (@vLabelImageType <> 'ZPL')
