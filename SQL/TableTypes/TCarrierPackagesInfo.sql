@@ -5,13 +5,13 @@
 
   Date        Person  Comments
 
-  2024/02/24. AY      TCarrierPackagesInfo: Added CI related fields (CIMSV3-3434)
+  2024/02/24  AY      TCarrierPackagesInfo: Added CI related fields (CIMSV3-3434)
   2024/02/16  AY      TCarrierPackagesInfo: Added LabelReference[1-5]/[Type.Value] for FedEx API (CIMSV3-3395)
   2023/12/05  AY      TCarrierPackagesInfo: Added PackageWeight (JLFL-320)
   2023/08/21  RV      TCarrierPackagesInfo: Added DimensionUoM
+                      TCarrierShipmentData: Added OrderDate and ReceiverTaxId (CIMSV3-2760)
   2023/08/16  RV      TCarrierPackagesInfo: Initial Version
-  Create Type TCarrierPackagesInfo as Table (
-  grant references on Type:: TCarrierPackagesInfo to public;
+                      TCarrierShipmentData: Added OrderDate, CarrierOptions, TotalPackages, LabelFormatType, LabelStockType etc, (JLFL-320)
 ------------------------------------------------------------------------------*/
 
 Go

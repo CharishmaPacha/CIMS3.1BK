@@ -7,8 +7,6 @@
 
   2024/02/19  RV      TCarrierResponseNotifications: Added SeverityLevel (CIMSV3-3396)
   2022/11/04  VS      TCarrierResponseNotifications: Initial Version (OBV3-1353)
-  Create Type TCarrierResponseNotifications as Table (
-  grant references on Type:: TCarrierResponseNotifications to public;
 ------------------------------------------------------------------------------*/
 
 Go

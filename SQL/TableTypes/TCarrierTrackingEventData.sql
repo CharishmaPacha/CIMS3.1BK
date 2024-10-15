@@ -6,8 +6,6 @@
   Date        Person  Comments
 
   2022/11/07  SK/AY   TCarrierTrackingEventData: New Type (BK-956)
-  Create Type TCarrierTrackingEventData as Table (
-  Grant References on Type:: TCarrierTrackingEventData to public;
 ------------------------------------------------------------------------------*/
 
 Go
@@ -32,6 +30,6 @@ Create Type TCarrierTrackingEventData as Table (
   RecordId                   TRecordId
 );
 
-Grant References on Type:: TCarrierTrackingEventData to public;
+grant references on Type:: TCarrierTrackingEventData to public;
 
 Go

@@ -10,8 +10,6 @@
   2022/12/23  VS      TCarrierShipmentData: Added PackageWeight and Volume (OBV3-1363)
   2022/11/18  VS      TCarrierShipmentData: Added ShipToInfo (OBV3-1447)
   2022/11/17  AY      TCarrierShipmentData: To hold several pieces of data for carrier integration (OBV3-1447)
-  Create Type TCarrierShipmentData as Table (
-  grant references on Type:: TCarrierShipmentData to public;
 ------------------------------------------------------------------------------*/
 
 Go

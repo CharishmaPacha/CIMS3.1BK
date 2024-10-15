@@ -7,9 +7,8 @@
 
   2023/01/10  RV      TCommoditiesInfo, TPackingListDetails: Added UnitCost, LineTotalCost and LineTotalPrice (OBV3-1653)
   2022/12/09  AY      TCommoditiesInfo: Added ProductInfo1/2/3 (OBV3-1586)
+  2022/10/27  AY      TCommoditiesInfo: Added more fields for handling multiple packages (OBV3-1305)
   2021/07/30  OK      Added TCommoditiesInfo (BK-382)
-  Create Type TCommoditiesInfo as Table (
-  grant references on Type:: TCommoditiesInfo to public;
 ------------------------------------------------------------------------------*/
 
 Go
