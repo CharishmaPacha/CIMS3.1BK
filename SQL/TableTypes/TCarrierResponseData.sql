@@ -7,8 +7,6 @@
 
   2023/03/20  VS      TCarrierResponseData: Added BillToAccount (JLFL-297)
   2022/10/18  VS      TCarrierResponseData: Initial version (CIMSV3-1780)
-  Create Type TCarrierResponseData as Table (
-  grant references on Type:: TCarrierResponseData to public;
 ------------------------------------------------------------------------------*/
 
 Go

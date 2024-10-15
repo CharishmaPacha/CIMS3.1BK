@@ -6,8 +6,6 @@
   Date        Person  Comments
 
   2023/02/24  SK      TCarrierTrackingData: Added SourceSystem (BK-1025)
-  Create Type TCarrierTrackingData as Table (
-  grant references on Type:: TCarrierTrackingData to public;
 ------------------------------------------------------------------------------*/
 
 Go
