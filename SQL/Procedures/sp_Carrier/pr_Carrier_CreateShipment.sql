@@ -9,7 +9,6 @@
   2024/04/12  VS      pr_Carrier_CreateShipment: Update the OH.ShipVia in ShipLabels table (CIMSV3-3475)
   2024/03/30  RV      pr_Carrier_CreateShipment: Made changes to not generate a label again if the carrier label has already been generated.
                         If an error occurs while processing the records (MBW-877)
-  2024/02/24  VS      pr_Carrier_CreateShipment: Update the CIMS Carrier Validations in ShipLabels table (CIMSV3-3437)
   2024/02/07  MS      pr_Carrier_CreateShipment: Changes to defer the label generation (JLFL-895)
   2023/05/25  VS      pr_Carrier_CreateShipment, pr_Carrier_GetShipmentData: Validate Carrier validations in Create Shipment (CIMSV3-2807)
   2023/04/25  RV      pr_Carrier_CreateShipment: Made changes to insert the Total packages count (JLCA-777)
@@ -100,9 +99,6 @@ begin
     join ShipLabels SL on (ttSI.EntityKey    = SL.EntityKey) and
                           (ttSI.BusinessUnit = SL.BusinessUnit) and
                           (SL.Status         = 'A');
-
-  /* Below rules execution will validate the orders to generate the labels */
-  exec pr_RuleSets_ExecuteAllRules 'Carrier_Validations', @xmlRulesData, @BusinessUnit;
 
   /* Evaluate rules to determine if we are ready to create shipment and to identify the interface to use
     #ShipLabelstoInsert.InsertRequired is updated to Y to indicate we are ready to create shipment */
