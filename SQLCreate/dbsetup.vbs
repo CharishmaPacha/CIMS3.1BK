@@ -5,6 +5,7 @@
 
 '  Date        Person  Comments
 
+'  2024/10/23  VM      ProcessSqlFolders: Bug-fix to consider finding start of the folder string filter properly (CIMSV3-3962)
 '  2024/05/15  VM      ProcessSqlFile: Enhanced to process files by filefilter/folder/subfolder/subfolderfilter reading from the SQL script file
 '                      ProcessSqlFolder, ProcessSqlFolders: Made changes to show message by context
 '                      GetInputFoldersInfo, ProcessSqlFiles: Inroduced new functions (CIMSV3-3601)
@@ -964,7 +965,7 @@ On Error Resume Next
   ' Get sub folders within the folder one by one
   For Each oSubFolder in oFolder.SubFolders
     ' Process only folders based on folder filter given.
-    If InStr(oSubFolder.Name, strFolderFilter) > 0 Then
+    If Left(oSubFolder.Name, Len(strFolderFilter)) = strFolderFilter Then
       If InStr(strFolder, "\") > 0 Then
         ShowFeedback "Processing " & strFolder & "\" & oSubFolder.Name & "..."
       Else
