@@ -5,6 +5,7 @@
 
   Date        Person  Comments
 
+  2024/10/30  RV      Added CIMSUPS2-TrackingInfo (BK-1148)
   2024/08/18  RV      Added CIMSFEDEX2-FEDEXTracking (BK-1132)
   2024/04/12  DEM     Added CIMSFEDEX2-AddressValidation (CIMSV3-3531)
   2024/02/12  RV      Added CIMSFEDEX2OAUTH-GenerateToken and CIMSFEDEX2-ShipmentRequest (CIMSV3-3397)
@@ -129,6 +130,7 @@ delete from APIConfiguration where IntegrationName = @IntegrationName and Busine
 insert into APIConfiguration
              (MessageType,                  MessageUrl,                     MethodType, StoredProcedureName,                            DataProcedureName,                              IntegrationName,  InputType,        InputDataType,   ProcessMode,  ResponseType,  RecordsPerBatch,   BusinessUnit)
       select  'ShipmentRequest',            'shipments/v2205/ship',         'POST',     'pr_API_UPS_ProcessShipmentResponse',           'pr_API_UPS_ShipmentRequest_GetMsgData',        @IntegrationName, @InputType,       @InputDataType,  @ProcessMode, @ResponseType, 200,               BusinessUnit from BusinessUnits
+union select  'UPSTracking',                'track/v1/details',             'GET',      'pr_API_UPS2_TrackingInfo_ProcessResponse',     'pr_API_UPS2_TrackingInfo_GetMsgData',          @IntegrationName, 'URLAPPEND',      @InputDataType,  @ProcessMode, @ResponseType, 200,               BusinessUnit from BusinessUnits
 
 
 /*------------------------------------------------------------------------------*/
