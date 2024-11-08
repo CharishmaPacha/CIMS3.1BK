@@ -5,6 +5,7 @@
 
   Date        Person  Comments
 
+  2022/03/10  PHK     Added SKUs Dataset (HA-109)
   2021/03/16  AY      Walmart added new field in their Routing Info (HA Golive)
   2021/03/04  VS      LoadRoutingInfo changed to LRI (HA-2122)
   2021/02/20  TK      Generalized field names for LoadRoutingInfo, LRI_WM & LRI_TAR (HA-1962)
@@ -279,6 +280,99 @@ union select  'Warehouse',            '',                    'TWarehouse',      
 union select  'Location',             '',                    'TLocation',        null,       null,              null,          ' ',     '50',    'A',    '1',       @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
 union select  'LocationType',         '',                    'TLocationType',    null,       null,              null,          ' ',     '51',    'I',    '1',       @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
 union select  'LPNType',              '',                    'TTypeCode',        null,       'C',               null,          ' ',     '52',    'I',    '1',       @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+
+/* Create the Data set name to the layout for respective Import file type */
+exec pr_Setup_CreateInterfaceDataSet @vProcessName, @vDataSetName;
+
+/*------------------------------------------------------------------------------*/
+/* ImportFile: SKU */
+/*------------------------------------------------------------------------------*/
+
+select @vProcessName = 'ImportFile',
+       @vDataSetName = 'SKUs';
+
+delete from InterfaceFields where DataSetName = @vDataSetName and ProcessName = @vProcessName;
+
+insert into InterfaceFields
+             (FieldName,              ExternalFieldName,     FieldType,          FieldWidth, FieldDefaultValue, Justification, PadChar, Operations, SortSeq, Status, ProcessName,   DataSetName,   BusinessUnit)
+      select  'SKU',                  '',                    'TSKU',             null,       null,              null,          ' ',     null,       '1',     'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'SKU1',                 '',                    'TSKU',             null,       null,              null,          ' ',     null,       '2',     'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'SKU2',                 '',                    'TSKU',             null,       null,              null,          ' ',     null,       '3',     'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'SKU3',                 '',                    'TSKU',             null,       null,              null,          ' ',     null,       '4',     'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'SKU4',                 '',                    'TSKU',             null,       null,              null,          ' ',     null,       '5',     'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'SKU5',                 '',                    'TSKU',             null,       null,              null,          ' ',     null,       '6',     'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'Description',          '',                    'TDescription',     null,       null,              null,          ' ',     null,       '7',     'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'SKU1Description',      '',                    'TDescription',     null,       null,              null,          ' ',     null,       '8',     'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'SKU2Description',      '',                    'TDescription',     null,       null,              null,          ' ',     null,       '9',     'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'SKU3Description',      '',                    'TDescription',     null,       null,              null,          ' ',     null,       '10',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'SKU4Description',      '',                    'TDescription',     null,       null,              null,          ' ',     null,       '11',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'SKU5Description',      '',                    'TDescription',     null,       null,              null,          ' ',     null,       '12',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'AlternateSKU',         '',                    'TSKU',             null,       null,              null,          ' ',     null,       '13',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'Barcode',              '',                    'TBarcode',         null,       null,              null,          ' ',     null,       '14',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'Status',               '',                    'TStatus',          null,       null,              null,          ' ',     null,       '15',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'UoM',                  '',                    'TUoM',             null,       null,              null,          ' ',     null,       '16',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+
+union select  'InnerPacksPerLPN',     '',                    'TInteger',         null,       null,              null,          ' ',     null,       '17',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'UnitsPerInnerPack',    '',                    'TInteger',         null,       null,              null,          ' ',     null,       '18',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'UnitsPerLPN',          '',                    'TInteger',         null,       null,              null,          ' ',     null,       '19',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+
+union select  'InnerPackWeight',      '',                    'TInteger',         null,       null,              null,          ' ',     null,       '20',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'InnerPackLength',      '',                    'TInteger',         null,       null,              null,          ' ',     null,       '21',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'InnerPackWidth',       '',                    'TInteger',         null,       null,              null,          ' ',     null,       '22',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'InnerPackHeight',      '',                    'TInteger',         null,       null,              null,          ' ',     null,       '23',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'InnerPackVolume',      '',                    'TInteger',         null,       null,              null,          ' ',     null,       '24',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+
+union select  'UnitWeight',           '',                    'TFloat',           null,       null,              null,          ' ',     null,       '25',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'UnitLength',           '',                    'TFloat',           null,       null,              null,          ' ',     null,       '26',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'UnitWidth',            '',                    'TFloat',           null,       null,              null,          ' ',     null,       '27',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'UnitHeight',           '',                    'TFloat',           null,       null,              null,          ' ',     null,       '28',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'UnitVolume',           '',                    'TFloat',           null,       null,              null,          ' ',     null,       '29',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'NestingFactor',        '',                    'TFloat',           null,       null,              null,          ' ',     null,       '30',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+
+union select  'PalletTie',            '',                    'TInteger',         null,       null,              null,          ' ',     null,       '31',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'PalletHigh',           '',                    'TInteger',         null,       null,              null,          ' ',     null,       '32',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'UnitPrice',            '',                    'TFloat',           null,       null,              null,          ' ',     null,       '33',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'UnitCost',             '',                    'TFloat',           null,       null,              null,          ' ',     null,       '34',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+
+union select  'PickUoM',              '',                    'TFlags',           null,       null,              null,          ' ',     null,       '35',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'ShipUoM',              '',                    'TFlags',           null,       null,              null,          ' ',     null,       '36',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'ShipPack',             '',                    'TInteger',         null,       null,              null,          ' ',     null,       '37',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+
+union select  'UPC',                  '',                    'TUPC',             null,       null,              null,          ' ',     null,       '38',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'CaseUPC',              '',                    'TUPC',             null,       null,              null,          ' ',     null,       '39',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'Brand',                '',                    'TBrand',           null,       null,              null,          ' ',     null,       '40',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'SKUImageURL',          '',                    'TURL',             null,       null,              null,          ' ',     null,       '41',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+
+union select  'ProdCategory',         '',                    'TCategory',        null,       null,              null,          ' ',     null,       '42',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'ProdSubCategory',      '',                    'TCategory',        null,       null,              null,          ' ',     null,       '43',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'PutawayClass',         '',                    'TCategory',        null,       null,              null,          ' ',     null,       '44',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'ABCClass',             '',                    'TFlag',            null,       null,              null,          ' ',     null,       '45',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+
+union select  'NMFC',                 '',                    'TTypeCode',        null,       null,              null,          ' ',     null,       '46',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'HarmonizedCode',       '',                    'THarmonizedCode',  null,       null,              null,          ' ',     null,       '47',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'HTSCode',              '',                    'THTSCode',         null,       null,              null,          ' ',     null,       '48',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+
+union select  'Serialized',           '',                    'TFlag',            null,       null,              null,          ' ',     null,       '49',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'ReturnDisposition',    '',                    'TOperation',       null,       null,              null,          ' ',     null,       '50',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'IsSortable',           '',                    'TFlags',           null,       null,              null,          ' ',     null,       '51',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'IsConveyable',         '',                    'TFlags',           null,       null,              null,          ' ',     null,       '52',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'IsScannable',          '',                    'TFlags',           null,       null,              null,          ' ',     null,       '53',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'IsBaggable',           '',                    'TFlags',           null,       null,              null,          ' ',     null,       '54',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+
+union select  'SKUSortOrder',         '',                    'TDescription',     null,       null,              null,          ' ',     null,       '55',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+
+union select  'Ownership',            '',                    'TOwnership',       null,       null,              null,          ' ',     null,       '56',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'DefaultCoO',           '',                    'TCoO',             null,       null,              null,          ' ',     null,       '57',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+
+union select  'SourceSystem',         '',                    'TName',            null,       null,              null,          ' ',     null,       '58',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'RecordAction',         '',                    'TVarchar',         null,       null,              null,          ' ',     null,       '60',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+
+/* Define the fields which are not part of the the import but which need to be added
+   for either processing or for importing due to null constraints or to setup defaults */
+/* Archived is being added because in UI a default filter is setup with Archived on SKUs table and hence this is necessary */
+union select  'Archived',             '',                    'TFlags',           null,       null,              null,          ' ',     @vAugment,  '91',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'CreatedBy',            '',                    'TUserId',          null,       null,              null,          ' ',     @vAugment,  '98',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+union select  'BusinessUnit',         '',                    'TBusinessUnit',    null,       null,              null,          ' ',     @vAugment,  '99',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
 
 /* Create the Data set name to the layout for respective Import file type */
 exec pr_Setup_CreateInterfaceDataSet @vProcessName, @vDataSetName;
