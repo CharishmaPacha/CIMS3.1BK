@@ -20,11 +20,14 @@
 
 Go
 
+declare @vProcessName TName,
+        @vDataSetName TName,
+        @vOperations  TString,
+        @vAugment     TString = 'Augment,Import,Insert';
+
 /*------------------------------------------------------------------------------*/
 /* Router Confirmations */
 /*------------------------------------------------------------------------------*/
-declare @vProcessName TName,
-        @vDataSetName TName;
 
 select @vProcessName = 'Import',
        @vDataSetName = 'RouterConfirmations';
