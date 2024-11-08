@@ -5,6 +5,7 @@
 
   Date        Person   Comments
 
+  2022/03/10  PHK     Added layout for SKUS (HA-109)
   2021/03/08  RKC     corrected the data set name for LRI_TAR (HA-1926)
   2021/01/20  TK      Corrected field name for LRI, TAR, WA (HA-1962)
   2021/01/27  RKC     Added layout for INV - Inventory (CIMSV3-1323)
@@ -372,5 +373,93 @@ insert into @ttLF select 'CreatedBy',                   null,   null,   null,   
 
 /* Add the fields for this Layout */
 exec pr_LayoutFields_Setup @ContextName, 'Standard', @ttLF, @DataSetName, 'SKUId' /* Key fields */;
+
+/******************************************************************************/
+/* SKUs Layouts */
+/******************************************************************************/
+delete from @Layouts;
+
+select @ContextName = 'ImportFiles.SKU',
+       @DataSetName = 'SKUs';
+
+/*                          Layout  Default  Layout                        Default        Status Visible SortSeq ShowExpanded
+                            Type    Layout   Description                   SelectionName                                   */
+insert into @Layouts select 'L',    'N',     'Standard',                   null,          null,  null,   0,      null
+
+exec pr_Setup_Layout @ContextName, @DataSetName, @Layouts, 'DI' /* Delete & Insert */, 'cimsdba', @BusinessUnit;
+
+/******************************************************************************/
+/* Listing Layouts Details */
+/******************************************************************************/
+
+/*----------------------------------------------------------------------------*/
+/* Layout Fields for SKUs standard Layout */
+/*----------------------------------------------------------------------------*/
+delete from @ttLF;
+
+/*                        Field                   Visible Visible Field          Width Display
+                          Name                    Index           Caption              Format */
+insert into @ttLF select  'SKU',                  null,      1,   null,          null, null
+insert into @ttLF select  'SKU1',                 null,   null,   null,          null, null
+insert into @ttLF select  'SKU2',                 null,   null,   null,          null, null
+insert into @ttLF select  'SKU3',                 null,   null,   null,          null, null
+insert into @ttLF select  'SKU4',                 null,   null,   null,          null, null
+insert into @ttLF select  'SKU5',                 null,   null,   null,          null, null
+insert into @ttLF select  'Description',          null,   null,   null,          null, null
+insert into @ttLF select  'SKU1Description',      null,   null,   null,          null, null
+insert into @ttLF select  'SKU2Description',      null,   null,   null,          null, null
+insert into @ttLF select  'SKU3Description',      null,   null,   null,          null, null
+insert into @ttLF select  'SKU4Description',      null,   null,   null,          null, null
+insert into @ttLF select  'SKU5Description',      null,   null,   null,          null, null
+insert into @ttLF select  'AlternateSKU',         null,   null,   null,          null, null
+insert into @ttLF select  'Barcode',              null,   null,   null,          null, null
+insert into @ttLF select  'Status',               null,      1,   null,          null, null
+insert into @ttLF select  'UoM',                  null,      1,   null,          null, null
+insert into @ttLF select  'InnerPacksPerLPN',     null,   null,   null,          null, null
+insert into @ttLF select  'UnitsPerInnerPack',    null,   null,   null,          null, null
+insert into @ttLF select  'UnitsPerLPN',          null,   null,   null,          null, null
+insert into @ttLF select  'InnerPackWeight',      null,   null,   null,          null, null
+insert into @ttLF select  'InnerPackLength',      null,   null,   null,          null, null
+insert into @ttLF select  'InnerPackWidth',       null,   null,   null,          null, null
+insert into @ttLF select  'InnerPackHeight',      null,   null,   null,          null, null
+insert into @ttLF select  'InnerPackVolume',      null,   null,   null,          null, null
+insert into @ttLF select  'UnitWeight',           null,   null,   null,          null, null
+insert into @ttLF select  'UnitLength',           null,   null,   null,          null, null
+insert into @ttLF select  'UnitWidth',            null,   null,   null,          null, null
+insert into @ttLF select  'UnitHeight',           null,   null,   null,          null, null
+insert into @ttLF select  'UnitVolume',           null,   null,   null,          null, null
+insert into @ttLF select  'NestingFactor',        null,   null,   null,          null, null
+insert into @ttLF select  'PalletTie',            null,   null,   null,          null, null
+insert into @ttLF select  'PalletHigh',           null,   null,   null,          null, null
+insert into @ttLF select  'UnitPrice',            null,   null,   null,          null, null
+insert into @ttLF select  'UnitCost',             null,   null,   null,          null, null
+insert into @ttLF select  'PickUoM',              null,   null,   null,          null, null
+insert into @ttLF select  'ShipUoM',              null,   null,   null,          null, null
+insert into @ttLF select  'ShipPack',             null,   null,   null,          null, null
+insert into @ttLF select  'UPC',                  null,      1,   null,          null, null
+insert into @ttLF select  'CaseUPC',              null,   null,   null,          null, null
+insert into @ttLF select  'Brand',                null,   null,   null,          null, null
+insert into @ttLF select  'SKUImageURL',          null,   null,   null,          null, null
+insert into @ttLF select  'ProdCategory',         null,      1,   null,          null, null
+insert into @ttLF select  'ProdSubCategory',      null,      1,   null,          null, null
+insert into @ttLF select  'PutawayClass',         null,   null,   null,          null, null
+insert into @ttLF select  'ABCClass',             null,   null,   null,          null, null
+insert into @ttLF select  'NMFC',                 null,   null,   null,          null, null
+insert into @ttLF select  'HarmonizedCode',       null,   null,   null,          null, null
+insert into @ttLF select  'HTSCode',              null,   null,   null,          null, null
+insert into @ttLF select  'Serialized',           null,   null,   null,          null, null
+insert into @ttLF select  'ReturnDisposition',    null,   null,   null,          null, null
+insert into @ttLF select  'IsSortable',           null,   null,   null,          null, null
+insert into @ttLF select  'IsConveyable',         null,   null,   null,          null, null
+insert into @ttLF select  'IsScannable',          null,   null,   null,          null, null
+insert into @ttLF select  'IsBaggable',           null,   null,   null,          null, null
+insert into @ttLF select  'SKUSortOrder',         null,   null,   null,          null, null
+insert into @ttLF select  'Ownership',            null,   null,   null,          null, null
+insert into @ttLF select  'DefaultCoO',           null,   null,   null,          null, null
+insert into @ttLF select  'SourceSystem',         null,      1,   null,          null, null
+insert into @ttLF select  'RecordAction',         null,      1,   null,          null, null
+
+/* Add the fields for this Layout */
+exec pr_LayoutFields_Setup @ContextName, 'Standard', @ttLF, @DataSetName, 'SKU' /* Key fields */;
 
 Go

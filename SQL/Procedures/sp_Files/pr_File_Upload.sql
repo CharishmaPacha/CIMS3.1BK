@@ -5,6 +5,7 @@
 
   Date        Person  Comments
 
+  2022/03/09  PHK     pr_File_Upload: Included Filetype SKU (HA-109)
   2021/02/24  RV      pr_File_Import, pr_File_Upload: Made changes to get the full file path from controls (CIMSV3-1351)
   2021/02/19  SK      pr_File_Upload: add timestammp to error file (HA-2010)
   2021/02/03  RKC     pr_File_Upload: Used the fn_Controls_GetAsPath to get the paths (CIMSV3-1351)
@@ -114,17 +115,17 @@ begin try /* pr_File_Upload */
   if (@vMessageName is not null)
    goto ErrorHandler;
 
-  /* Add required fields as required for different file types */
-  if (@FileType in ('SPL' , 'LOC' /* SKUPriceList, Locations */))
-    select @vAddColString = 'alter table  ' + @TmpTable + '
-                               Add Validated  varchar (10),
+  /* Add required fields as needed for different file types */
+  if (@FileType in ('SPL' , 'LOC', 'SKU', 'LOCREP' /* SKUPriceList, Locations, SKUs, LocationReplenishLevels */))
+    select @vAddColString = 'Alter Table  ' + @TmpTable + ' Add ' +
+                              'Validated      varchar (10),
                                ValidationMsg  varchar (max),
                                CreatedBy      varchar (50),
                                KeyData        varchar (200),
                                RecordId       int  identity (1,1);';
   else
-    select @vAddColString = 'alter table  ' + @TmpTable + '
-                               Add Validated  varchar (10),
+    select @vAddColString = 'Alter Table  ' + @TmpTable + ' Add ' +
+                              'Validated      varchar (10),
                                ValidationMsg  varchar (max),
                                CreatedBy      varchar (50),
                                KeyData        varchar (200),

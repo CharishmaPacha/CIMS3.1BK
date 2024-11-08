@@ -5,10 +5,11 @@
 
   Date        Person  Comments
 
+  2022/03/10  PHK     Added new rules for SKUs file Imports (HA-109)
   2021/03/13  RKC     Added new rules to add the 0 in prefix for 04, 08 WH (HA-2252)
   2021/02/05  RKC     Added new rules for import inventory (CIMSV3-1323)
   2021/01/30  AY      Initialize BusinessUnit (HA-1946)
-  2020/11/11  SV      set up rules for Location File Imports (CIMSV3-1120)
+  2020/11/11  SV      Set up rules for Location File Imports (CIMSV3-1120)
   2020/03/23  MS      Changes to delete Existing records (CID-1276)
   2020/01/20  MS      Initial version (CID-1117)
 ------------------------------------------------------------------------------*/
@@ -98,7 +99,20 @@ select @vRuleCondition   = '~FileType~ = ''INV''',
 insert into @Rules (RuleSetName, RuleCondition, RuleDescription, RuleQuery, RuleQueryType, SortSeq, Status)
   select @vRuleSetName, @vRuleCondition, @vRuleDescription, @vRuleQuery, @vRuleQueryType, coalesce(@vSortSeq, 0), @vStatus;
 
-  /******************************************************************************/
+/*----------------------------------------------------------------------------*/
+/* Rule to update SKU Archived info on the temp table */
+select @vRuleCondition   = '~FileType~ in (''SKU'')',
+       @vRuleDescription = 'Process File: Update SKU Archived info on the temp table',
+       @vRuleQuery       = 'update ~!TempTableName~
+                            set Archived = ''N''',
+       @vRuleQueryType   = 'Update',
+       @vStatus          = 'A', /* A-Active, I-In-Active, NA-Not Applicable */
+       @vSortSeq        += 1;
+
+insert into @Rules (RuleSetName, RuleCondition, RuleDescription, RuleQuery, RuleQueryType, SortSeq, Status)
+  select @vRuleSetName, @vRuleCondition, @vRuleDescription, @vRuleQuery, @vRuleQueryType, coalesce(@vSortSeq, 0), @vStatus;
+
+/******************************************************************************/
 /* Rule Set to establish the KeyData for each of the File Types to be imported  */
 /******************************************************************************/
 select @vRuleSetName        = 'ImportFile_AddRequiredColumn',
@@ -382,6 +396,148 @@ insert into @Rules (RuleSetName, RuleCondition, RuleDescription, RuleQuery, Rule
   select @vRuleSetName, @vRuleCondition, @vRuleDescription, @vRuleQuery, @vRuleQueryType, coalesce(@vSortSeq, 0), @vStatus;
 
 /******************************************************************************/
+/* Rule Set for importing SKUs */
+/******************************************************************************/
+select @vRuleSetName        = 'ImportFile_SKU',
+       @vRuleSetFilter      = '~FileType~ = ''SKU''',
+       @vRuleSetDescription = 'Set of rules to be used for validating SKU import',
+       @vSortSeq            = 220, -- Initialize for this set
+       @vStatus             = 'A' /* Active */;
+
+insert into @RuleSets (RuleSetName, RuleSetDescription, RuleSetType, RuleSetFilter, SortSeq, Status, BusinessUnit)
+  select @vRuleSetName, @vRuleSetDescription, @vRuleSetType, @vRuleSetFilter, coalesce(@vSortSeq, 0), @vStatus, @vBusinessUnit;
+
+/*----------------------------------------------------------------------------*/
+/* Rule to update record action as I if it has U and not exists in SKUs Table
+   default rule above cannot be used as that assumes that the key field is RecordId
+   where as it is SKUId */
+select @vRuleCondition   = '~FileType~ = ''SKU''',
+       @vRuleDescription = 'Process File: Update record action as I if it has U and does not exist in SKUs Table',
+       @vRuleQuery       = 'update TT
+                            set RecordAction = ''I''
+                            from ~!TempTableName~ TT
+                              left outer join ~!MainTableName~ MT on (TT.KeyData      = MT.~!KeyFieldName~) and
+                                                                     (TT.BusinessUnit = MT.BusinessUnit)
+                            where (TT.RecordAction = ''U'') and
+                                  (MT.SKU is null)',
+       @vRuleQueryType   = 'Update',
+       @vStatus          = 'NA', /* A-Active, I-In-Active, NA-Not Applicable */
+       @vSortSeq        += 1;
+
+insert into @Rules (RuleSetName, RuleCondition, RuleDescription, RuleQuery, RuleQueryType, SortSeq, Status)
+  select @vRuleSetName, @vRuleCondition, @vRuleDescription, @vRuleQuery, @vRuleQueryType, coalesce(@vSortSeq, 0), @vStatus;
+
+/*----------------------------------------------------------------------------*/
+/* Rule to update record action as U if it exists in MainTable and it has action as Insert */
+select @vRuleCondition   = '~FileType~ = ''SKU''',
+       @vRuleDescription = 'Process File: Update record action as U if it exists in MainTable',
+       @vRuleQuery       = 'update TT
+                            set RecordAction = ''U''
+                            from ~!TempTableName~ TT
+                              left outer join ~!MainTableName~ MT on (TT.KeyData      = MT.~!KeyFieldName~) and
+                                                                     (TT.BusinessUnit = MT.BusinessUnit)
+                            where (TT.RecordAction = ''I'') and
+                                  (MT.SKU is not null)',
+       @vRuleQueryType   = 'Update',
+       @vStatus          = 'NA', /* A-Active, I-In-Active, NA-Not Applicable */
+       @vSortSeq        += 1;
+
+insert into @Rules (RuleSetName, RuleCondition, RuleDescription, RuleQuery, RuleQueryType, SortSeq, Status)
+  select @vRuleSetName, @vRuleCondition, @vRuleDescription, @vRuleQuery, @vRuleQueryType, coalesce(@vSortSeq, 0), @vStatus;
+
+/*----------------------------------------------------------------------------*/
+/* Rule to validate SKUs */
+select @vRuleCondition   = '~FileType~ = ''SKU''',
+       @vRuleDescription = 'Process File: Update validation msg if SKU already exists',
+       @vRuleQuery       = 'update TT set TT.ValidationMsg += ''|| SKU does not exist''
+                            from ~!TempTableName~ TT
+                              left outer join SKUs S on (TT.SKU = S.SKU)
+                            where (TT.RecordAction not in ( ''I'')) and
+                                  (S.SKU is null);',
+       @vRuleQueryType   = 'Update',
+       @vStatus          = 'A', /* A-Active, I-In-Active, NA-Not Applicable */
+       @vSortSeq        += 1;
+
+insert into @Rules (RuleSetName, RuleCondition, RuleDescription, RuleQuery, RuleQueryType, SortSeq, Status)
+  select @vRuleSetName, @vRuleCondition, @vRuleDescription, @vRuleQuery, @vRuleQueryType, coalesce(@vSortSeq, 0), @vStatus;
+
+/*----------------------------------------------------------------------------*/
+/* Rule to validate SKUs if UOM is invalid */
+select @vRuleCondition   = '~FileType~ = ''SKU''',
+       @vRuleDescription = 'Process File: Update validation msg if UOM is invalid',
+       @vRuleQuery       = 'update TT set TT.ValidationMsg += ''|| Invalid UoM''
+                            from ~!TempTableName~ TT
+                              left outer join vwLookUps L on (TT.UoM = L.LookUpCode) and
+                                      (L.LookUpCategory = ''UoM'')
+                            where (TT.UoM is not null) and (coalesce(L.LookUpDescription, '''') = '''');',
+       @vRuleQueryType   = 'Update',
+       @vStatus          = 'A', /* A-Active, I-In-Active, NA-Not Applicable */
+       @vSortSeq        += 1;
+
+insert into @Rules (RuleSetName, RuleCondition, RuleDescription, RuleQuery, RuleQueryType, SortSeq, Status)
+  select @vRuleSetName, @vRuleCondition, @vRuleDescription, @vRuleQuery, @vRuleQueryType, coalesce(@vSortSeq, 0), @vStatus;
+
+/*----------------------------------------------------------------------------*/
+/* Rule to validate SKUs if SourceSystem is invalid */
+select @vRuleCondition   = '~FileType~ = ''SKU''',
+       @vRuleDescription = 'Process File: Update validation msg if SourceSystem is invalid',
+       @vRuleQuery       = 'update TT set TT.ValidationMsg += ''|| Source System is not valid''
+                            from ~!TempTableName~ TT
+                              left outer join vwLookUps L on (TT.SourceSystem = L.LookUpCode) and
+                                      (L.LookUpCategory = ''SourceSystem'')
+                            where (TT.SourceSystem is not null) and (coalesce(L.LookUpDescription, '''') = '''');',
+       @vRuleQueryType   = 'Update',
+       @vStatus          = 'A', /* A-Active, I-In-Active, NA-Not Applicable */
+       @vSortSeq        += 1;
+
+insert into @Rules (RuleSetName, RuleCondition, RuleDescription, RuleQuery, RuleQueryType, SortSeq, Status)
+  select @vRuleSetName, @vRuleCondition, @vRuleDescription, @vRuleQuery, @vRuleQueryType, coalesce(@vSortSeq, 0), @vStatus;
+
+/*----------------------------------------------------------------------------*/
+/* Rule to validate SKUs: We do not want to allow any deletes by diff source system */
+select @vRuleCondition   = '~FileType~ = ''SKU''',
+       @vRuleDescription = 'Process File: Update validation msg if tried to delete diff source system ',
+       @vRuleQuery       = 'update TT set TT.ValidationMsg += ''|| Cannot delete data sent from a different Source System''
+                            from ~!TempTableName~ TT
+                              join SKUs S on (TT.SKU = S.SKU) and (S.SourceSystem <> TT.SourceSystem)
+                            where (TT.RecordAction = ''D'' /* Delete */);',
+       @vRuleQueryType   = 'Update',
+       @vStatus          = 'A', /* A-Active, I-In-Active, NA-Not Applicable */
+       @vSortSeq        += 1;
+
+insert into @Rules (RuleSetName, RuleCondition, RuleDescription, RuleQuery, RuleQueryType, SortSeq, Status)
+  select @vRuleSetName, @vRuleCondition, @vRuleDescription, @vRuleQuery, @vRuleQueryType, coalesce(@vSortSeq, 0), @vStatus;
+
+/*----------------------------------------------------------------------------*/
+/* Rule to validate SKUs: We do not allow update SKUs sent from diff source system */
+select @vRuleCondition   = '~FileType~ = ''SKU''',
+       @vRuleDescription = 'Process File: Update validation msg if tried to update diff source system ',
+       @vRuleQuery       = 'update TT set TT.ValidationMsg += ''|| Cannot update data sent from a different Source System''
+                            from ~!TempTableName~ TT
+                              join SKUs S on (TT.SKU = S.SKU) and (S.SourceSystem <> TT.SourceSystem)
+                            where (TT.RecordAction = ''U'' /* Update */) and
+                                  (S.Status        = ''A'' /* Active */);',
+       @vRuleQueryType   = 'Update',
+       @vStatus          = 'A', /* A-Active, I-In-Active, NA-Not Applicable */
+       @vSortSeq        += 1;
+
+insert into @Rules (RuleSetName, RuleCondition, RuleDescription, RuleQuery, RuleQueryType, SortSeq, Status)
+  select @vRuleSetName, @vRuleCondition, @vRuleDescription, @vRuleQuery, @vRuleQueryType, coalesce(@vSortSeq, 0), @vStatus;
+
+/*----------------------------------------------------------------------------*/
+/* Rule to validate SKUs if UPC is invalid */
+select @vRuleCondition   = '~FileType~ = ''SKU''',
+       @vRuleDescription = 'Process File: Update validation msg if UPC is invalid',
+       @vRuleQuery       = 'update TT set TT.ValidationMsg += ''|| UPC is invalid as it is not numeric''
+                            from ~!TempTableName~ TT
+                            where (IsNumeric(TT.UPC) = ''0'') and (coalesce(TT.UPC, '''') <> '''');',
+       @vRuleQueryType   = 'Update',
+       @vStatus          = 'A', /* A-Active, I-In-Active, NA-Not Applicable */
+       @vSortSeq        += 1;
+
+insert into @Rules (RuleSetName, RuleCondition, RuleDescription, RuleQuery, RuleQueryType, SortSeq, Status)
+  select @vRuleSetName, @vRuleCondition, @vRuleDescription, @vRuleQuery, @vRuleQueryType, coalesce(@vSortSeq, 0), @vStatus;
+/******************************************************************************/
 /* Rule Set for Load Routing Info */
 /******************************************************************************/
 select @vRuleSetName        = 'ImportFile_LoadRoutingInfo',
@@ -392,6 +548,7 @@ select @vRuleSetName        = 'ImportFile_LoadRoutingInfo',
 
 insert into @RuleSets (RuleSetName, RuleSetDescription, RuleSetType, RuleSetFilter, SortSeq, Status, BusinessUnit)
   select @vRuleSetName, @vRuleSetDescription, @vRuleSetType, @vRuleSetFilter, coalesce(@vSortSeq, 0), @vStatus, @vBusinessUnit;
+
 /*----------------------------------------------------------------------------*/
 /* Rule to update records as Validation Failed */
 select @vRuleCondition   = null,
@@ -420,7 +577,7 @@ insert into @RuleSets (RuleSetName, RuleSetDescription, RuleSetType, RuleSetFilt
 /* Rule to update records as Validation Failed */
 select @vRuleCondition   = null,
        @vRuleDescription = 'Process File: Update records as Validation Failed if it has any ValidationMsg',
-       @vRuleQuery       = 'Update TMP set TMP.Validated      = case when coalesce(TMP.ValidationMsg, '''') <> ''''
+       @vRuleQuery       = 'update TMP set TMP.Validated      = case when coalesce(TMP.ValidationMsg, '''') <> ''''
                                                                   then ''N'' /* No */
                                                                 else ''Y'' /* Yes */
                                                                 end,
@@ -450,12 +607,12 @@ delete from @RuleSets;
 delete from @Rules;
 
 /******************************************************************************/
-/* Rule Set - Description of this RuleSet */
+/* Rule Set - Description of this Rule set */
 /******************************************************************************/
 select @vRuleSetName        = 'ImportFile_UpdateRecords',
        @vRuleSetDescription = 'Update existing records while importing',
        @vRuleSetFilter      = null,
-       @vSortSeq            = 0, -- Initialize for this set
+       @vSortSeq            = 900, -- Initialize for this set
        @vStatus             = 'A' /* Active */;
 
 insert into @RuleSets (RuleSetName, RuleSetDescription, RuleSetType, RuleSetFilter, SortSeq, Status, BusinessUnit)
@@ -465,7 +622,7 @@ insert into @RuleSets (RuleSetName, RuleSetDescription, RuleSetType, RuleSetFilt
 /* Rule to update Existing Records */
 select @vRuleCondition   = '~FileType~ = ''SPL''',
        @vRuleDescription = 'Process Data: Update existing records in SKUPriceList, if RecordAction is U ',
-       @vRuleQuery       = 'Update MT
+       @vRuleQuery       = 'update MT
                               set MT.RetailUnitPrice = coalesce(TT.RetailUnitPrice, MT.RetailUnitPrice),
                                   MT.UnitSalePrice   = coalesce(TT.UnitSalePrice, MT.UnitSalePrice)
                               from ~!MainTableName~ MT

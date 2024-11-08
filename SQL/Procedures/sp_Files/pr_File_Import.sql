@@ -5,6 +5,8 @@
 
   Date        Person  Comments
 
+  2022/03/04  GAG     pr_File_Import: Changed @vDatasetName and @vMainTableName to use function control as fn_Controls_GetAsString
+                      pr_File_Upload: Add required fields if fieldtype is of "LOCREP" (BK-766)
   2021/03/24  TK      pr_File_Import_Inventory_Process: Trim trailing spaces for inventory class (HA-GoLive)
   2021/03/19  TK      pr_File_Import_Inventory_Process: Bug fix to update pallet info on the LPNs that are created in the run (HA-2341)
   2021/03/15  RKC/TK  pr_File_Import_Inventory_Process: Made changes to update the pallet & locations on the newly created LPNs (HA-2285)
@@ -65,8 +67,9 @@ begin try /* pr_File_Import */
          @vControlCategory = 'Import_File_' + @FileType;
 
   /* Get the DatasetName & FileName of respective FileType , Assumption is we always send FileType from UI */
-  select @vDatasetName   = dbo.fn_Controls_GetAsPath(@vControlCategory, 'DataSetName', @FileType /* default */, @BusinessUnit, null /* UserId */),
-         @vMainTableName = dbo.fn_Controls_GetAsPath(@vControlCategory, 'TableName', @vDataSetName /* default */, @BusinessUnit, null /* UserId */),
+  /* GAG--> If @vDatasetName and @vMainTableName is given as fn_Controls_GetAspath it doesn't work and also we dont need full path name for those fields, so changing to "fn_Controls_GetAsString" */
+  select @vDatasetName   = dbo.fn_Controls_GetAsString(@vControlCategory, 'DataSetName', @FileType /* default */, @BusinessUnit, null /* UserId */),
+         @vMainTableName = dbo.fn_Controls_GetAsString(@vControlCategory, 'TableName', @vDataSetName /* default */, @BusinessUnit, null /* UserId */),
          @vKeyFieldName  = dbo.fn_Controls_GetAsString(@vControlCategory, 'KeyFieldName', 'UniqueId' /* default */, @BusinessUnit, null /* UserId */),
          @vImportProcess = dbo.fn_Controls_GetAsString(@vControlCategory, 'ImportProcess', 'IUDSQL,Rules,Procedure' /* default */, @BusinessUnit, null /* UserId */),
          @vFileName      = replace(@TempTableName , 'Imp' + '_' + @FileType + '_', ''); --FileName to use in InterfaceLog

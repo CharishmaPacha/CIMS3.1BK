@@ -18,6 +18,7 @@
   2022/06/13  VS      Added UpdateInvSnapShot, ExportInvSnapshot (FBV3-1203)
   2022/05/04  RKC     Added CrossLocationSubstitution, CrossWarehouseSubstitution under BatchPicking (BK-819)
   2022/04/13  VS      Added PickBatch_BKPP wave controls (BK-800)
+  2022/03/10  PHK     Added Import_File_SKU to import SKUs from UI via CVS file (HA-109)
   2022/02/23  VS      Added DefaultEmailId for ShipLabels category (CIMSV3-1780)
   2021/12/08  NB      Added UI Control to Root Category, FolderPath_UI to ExportToExcel(CIMSV3-810)
   2021/11/11  KBB     Added InventoryChanges (BK-642)
@@ -1208,6 +1209,23 @@ exec pr_Controls_Setup @ControlCategory, @Controls, 'IU' /* Insert/Update */;
 Go
 
 /*----------------------------------------------------------------------------*/
+/* Import_File - FileType is SKU */
+/*----------------------------------------------------------------------------*/
+declare @Controls TControlsTable, @ControlCategory TCategory = 'Import_File_SKU';
+
+insert into @Controls
+            (ControlCode,                  Description,                                       ControlValue,            DataType,  Visible)
+      select 'FilePath_UI',                'File Path in UI Server',                          'TempData\ImportFiles\Xfer\',
+                                                                                                                       'S',       1
+union select 'TemplateFileName',           'Template File Name',                              'SKUs.csv',              'S',       1
+union select 'KeyFieldName',               'Entity Field Name',                               'SKU',                   'S',       0
+union select 'DataSetName',                'Data set that is used being imported',            'SKUs',                  'S',       0
+union select 'TableName',                  'Actual Table data is being imported into',        'SKUs',                  'S',       0
+
+exec pr_Controls_Setup @ControlCategory, @Controls, 'IU' /* Insert/Update */;
+
+Go
+
 /*--------------------------- Interface-Exports ------------------------------*/
 /*----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/

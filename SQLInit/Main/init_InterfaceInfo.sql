@@ -18,7 +18,8 @@ delete from LookUps where LookUpCategory = @LookUpCategory;
 
 insert into @FileTypes
        (LookUpCode,  LookUpDescription,        Status)
-values ('SPL',       'SKU Price List',         'A'),
+values ('SKU',       'SKU',                    'A'),
+       ('SPL',       'SKU Price List',         'A'),
        ('LOC',       'Location',               'A'),
        ('PL',        'Packing List',           'I'),
        ('RT',        'Report Templates',       'A'),
