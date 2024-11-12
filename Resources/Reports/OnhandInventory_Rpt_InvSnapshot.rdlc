@@ -358,7 +358,6 @@
                     <TablixCell>
                       <CellContents>
                         <Textbox Name="lblSKU">
-                          <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
@@ -378,8 +377,7 @@
                           </Paragraphs>
                           <Style>
                             <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
+                              <Style>None</Style>
                             </Border>
                             <BackgroundColor>LightGrey</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
@@ -391,7 +389,6 @@
                     <TablixCell>
                       <CellContents>
                         <Textbox Name="lblStyle">
-                          <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
@@ -411,8 +408,7 @@
                           </Paragraphs>
                           <Style>
                             <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
+                              <Style>None</Style>
                             </Border>
                             <BackgroundColor>LightGrey</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
@@ -424,7 +420,6 @@
                     <TablixCell>
                       <CellContents>
                         <Textbox Name="lblColor">
-                          <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
@@ -444,8 +439,7 @@
                           </Paragraphs>
                           <Style>
                             <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
+                              <Style>None</Style>
                             </Border>
                             <BackgroundColor>LightGrey</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
@@ -457,7 +451,6 @@
                     <TablixCell>
                       <CellContents>
                         <Textbox Name="lblSize">
-                          <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
@@ -477,8 +470,7 @@
                           </Paragraphs>
                           <Style>
                             <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
+                              <Style>None</Style>
                             </Border>
                             <BackgroundColor>LightGrey</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
@@ -489,7 +481,6 @@
                     <TablixCell>
                       <CellContents>
                         <Textbox Name="lblLPN">
-                          <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
@@ -509,8 +500,7 @@
                           </Paragraphs>
                           <Style>
                             <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
+                              <Style>None</Style>
                             </Border>
                             <BackgroundColor>LightGrey</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
@@ -522,7 +512,6 @@
                     <TablixCell>
                       <CellContents>
                         <Textbox Name="lblLocation">
-                          <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
@@ -542,8 +531,7 @@
                           </Paragraphs>
                           <Style>
                             <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
+                              <Style>None</Style>
                             </Border>
                             <BackgroundColor>LightGrey</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
@@ -555,7 +543,6 @@
                     <TablixCell>
                       <CellContents>
                         <Textbox Name="lblWarehouse">
-                          <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
@@ -575,8 +562,7 @@
                           </Paragraphs>
                           <Style>
                             <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
+                              <Style>None</Style>
                             </Border>
                             <BackgroundColor>LightGrey</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
@@ -588,7 +574,6 @@
                     <TablixCell>
                       <CellContents>
                         <Textbox Name="lblQuantity">
-                          <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
@@ -608,8 +593,7 @@
                           </Paragraphs>
                           <Style>
                             <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
+                              <Style>None</Style>
                             </Border>
                             <BackgroundColor>LightGrey</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
@@ -620,7 +604,6 @@
                     <TablixCell>
                       <CellContents>
                         <Textbox Name="lblReservedQty">
-                          <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
@@ -640,8 +623,7 @@
                           </Paragraphs>
                           <Style>
                             <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
+                              <Style>None</Style>
                             </Border>
                             <BackgroundColor>LightGrey</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
@@ -652,7 +634,6 @@
                     <TablixCell>
                       <CellContents>
                         <Textbox Name="lblAvailableQty">
-                          <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
@@ -672,8 +653,7 @@
                           </Paragraphs>
                           <Style>
                             <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
+                              <Style>None</Style>
                             </Border>
                             <BackgroundColor>LightGrey</BackgroundColor>
                             <VerticalAlign>Middle</VerticalAlign>
@@ -708,7 +688,6 @@
                           </Paragraphs>
                           <Style>
                             <Border>
-                              <Color>White</Color>
                               <Style>None</Style>
                             </Border>
                             <VerticalAlign>Middle</VerticalAlign>
@@ -739,8 +718,7 @@
                           </Paragraphs>
                           <Style>
                             <Border>
-                              <Color>White</Color>
-                              <Style>Solid</Style>
+                              <Style>None</Style>
                             </Border>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
@@ -770,8 +748,7 @@
                           </Paragraphs>
                           <Style>
                             <Border>
-                              <Color>White</Color>
-                              <Style>Solid</Style>
+                              <Style>None</Style>
                             </Border>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
@@ -801,8 +778,7 @@
                           </Paragraphs>
                           <Style>
                             <Border>
-                              <Color>White</Color>
-                              <Style>Solid</Style>
+                              <Style>None</Style>
                             </Border>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
@@ -832,8 +808,7 @@
                           </Paragraphs>
                           <Style>
                             <Border>
-                              <Color>White</Color>
-                              <Style>Solid</Style>
+                              <Style>None</Style>
                             </Border>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
@@ -863,8 +838,7 @@
                           </Paragraphs>
                           <Style>
                             <Border>
-                              <Color>White</Color>
-                              <Style>Solid</Style>
+                              <Style>None</Style>
                             </Border>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
@@ -894,8 +868,7 @@
                           </Paragraphs>
                           <Style>
                             <Border>
-                              <Color>White</Color>
-                              <Style>Solid</Style>
+                              <Style>None</Style>
                             </Border>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>2pt</PaddingLeft>
@@ -924,8 +897,7 @@
                           </Paragraphs>
                           <Style>
                             <Border>
-                              <Color>White</Color>
-                              <Style>Solid</Style>
+                              <Style>None</Style>
                             </Border>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingRight>4pt</PaddingRight>
@@ -954,8 +926,7 @@
                           </Paragraphs>
                           <Style>
                             <Border>
-                              <Color>White</Color>
-                              <Style>Solid</Style>
+                              <Style>None</Style>
                             </Border>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingRight>3pt</PaddingRight>
@@ -984,8 +955,7 @@
                           </Paragraphs>
                           <Style>
                             <Border>
-                              <Color>White</Color>
-                              <Style>Solid</Style>
+                              <Style>None</Style>
                             </Border>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingRight>4pt</PaddingRight>
@@ -1048,7 +1018,7 @@
               <Value>CIMSLogo_201808231</Value>
               <Sizing>FitProportional</Sizing>
               <Top>0.15875cm</Top>
-              <Left>0.31746cm</Left>
+              <Left>0.1in</Left>
               <Height>2.88396cm</Height>
               <Width>4.68313cm</Width>
               <Style>
@@ -1058,7 +1028,6 @@
               </Style>
             </Image>
             <Textbox Name="lblHeading">
-              <CanGrow>true</CanGrow>
               <KeepTogether>true</KeepTogether>
               <Paragraphs>
                 <Paragraph>
@@ -1108,7 +1077,7 @@
           </Style>
         </PageHeader>
         <PageFooter>
-          <Height>0.27811in</Height>
+          <Height>0.31278in</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
@@ -1130,25 +1099,10 @@
                       <Style />
                     </Paragraph>
                   </Paragraphs>
-                  <Top>0.08806cm</Top>
                   <Height>0.16in</Height>
                   <Width>3.06691in</Width>
                   <Style>
-                    <Border>
-                      <Color>White</Color>
-                    </Border>
-                    <TopBorder>
-                      <Style>Solid</Style>
-                    </TopBorder>
-                    <BottomBorder>
-                      <Style>Solid</Style>
-                    </BottomBorder>
-                    <LeftBorder>
-                      <Style>Solid</Style>
-                    </LeftBorder>
-                    <RightBorder>
-                      <Style>Solid</Style>
-                    </RightBorder>
+                    <Border />
                   </Style>
                 </Textbox>
                 <Textbox Name="PageNumber">
@@ -1169,8 +1123,7 @@
                       </Style>
                     </Paragraph>
                   </Paragraphs>
-                  <Top>0.08806cm</Top>
-                  <Left>9.37392in</Left>
+                  <Left>9.34418in</Left>
                   <Height>0.16in</Height>
                   <Width>3.18979cm</Width>
                   <ZIndex>1</ZIndex>
@@ -1184,7 +1137,7 @@
               </ReportItems>
               <DataElementOutput>ContentsOnly</DataElementOutput>
               <Top>0.3cm</Top>
-              <Left>0.07026in</Left>
+              <Left>0.1in</Left>
               <Height>0.4064cm</Height>
               <Width>10.62974in</Width>
               <Style>
