@@ -1015,19 +1015,17 @@
               <TablixMembers>
                 <TablixMember>
                   <KeepWithGroup>After</KeepWithGroup>
+                  <RepeatOnNewPage>true</RepeatOnNewPage>
                 </TablixMember>
                 <TablixMember>
                   <Group Name="Details" />
                 </TablixMember>
               </TablixMembers>
             </TablixRowHierarchy>
-            <RepeatColumnHeaders>true</RepeatColumnHeaders>
-            <RepeatRowHeaders>true</RepeatRowHeaders>
             <DataSetName>Inventory_InvSnapshot</DataSetName>
-            <Top>0.16292in</Top>
             <Left>0.1in</Left>
             <Height>0.55in</Height>
-            <Width>10.6in</Width>
+            <Width>10.60001in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1035,13 +1033,13 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>2.22711cm</Height>
+        <Height>1.49332cm</Height>
         <Style />
       </Body>
       <Width>10.8in</Width>
       <Page>
         <PageHeader>
-          <Height>3.25367cm</Height>
+          <Height>3.31717cm</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
@@ -1086,6 +1084,18 @@
                 </Border>
               </Style>
             </Textbox>
+            <Line Name="Line1">
+              <Top>1.18931in</Top>
+              <Height>0in</Height>
+              <Width>10.8in</Width>
+              <ZIndex>2</ZIndex>
+              <Style>
+                <Border>
+                  <Style>Solid</Style>
+                  <Width>2pt</Width>
+                </Border>
+              </Style>
+            </Line>
           </ReportItems>
           <Style>
             <Border>
@@ -1093,12 +1103,12 @@
               <Width>2pt</Width>
             </Border>
             <BottomBorder>
-              <Style>Solid</Style>
+              <Style>None</Style>
             </BottomBorder>
           </Style>
         </PageHeader>
         <PageFooter>
-          <Height>0.299in</Height>
+          <Height>0.27811in</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
@@ -1120,6 +1130,7 @@
                       <Style />
                     </Paragraph>
                   </Paragraphs>
+                  <Top>0.08806cm</Top>
                   <Height>0.16in</Height>
                   <Width>3.06691in</Width>
                   <Style>
@@ -1158,6 +1169,7 @@
                       </Style>
                     </Paragraph>
                   </Paragraphs>
+                  <Top>0.08806cm</Top>
                   <Left>9.37392in</Left>
                   <Height>0.16in</Height>
                   <Width>3.18979cm</Width>
@@ -1171,7 +1183,7 @@
                 </Textbox>
               </ReportItems>
               <DataElementOutput>ContentsOnly</DataElementOutput>
-              <Top>0.07056cm</Top>
+              <Top>0.3cm</Top>
               <Left>0.07026in</Left>
               <Height>0.4064cm</Height>
               <Width>10.62974in</Width>
@@ -1181,10 +1193,23 @@
                 </TopBorder>
               </Style>
             </Rectangle>
+            <Line Name="Line2">
+              <Top>0.05722in</Top>
+              <Height>0in</Height>
+              <Width>10.8in</Width>
+              <ZIndex>1</ZIndex>
+              <Style>
+                <Border>
+                  <Style>Solid</Style>
+                  <Width>2pt</Width>
+                </Border>
+              </Style>
+            </Line>
           </ReportItems>
           <Style>
             <Border>
               <Style>None</Style>
+              <Width>2pt</Width>
             </Border>
           </Style>
         </PageFooter>
