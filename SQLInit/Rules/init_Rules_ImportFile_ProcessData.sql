@@ -5,6 +5,7 @@
 
   Date        Person  Comments
 
+  2024/11/12  PHK     Temp Changes to able to do Imports for SKUs (BK-1160)
   2022/03/10  PHK     Added new rules for SKUs file Imports (HA-109)
   2021/03/13  RKC     Added new rules to add the 0 in prefix for 04, 08 WH (HA-2252)
   2021/02/05  RKC     Added new rules for import inventory (CIMSV3-1323)
@@ -106,7 +107,7 @@ select @vRuleCondition   = '~FileType~ in (''SKU'')',
        @vRuleQuery       = 'update ~!TempTableName~
                             set Archived = ''N''',
        @vRuleQueryType   = 'Update',
-       @vStatus          = 'A', /* A-Active, I-In-Active, NA-Not Applicable */
+       @vStatus          = 'I', /* A-Active, I-In-Active, NA-Not Applicable */
        @vSortSeq        += 1;
 
 insert into @Rules (RuleSetName, RuleCondition, RuleDescription, RuleQuery, RuleQueryType, SortSeq, Status)
