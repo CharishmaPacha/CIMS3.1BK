@@ -5,6 +5,7 @@
 
   Date        Person  Comments
 
+  2024/11/07  CHP     Added CC.Rpt.ResultsList (BK-1150)
   2023/03/29  RKC     Added Waves.Act.PreprocessOrders (BK-1036)
   2022/08/04  SAK     Added permissions for PickTasks.Act.ConfirmPicks (BK-864)
   2022/04/21  SRP     Added SKU Velocity (BK-813)
@@ -769,6 +770,12 @@ insert into @ttP select 'CycleCountTasks.Act.Cancel',           'Cancel Cycle Co
 insert into @ttP select 'CycleCountTasks.Act.AssignToUser',     'Assign To User',             1,        1,         null,    'CycleCountTasks.Actions'
 insert into @ttP select 'CycleCountTasks.Act.PrintTaskLabels',  'Print Cycle Count Task labels',
                                                                                               1,        1,         null,    'CycleCountTasks.Actions'
+                                                                                             
+/*--------------------*/
+/* Cycle Count Results Actions */
+/*--------------------*/
+insert into @ttP select 'CycleCountResults.Actions',            'Actions',                    1,        1,         null,    'CycleCountResults'
+insert into @ttP select 'CC.Rpt.ResultsList',                   'CC Results List Report',     1,        1,         null,    'CycleCountResults.Actions'
 
 /*--------------------------------------------*/
 /* Privileges & Overrides - Cycle Counting */
