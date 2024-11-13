@@ -5,6 +5,8 @@
 
   Date        Person  Comments
 
+  2023/08/22  GAG     pr_AMF_Inventory_ValidateSKU: Made changes to get control for Inventory Class and added BuildInventory for Operation (CIMSV3-3035)
+  2023/08/24  VKN     pr_AMF_Inventory_ValidateSKU: Changes to get the dropdown list for labelformats (CIMSV3-3034) 
   pr_AMF_Inventory_ValidateSKU: Made changes(HA-1839)
   2020/11/13  RIA     Added pr_AMF_Inventory_ModifySKU, pr_AMF_Inventory_ValidateSKU (CIMSV3-1108)
 ------------------------------------------------------------------------------*/
@@ -51,10 +53,15 @@ as
           @vOwnershipXML             TXML,
           @vWarehouseXML             TXML,
           @vReasonCodesXML           TXML,
+          @vLabelFormatXML           TXML,
           @vSKUId                    TRecordId,
           @vSKU                      TSKU,
           @vStatus                   TStatus,
-          @vWorkFlowSkipped          TFlags;
+          @Pallet                    TPallet,
+          @Location                  TLocation,
+          @vWorkFlowSkipped          TFlags,
+          @vInventoryClassesUsed     TControlValue;
+  declare @ttLabelFormats            TAMFNameValueOptions;
 begin /* pr_AMF_Inventory_ValidateSKU */
 
   select @vxmlInput = convert(xml, @InputXML);  /* Convert input into xml var */
@@ -74,6 +81,9 @@ begin /* pr_AMF_Inventory_ValidateSKU */
          @vOperation       = Record.Col.value('(Data/Operation)[1]',                  'TOperation'   )
   from @vxmlInput.nodes('/Root') as Record(Col)
   OPTION (OPTIMIZE FOR (@vxmlInput = null));
+
+  /* Get InventoryClass used from Controls */
+  select @vInventoryClassesUsed = dbo.fn_Controls_GetAsString(@vOperation, 'InventoryClassesUsed', '' /* default */, @vBusinessUnit, @vUserId);
 
   /* Return and do nothing if skipped and came to new workflow */
   if (@vWorkFlowSkipped = 'Y')
@@ -103,8 +113,8 @@ begin /* pr_AMF_Inventory_ValidateSKU */
   exec pr_AMF_Info_GetSKUInfoXML @vSKUId, 'N', @vOperation,
                                  @vSKUInfoXML output, @vSKUDetailsXML output;
 
-  /* if operation is create inventory lpn */
-  if (@vOperation = 'CreateInvLPN')
+  /* Build LookUps based on Operation */
+  if (@vOperation in ('CreateInvLPN', 'BuildInventory'))
     begin
 
       /* Fetch the InventoryClass1 values */
@@ -115,21 +125,36 @@ begin /* pr_AMF_Inventory_ValidateSKU */
       exec pr_AMF_BuildLookUpList 'Owner' /* Look up Category */, 'Ownership',
                                   'select Owner', @vBusinessunit, @vOwnershipXML output;
 
-      /* Fetch the Warehouses */
+      /* Fetch the warehouses */
       exec pr_AMF_BuildLookUpList 'Warehouse' /* Look up Category */, 'Warehouse',
                                   'select Warehouse', @vBusinessunit, @vWarehouseXML output;
 
       /* Fetch the reason codes for creating inventory */
       exec pr_AMF_BuildLookUpList 'RC_LPNCreateInv' /* Look up Category */, 'ReasonCodes',
                                   'select a reason', @vBusinessunit, @vReasonCodesXML output;
+
+     /* Creating #table for inserting label format name and desc */
+     select * into #LabelFormats from @ttLabelFormats
+
+     /* Get the list of Label Formats to show in dropdown */
+     insert into #LabelFormats(Name, Value)
+       select LabelFormatDesc, LabelFormatName
+       from LabelFormats
+       where (EntityType = 'LPN') and (BusinessUnit = @vBusinessUnit) and (Status = 'A')
+       order by SortSeq, LabelFormatDesc;
+
+     /* get the list of Label Formats to show in dropdown */
+     exec pr_AMF_BuildDropDownList 'LabelFormats', 'LabelFormatToPrint', 'select Label Format', @vBusinessUnit, @vLabelFormatXML out;
+
     end
 
   /* Build the DataXML */
   select @DataXML = dbo.fn_XmlNode('Data', coalesce(@vSKUInfoXML, '') + coalesce(@vSKUDetailsXML, '') +
                                    coalesce(@vInvClass1XML, '') + coalesce(@vOwnershipXML, '') +
-                                   coalesce(@vWarehouseXML, '') + coalesce(@vReasonCodesXML,''));
+                                   coalesce(@vWarehouseXML, '') + coalesce(@vReasonCodesXML,'') +
+                                   dbo.fn_XMLNode('InventoryClassesUsed', @vInventoryClassesUsed) +
+                                   coalesce(@vLabelFormatXML, ''));
 
 end /* pr_AMF_Inventory_ValidateSKU */
 
 Go
-

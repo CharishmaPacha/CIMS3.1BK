@@ -5,6 +5,7 @@
 
   Date        Person  Comments
 
+  2023/08/22  VKN     Added RFBuildInventory (CIMSV3-3034)
   2021/04/26  RIA     Added Build Load (HA-2675)
   2021/03/19  RIA     Added LoadInquiry (HA-2347)
   2021/02/26  RIA     Added Cancel ShipCartons (HA-2087)
@@ -134,8 +135,9 @@ select @ParentMenuName = 'RFInventoryManagement';
 
 insert into #AMFMenuDetails
             (MenuName,                  Caption,                      Visible, Status, WorkFlowName,                 PermissionName,               ParentMenuName,   SortSeq)
-      select 'RFCreateNewLPN',          'Create Inventory LPN',       1,       'A',    'Inventory_CreateInvLPN',     'RFCreateNewLPN',             @ParentMenuName,  1
-union select 'RFMoveLPN',               'Move LPN',                   1,       'A',    'Inventory_MoveLPN',          'RFMoveLPN',                  @ParentMenuName,  2
+      select 'RFBuildInventory',        'Build Inventory',            1,       'A',    'Inventory_BuildInventory',   'RFBuildInventory',           @ParentMenuName,  1
+union select 'RFCreateNewLPN',          'Create Inventory LPN',       1,       'A',    'Inventory_CreateInvLPN',     'RFCreateNewLPN',             @ParentMenuName,  2
+union select 'RFMoveLPN',               'Move LPN',                   1,       'A',    'Inventory_MoveLPN',          'RFMoveLPN',                  @ParentMenuName,  3
 union select 'RFAdjustQuantity',        'Adjust LPN/Location Quantity',
                                                                       1,       'A',    'Inventory_AdjustQty',        'RFAdjustQuantity',           @ParentMenuName,  3
 union select 'RFAdjustLocationQuantity','Adjust Location Quantity',   0,       'I',    null,                         'RFAdjustLocationQuantity',   @ParentMenuName,  4
