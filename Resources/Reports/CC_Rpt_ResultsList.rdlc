@@ -2304,7 +2304,7 @@ Change</Value>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>CycleCountResults_CCResultsInfo</DataSetName>
-            <Top>0.005in</Top>
+            <Top>0.01in</Top>
             <Left>0.1in</Left>
             <Height>0.84012in</Height>
             <Width>10.45222in</Width>
