@@ -5,6 +5,7 @@
 
   Date        Person  Comments
 
+  2024/11/06  RV      Added OnhandInventory_Rpt_InvSnapshot (BK-1149)
   2023/03/27  LAC     Added Waves_PreprocessOrders (BK-1036)
   2023/03/22  PKK     Added Waves_ApproveToRelease (BK-1033)
   2022/08/04  SAK     Added action Tasks_ConfirmPicks used for confrim picks to be completed (BK-864)
@@ -614,6 +615,18 @@ insert into UIActionDetails
       select 'Mapping_Add',                  'Mapping.Act.Add',                  'Create Mapping',              @ExecuteDialog,      @Entity,  'A',         'D',                  'Mapping_Add',                 'N',                null,                       null,                         'N',           1,                0,                 1,       'pr_Mapping_Action_AddorUpdate',                                      @ParentActionId, BusinessUnit from vwBusinessUnits
 union select 'Mapping_Edit',                 'Mapping.Act.Edit',                 'Edit Mapping',                @ExecuteDialog,      @Entity,  'A',         'D',                  'Mapping_Edit',                'M',                null,                       null,                         'N',           100,              0,                 2,       'pr_Mapping_Action_AddorUpdate',                                      @ParentActionId, BusinessUnit from vwBusinessUnits
 union select 'Mapping_Delete',               'Mapping.Act.Delete',               'Delete Mapping',              @ExecuteNoDialog,    @Entity,  'A',         'N',                   null,                         'M',                null,                       null,                         'Y',           100,              0,                 3,       'pr_Mapping_Action_Delete',                                           @ParentActionId, BusinessUnit from vwBusinessUnits
+
+/******************************************************************************/
+/* List.OnhandInventory actions */
+select @ContextName    = 'List.OnhandInventory',
+       @ParentActionId = 'List.OnhandInventory.Actions',
+       @Entity         = 'OnhandInventory';
+
+insert into UIActionDetails
+            (ActionId,                          PermissionName,                     Caption,                       UITarget,               Entity,   LayoutType,  ActionInputFormType,  ActionInputFormName,           SelectionCriteria,  ActionActivationFieldName,  ActionActivationFieldValues,  ConfirmAction,  ConfirmChangeToSubmit,  MaxRecordsPerRun, StartNewMenuGroup, SortSeq, ActionProcedureName,                                                  ParentActionId,  BusinessUnit )
+            output INSERTED.ActionId, @ContextName, INSERTED.BusinessUnit into UIActionContexts(ActionId, ContextName, BusinessUnit)
+      /* Actions for Reports */
+      select 'OnhandInventory_Rpt_InvSnapshot', 'OnhandInventory.Rpt.InvSnapshot',  'Inventory Snapshot',          @ExecuteReportNoDialog, @Entity,  'L',         'N',                  null,                          'Multiple',         null,                       null,                         'N',            'No',                   10,               0,                 50,      null,                                                                 @ParentActionId, BusinessUnit from vwBusinessUnits
 
 /******************************************************************************/
 /* List.Orders actions */

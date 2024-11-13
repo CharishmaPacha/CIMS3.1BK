@@ -5,6 +5,7 @@
 
   Date        Person  Comments
 
+  2024/11/08  RV      Added OnhandInventory.Rpt.InvSnapshot (BK-1149)
   2023/08/22  VKN     Added permission for RFBuildInventory (CIMSV3-3034)
   2023/03/29  RKC     Added Waves.Act.PreprocessOrders (BK-1036)
   2022/08/04  SAK     Added permissions for PickTasks.Act.ConfirmPicks (BK-864)
@@ -790,6 +791,7 @@ insert into @ttP select 'OnhandInventory.View',            'Onhand Inventory Exp
 insert into @ttP select 'OnhandInventory.Actions',         'Onhand Inventory Export',         0,        0,         null,    'OnhandInventory'
 insert into @ttP select 'OnhandInventory.Act.ExportOnhandInventory',
                                                            'Export Onhand Inventory',         0,        0,         null,    'OnhandInventory.Actions'
+insert into @ttP select 'OnhandInventory.Rpt.InvSnapshot', 'Inventory Snapshot',              1,        1,         null,    'OnhandInventory.Actions'
 /*----------------------------------------------------------------------------------------------------------------------------------------*/
 /*                                          Permissions for Order Fullfilment Menu - Sub Menu items Actions                                       */
 /*----------------------------------------------------------------------------------------------------------------------------------------*/

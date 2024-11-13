@@ -82,6 +82,7 @@ insert into @ttLF select 'ReservedIPs',                 null,   null,   null,   
 insert into @ttLF select 'AvailableIPs',                null,   null,   null,               null, null
 
 insert into @ttLF select 'LPN',                         null,   null,   null,               null, null
+insert into @ttLF select 'LPNDetailId',                 null,     -3,   null,               null, null
 insert into @ttLF select 'Location',                    null,   null,   null,               null, null
 insert into @ttLF select 'Lot',                         null,   null,   null,               null, null
 insert into @ttLF select 'InventoryClass1',             null,   null,   null,               null, null
@@ -95,11 +96,11 @@ insert into @ttLF select 'ProdCategory',                null,     -1,   null,   
 insert into @ttLF select 'ProdSubCategory',             null,     -1,   null,               null, null
 insert into @ttLF select 'ABCClass',                    null,   null,   null,               null, null
 insert into @ttLF select 'SKUSortOrder',                null,   null,   null,               null, null
-
+insert into @ttLF select 'InventoryKey',                null,     -3,   null,               null, null
 insert into @ttLF select 'Businessunit',                null,   null,   null,               null, null
 
 /* Add the fields for this Layout */
-exec pr_LayoutFields_Setup @ContextName, 'Standard', @ttLF, @DataSetName, null /* KeyFields */;
+exec pr_LayoutFields_Setup @ContextName, 'Standard', @ttLF, @DataSetName, 'LPNDetailId;InventoryKey' /* KeyFields */;
 
 /******************************************************************************/
 /* Summary Layouts Details */

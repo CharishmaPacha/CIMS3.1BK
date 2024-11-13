@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="Inventory" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xs:element name="Inventory" msdata:IsDataSet="true" msdata:Locale="en-US">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="InvSnapshot">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="SKUId" type="xs:string" minOccurs="0" />
+              <xs:element name="SKU" type="xs:string" minOccurs="0" />
+              <xs:element name="SKU1" type="xs:string" minOccurs="0" />
+              <xs:element name="SKU2" type="xs:string" minOccurs="0" />
+              <xs:element name="SKU3" type="xs:string" minOccurs="0" />
+              <xs:element name="SKU4" type="xs:string" minOccurs="0" />
+              <xs:element name="SKU5" type="xs:string" minOccurs="0" />
+              <xs:element name="Description" type="xs:string" minOccurs="0" />
+              <xs:element name="SKU1Description" type="xs:string" minOccurs="0" />
+              <xs:element name="SKU2Description" type="xs:string" minOccurs="0" />
+              <xs:element name="SKU3Description" type="xs:string" minOccurs="0" />
+              <xs:element name="SKU4Description" type="xs:string" minOccurs="0" />
+              <xs:element name="SKU5Description" type="xs:string" minOccurs="0" />
+              <xs:element name="UPC" type="xs:string" minOccurs="0" />
+              <xs:element name="Brand" type="xs:string" minOccurs="0" />
+              <xs:element name="ProdCategory" type="xs:string" minOccurs="0" />
+              <xs:element name="ProdSubCategory" type="xs:string" minOccurs="0" />
+              <xs:element name="ABCClass" type="xs:string" minOccurs="0" />
+              <xs:element name="SKUSortOrder" type="xs:string" minOccurs="0" />
+              <xs:element name="UnitPrice" type="xs:string" minOccurs="0" />
+              <xs:element name="UoM" type="xs:string" minOccurs="0" />
+              <xs:element name="UnitsPerInnerPack" type="xs:string" minOccurs="0" />
+              <xs:element name="SourceSystem" type="xs:string" minOccurs="0" />
+              <xs:element name="LPNId" type="xs:string" minOccurs="0" />
+              <xs:element name="LPN" type="xs:string" minOccurs="0" />
+              <xs:element name="LPNDetailId" type="xs:string" minOccurs="0" />
+              <xs:element name="Location" type="xs:string" minOccurs="0" />
+              <xs:element name="LPNOnHandStatus" type="xs:string" minOccurs="0" />
+              <xs:element name="Status" type="xs:string" minOccurs="0" />
+              <xs:element name="Warehouse" type="xs:string" minOccurs="0" />
+              <xs:element name="Ownership" type="xs:string" minOccurs="0" />
+              <xs:element name="Lot" type="xs:string" minOccurs="0" />
+              <xs:element name="InventoryClass1" type="xs:string" minOccurs="0" />
+              <xs:element name="InventoryClass2" type="xs:string" minOccurs="0" />
+              <xs:element name="InventoryClass3" type="xs:string" minOccurs="0" />
+              <xs:element name="ExpiryDate" type="xs:string" minOccurs="0" />
+              <xs:element name="DestWarehouse" type="xs:string" minOccurs="0" />
+              <xs:element name="LPNType" type="xs:string" minOccurs="0" />
+              <xs:element name="LPNTypeDescription" type="xs:string" minOccurs="0" />
+              <xs:element name="Reference" type="xs:string" minOccurs="0" />
+              <xs:element name="Pallet" type="xs:string" minOccurs="0" />
+              <xs:element name="PickingZone" type="xs:string" minOccurs="0" />
+              <xs:element name="InnerPacks" type="xs:string" minOccurs="0" />
+              <xs:element name="AvailableIPs" type="xs:string" minOccurs="0" />
+              <xs:element name="ReservedIPs" type="xs:string" minOccurs="0" />
+              <xs:element name="ReceivedIPs" type="xs:string" minOccurs="0" />
+              <xs:element name="Quantity" type="xs:string" minOccurs="0" />
+              <xs:element name="AvailableQty" type="xs:string" minOccurs="0" />
+              <xs:element name="ReservedQty" type="xs:string" minOccurs="0" />
+              <xs:element name="ReceivedQty" type="xs:string" minOccurs="0" />
+              <xs:element name="AvailableToReserve" type="xs:string" minOccurs="0" />
+              <xs:element name="OnhandStatus" type="xs:string" minOccurs="0" />
+              <xs:element name="OHStatus" type="xs:string" minOccurs="0" />
+              <xs:element name="BusinessUnit" type="xs:string" minOccurs="0" />
+              <xs:element name="InventoryKey" type="xs:string" minOccurs="0" />
+              <xs:element name="vwEOHINV_UDF1" type="xs:string" minOccurs="0" />
+              <xs:element name="vwEOHINV_UDF2" type="xs:string" minOccurs="0" />
+              <xs:element name="vwEOHINV_UDF3" type="xs:string" minOccurs="0" />
+              <xs:element name="vwEOHINV_UDF4" type="xs:string" minOccurs="0" />
+              <xs:element name="vwEOHINV_UDF5" type="xs:string" minOccurs="0" />
+              <xs:element name="vwEOHINV_UDF6" type="xs:string" minOccurs="0" />
+              <xs:element name="vwEOHINV_UDF7" type="xs:string" minOccurs="0" />
+              <xs:element name="vwEOHINV_UDF8" type="xs:string" minOccurs="0" />
+              <xs:element name="vwEOHINV_UDF9" type="xs:string" minOccurs="0" />
+              <xs:element name="vwEOHINV_UDF10" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
