@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="CCResultsList" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xs:element name="CCResultsList" msdata:IsDataSet="true" msdata:Locale="en-US">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="CCResultsInfo">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="TaskId" type="xs:string" minOccurs="0" />
+              <xs:element name="TaskDetailId" type="xs:string" minOccurs="0" />
+              <xs:element name="TransactionDate" type="xs:string" minOccurs="0" />
+              <xs:element name="BatchNo" type="xs:string" minOccurs="0" />
+              <xs:element name="CC_TaskCategory1" type="xs:string" minOccurs="0" />
+              <xs:element name="CC_TaskCategory2" type="xs:string" minOccurs="0" />
+              <xs:element name="CC_TaskCategory3" type="xs:string" minOccurs="0" />
+              <xs:element name="CC_TaskCategory4" type="xs:string" minOccurs="0" />
+              <xs:element name="CC_TaskCategory5" type="xs:string" minOccurs="0" />
+              <xs:element name="LPNId" type="xs:string" minOccurs="0" />
+              <xs:element name="LPN" type="xs:string" minOccurs="0" />
+              <xs:element name="PrevLPNs" type="xs:string" minOccurs="0" />
+              <xs:element name="NumLPNs" type="xs:string" minOccurs="0" />
+              <xs:element name="LPNChange" type="xs:string" minOccurs="0" />
+              <xs:element name="LocationId" type="xs:string" minOccurs="0" />
+              <xs:element name="PrevLocationId" type="xs:string" minOccurs="0" />
+              <xs:element name="Location" type="xs:string" minOccurs="0" />
+              <xs:element name="LocationRow" type="xs:string" minOccurs="0" />
+              <xs:element name="LocationAisle" type="xs:string" minOccurs="0" />
+              <xs:element name="LocationBay" type="xs:string" minOccurs="0" />
+              <xs:element name="LocationSection" type="xs:string" minOccurs="0" />
+              <xs:element name="LocationLevel" type="xs:string" minOccurs="0" />
+              <xs:element name="PrevLocation" type="xs:string" minOccurs="0" />
+              <xs:element name="LocationType" type="xs:string" minOccurs="0" />
+              <xs:element name="LocationTypeDesc" type="xs:string" minOccurs="0" />
+              <xs:element name="PutawayZone" type="xs:string" minOccurs="0" />
+              <xs:element name="PickZone" type="xs:string" minOccurs="0" />
+              <xs:element name="StorageType" type="xs:string" minOccurs="0" />
+              <xs:element name="StorageTypeDesc" type="xs:string" minOccurs="0" />
+              <xs:element name="PalletId" type="xs:string" minOccurs="0" />
+              <xs:element name="PrevPalletId" type="xs:string" minOccurs="0" />
+              <xs:element name="Pallet" type="xs:string" minOccurs="0" />
+              <xs:element name="PrevPallet" type="xs:string" minOccurs="0" />
+              <xs:element name="Warehouse" type="xs:string" minOccurs="0" />
+              <xs:element name="SKUId" type="xs:string" minOccurs="0" />
+              <xs:element name="SKU" type="xs:string" minOccurs="0" />
+              <xs:element name="SKU1" type="xs:string" minOccurs="0" />
+              <xs:element name="SKU2" type="xs:string" minOccurs="0" />
+              <xs:element name="SKU3" type="xs:string" minOccurs="0" />
+              <xs:element name="SKU4" type="xs:string" minOccurs="0" />
+              <xs:element name="SKU5" type="xs:string" minOccurs="0" />
+              <xs:element name="SKUDesc" type="xs:string" minOccurs="0" />
+              <xs:element name="UPC" type="xs:string" minOccurs="0" />
+              <xs:element name="UnitCost" type="xs:string" minOccurs="0" />
+              <xs:element name="TDStatus" type="xs:string" minOccurs="0" />
+              <xs:element name="Variance" type="xs:string" minOccurs="0" />
+              <xs:element name="PrevQuantity" type="xs:string" minOccurs="0" />
+              <xs:element name="Quantity1" type="xs:string" minOccurs="0" />
+              <xs:element name="FinalQuantity" type="xs:string" minOccurs="0" />
+              <xs:element name="QuantityChange1" type="xs:string" minOccurs="0" />
+              <xs:element name="QuantityChange2" type="xs:string" minOccurs="0" />
+              <xs:element name="QuantityChange" type="xs:string" minOccurs="0" />
+              <xs:element name="AbsQuantityChange" type="xs:string" minOccurs="0" />
+              <xs:element name="PercentQtyChange1" type="xs:string" minOccurs="0" />
+              <xs:element name="PercentQtyChange2" type="xs:string" minOccurs="0" />
+              <xs:element name="PercentQtyChange" type="xs:string" minOccurs="0" />
+              <xs:element name="AbsPercentQtyChange" type="xs:string" minOccurs="0" />
+              <xs:element name="QtyAccuracy1" type="xs:string" minOccurs="0" />
+              <xs:element name="QtyAccuracy2" type="xs:string" minOccurs="0" />
+              <xs:element name="QtyAccuracy" type="xs:string" minOccurs="0" />
+              <xs:element name="PrevInnerPacks" type="xs:string" minOccurs="0" />
+              <xs:element name="InnerPacks1" type="xs:string" minOccurs="0" />
+              <xs:element name="FinalInnerPacks" type="xs:string" minOccurs="0" />
+              <xs:element name="InnerPacksChange1" type="xs:string" minOccurs="0" />
+              <xs:element name="InnerPacksChange2" type="xs:string" minOccurs="0" />
+              <xs:element name="InnerPacksChange" type="xs:string" minOccurs="0" />
+              <xs:element name="PercentIPChange1" type="xs:string" minOccurs="0" />
+              <xs:element name="PercentIPChange2" type="xs:string" minOccurs="0" />
+              <xs:element name="PercentIPChange" type="xs:string" minOccurs="0" />
+              <xs:element name="IPAccuracy1" type="xs:string" minOccurs="0" />
+              <xs:element name="IPAccuracy2" type="xs:string" minOccurs="0" />
+              <xs:element name="IPAccuracy" type="xs:string" minOccurs="0" />
+              <xs:element name="CurrentSKUCount" type="xs:string" minOccurs="0" />
+              <xs:element name="OldSKUCount" type="xs:string" minOccurs="0" />
+              <xs:element name="SKUVariance" type="xs:string" minOccurs="0" />
+              <xs:element name="SKUVarianceDesc" type="xs:string" minOccurs="0" />
+              <xs:element name="InventoryClass1" type="xs:string" minOccurs="0" />
+              <xs:element name="InventoryClass2" type="xs:string" minOccurs="0" />
+              <xs:element name="InventoryClass3" type="xs:string" minOccurs="0" />
+              <xs:element name="vwCCR_UDF1" type="xs:string" minOccurs="0" />
+              <xs:element name="vwCCR_UDF2" type="xs:string" minOccurs="0" />
+              <xs:element name="vwCCR_UDF3" type="xs:string" minOccurs="0" />
+              <xs:element name="vwCCR_UDF4" type="xs:string" minOccurs="0" />
+              <xs:element name="vwCCR_UDF5" type="xs:string" minOccurs="0" />
+              <xs:element name="vwCCR_UDF6" type="xs:string" minOccurs="0" />
+              <xs:element name="vwCCR_UDF7" type="xs:string" minOccurs="0" />
+              <xs:element name="vwCCR_UDF8" type="xs:string" minOccurs="0" />
+              <xs:element name="vwCCR_UDF9" type="xs:string" minOccurs="0" />
+              <xs:element name="vwCCR_UDF10" type="xs:string" minOccurs="0" />
+              <xs:element name="BusinessUnit" type="xs:string" minOccurs="0" />
+              <xs:element name="CreatedDate" type="xs:string" minOccurs="0" />
+              <xs:element name="ModifiedDate" type="xs:string" minOccurs="0" />
+              <xs:element name="CreatedBy" type="xs:string" minOccurs="0" />
+              <xs:element name="ModifiedBy" type="xs:string" minOccurs="0" />
+              <xs:element name="EntityType" type="xs:string" minOccurs="0" />
+              <xs:element name="EntityId" type="xs:string" minOccurs="0" />
+              <xs:element name="EntityKey" type="xs:string" minOccurs="0" />
+              <xs:element name="UDF1" type="xs:string" minOccurs="0" />
+              <xs:element name="UDF2" type="xs:string" minOccurs="0" />
+              <xs:element name="UDF3" type="xs:string" minOccurs="0" />
+              <xs:element name="UDF4" type="xs:string" minOccurs="0" />
+              <xs:element name="UDF5" type="xs:string" minOccurs="0" />
+              <xs:element name="RecordId" nillable="true" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:simpleContent msdata:ColumnName="RecordId_Text" msdata:Ordinal="0">
+                    <xs:extension base="xs:string">
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

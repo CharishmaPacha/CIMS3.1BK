@@ -5,6 +5,7 @@
 
   Date        Person  Comments
 
+  2024/11/07  CHP     Added CC_Rpt_ResultsList (BK-1150)
   2024/11/06  RV      Added OnhandInventory_Rpt_InvSnapshot (BK-1149)
   2023/03/27  LAC     Added Waves_PreprocessOrders (BK-1036)
   2023/03/22  PKK     Added Waves_ApproveToRelease (BK-1033)
@@ -316,7 +317,12 @@ select @ContextName    = 'List.CycleCountResults',
        @ParentActionId = 'List.CycleCountResults.Actions',
        @Entity         = 'CycleCountResults';
 
-/* Copy the CycleCountLocations actions that are needed for CycleCountStatistics page */
+insert into UIActionDetails
+            (ActionId,                       PermissionName,                     Caption,                       UITarget,                    Entity,   LayoutType,  ActionInputFormType,  ActionInputFormName,           SelectionCriteria,  ActionActivationFieldName,  ActionActivationFieldValues,  ConfirmAction, MaxRecordsPerRun, StartNewMenuGroup, SortSeq, ActionProcedureName,                                                  ParentActionId,  BusinessUnit )
+            output INSERTED.ActionId, @ContextName, INSERTED.BusinessUnit into UIActionContexts(ActionId, ContextName, BusinessUnit)
+      select 'CC_Rpt_ResultsList',           'CC.Rpt.ResultsList',               'CC Results List Report',      @ExecuteReportNoDialog,      @Entity,  'A',         'N',                  null,                          'Multiple',         null,                       null,                         'N',           1,                1,                 99,      null,                                                                 @ParentActionId, BusinessUnit from vwBusinessUnits
+
+/* Copy the CycleCountLocations actions that are needed for CycleCountResults page */
 insert into UIActionContexts (ActionId, ParentActionId, ContextName, BusinessUnit)
   select ActionId, @ParentActionId, @ContextName, BusinessUnit from UIActionDetails where ActionId in ('CCLocations_CreateTasks');
 

@@ -5,6 +5,7 @@
 
   Date        Person  Comments
 
+  2024/11/07  CHP     Added CC_Rpt_ResultsList (BK-1150)
   2024/11/06  RV      Added OnhandInventory_Rpt_InvSnapshot (BK-1149)
   2021/03/23  MS      Use VICSBoLMaster RDLC for Loads_Rpt_BoL_Account (HA-2386)
   2021/03/10  PHK     Added Loads_Rpt_BoL_Account (HA-2098)
@@ -97,5 +98,15 @@ insert into Reports
       select @EntityType, 'Waves_Rpt_WaveSKUSummary',      'Wave Summary',         'WaveSKUSummary.rdlc',         'WaveSKUSummary',       'pr_Waves_Rpt_GetSKUSummaryData', 'WaveSKUSummary_~SELECTEDRECORDVALUE_EntityKey~_~SYSTEMVALUE_CURRENTTIMESTAMP~',    '~SELECTEDRECORDVALUE_EntityKey~_WaveSKUSummary',   null,       'Dynamic',      'RDLC',          'WaveSummary',                      BusinessUnit from vwBusinessUnits
 
 /*------------------------------------------------------------------------------*/
+/* CycleCountResults */
+/*------------------------------------------------------------------------------*/
+delete from #Reports;
+select @EntityType = 'CycleCountResults';
+
+insert into #Reports
+            (ReportName,                      ReportDescription,      ReportTemplateName,            ReportSchema,           ReportProcedureName,              ReportFileName,                                                                     ReportDisplayName,                                  FolderName, DocumentType,   DocumentSubType, DocumentSet,                        ReportXMLType, Status, Visible)
+      select 'CC_Rpt_ResultsList',            'CC Results',           'CC_Rpt_ResultsList.rdlc',     'CCResultsList',        'pr_CC_Rpt_CCResultsList',        'CCResultsList_~SYSTEMVALUE_CURRENTTIMESTAMP~',                                     null,                                               null,       'Dynamic',      'RDLC',          'CCResultsList',                    'M',           'A',    'Y'
+
+exec pr_Setup_Reports @EntityType, 'AU' /* Add/update */, @CreatedBy, @BusinessUnit;
 
 Go

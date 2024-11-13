@@ -5,6 +5,7 @@
 
   Date        Person  Comments
 
+  2024/11/07  CHP     Added CC.Rpt.ResultsList (BK-1150)
   2024/11/08  RV      Added OnhandInventory.Rpt.InvSnapshot (BK-1149)
   2023/08/22  VKN     Added permission for RFBuildInventory (CIMSV3-3034)
   2023/03/29  RKC     Added Waves.Act.PreprocessOrders (BK-1036)
@@ -772,6 +773,12 @@ insert into @ttP select 'CycleCountTasks.Act.Cancel',           'Cancel Cycle Co
 insert into @ttP select 'CycleCountTasks.Act.AssignToUser',     'Assign To User',             1,        1,         null,    'CycleCountTasks.Actions'
 insert into @ttP select 'CycleCountTasks.Act.PrintTaskLabels',  'Print Cycle Count Task labels',
                                                                                               1,        1,         null,    'CycleCountTasks.Actions'
+                                                                                             
+/*--------------------*/
+/* Cycle Count Results Actions */
+/*--------------------*/
+insert into @ttP select 'CycleCountResults.Actions',            'Actions',                    1,        1,         null,    'CycleCountResults'
+insert into @ttP select 'CC.Rpt.ResultsList',                   'CC Results List Report',     1,        1,         null,    'CycleCountResults.Actions'
 
 /*--------------------------------------------*/
 /* Privileges & Overrides - Cycle Counting */
