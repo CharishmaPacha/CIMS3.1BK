@@ -6,6 +6,7 @@
   Date        Person  Comments
 
   2024/11/07  CHP     Added CC_Rpt_ResultsList (BK-1150)
+  2024/11/06  RV      Added OnhandInventory_Rpt_InvSnapshot (BK-1149)
   2021/03/23  MS      Use VICSBoLMaster RDLC for Loads_Rpt_BoL_Account (HA-2386)
   2021/03/10  PHK     Added Loads_Rpt_BoL_Account (HA-2098)
   2021/03/03  SK      Added Loads_Rpt_ShipManifestSummary
@@ -45,6 +46,16 @@ insert into Reports
       select @EntityType, 'Locations_Rpt_LPNList',         'Location LPNs',     'Locations_Rpt_LPNList.rdlc',  'LocationsLPNList',     'pr_Locations_Rpt_LPNList',    'LPNList_~SYSTEMVALUE_CURRENTTIMESTAMP~',                                           'LPN List',                                          null,       'Dynamic',          'RDLC',          'LocationsLPNList',    'M',           BusinessUnit from vwBusinessUnits
 union select @EntityType, 'Locations_Rpt_PalletList',      'Location Pallets',  'Locations_Rpt_PalletList.rdlc',
                                                                                                                'LocationsLPNList',     'pr_Locations_Rpt_LPNList',    'LPNList_~SYSTEMVALUE_CURRENTTIMESTAMP~',                                           'Pallet List',                                       null,       'Dynamic',          'RDLC',          'LocationsLPNList',    'M',           BusinessUnit from vwBusinessUnits
+
+/*------------------------------------------------------------------------------*/
+/* OnhandInventory */
+/*------------------------------------------------------------------------------*/
+delete from #Reports;
+select @EntityType = 'OnhandInventory';
+
+insert into #Reports
+            (ReportName,                              ReportDescription,                        ReportTemplateName,                          AdditionalReportName,                   PageModel,        ReportSchema,       ReportProcedureName,                  ReportFileName,                                ReportDisplayName,                            FolderName, DocumentType,   DocumentSubType, DocumentSet,         ReportXMLType, Status, Visible)
+      select 'OnhandInventory_Rpt_InvSnapshot',       'Onhand Inventory Snapshot',              'OnhandInventory_Rpt_InvSnapshot.rdlc',      null,                                   'M',              'OnhandInventory',  'pr_Inventory_Rpt_InvSnapshot',       'InvSnapshot_~SYSTEMVALUE_CURRENTTIMESTAMP~',  'InvSnapshot_~SYSTEMVALUE_CURRENTTIMESTAMP~', null,       'Dynamic',      'RDLC',          'OnhandInvSnapshot', 'M',           'A',    'Y'
 
 /*------------------------------------------------------------------------------*/
 select @EntityType = 'Order';
