@@ -5,6 +5,7 @@
 
   Date        Person  Comments
 
+  2023/08/22  VKN     Added permission for RFBuildInventory (CIMSV3-3034)
   2023/03/29  RKC     Added Waves.Act.PreprocessOrders (BK-1036)
   2022/08/04  SAK     Added permissions for PickTasks.Act.ConfirmPicks (BK-864)
   2022/04/21  SRP     Added SKU Velocity (BK-813)
@@ -182,6 +183,7 @@ insert into @ttP select 'AllowPAToDiffZone',               'Allow PA To Diff. Zo
 /*---------------------------------*/
 /* Inventory Management Menu Items */
 /*---------------------------------*/
+insert into @ttP select 'RFBuildInventory',                'Build Inventory',                 1,        1,         null,    'RFInventoryManagement'
 insert into @ttP select 'RFCreateNewLPN',                  'Create New LPN',                  1,        1,         null,    'RFInventoryManagement'
 insert into @ttP select 'RFMoveLPN',                       'Move LPN',                        1,        1,         null,    'RFInventoryManagement'
 insert into @ttP select 'RFAdjustQuantity',                'Adjust LPN/Location Quantity',    1,        1,         null,    'RFInventoryManagement'
