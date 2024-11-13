@@ -5,6 +5,7 @@
 
   Date        Person  Comments
 
+  2024/11/12  PHK     Changes to get required fields as needed for SKUs (BK-1160)
   2022/03/09  PHK     pr_File_Upload: Included Filetype SKU (HA-109)
   2021/02/24  RV      pr_File_Import, pr_File_Upload: Made changes to get the full file path from controls (CIMSV3-1351)
   2021/02/19  SK      pr_File_Upload: add timestammp to error file (HA-2010)
@@ -116,7 +117,7 @@ begin try /* pr_File_Upload */
    goto ErrorHandler;
 
   /* Add required fields as needed for different file types */
-  if (@FileType in ('SPL' , 'LOC', 'SKU', 'LOCREP' /* SKUPriceList, Locations, SKUs, LocationReplenishLevels */))
+  if (@FileType in ('SPL' , 'LOC', 'LOCREP' /* SKUPriceList, Locations, SKUs, LocationReplenishLevels */))
     select @vAddColString = 'Alter Table  ' + @TmpTable + ' Add ' +
                               'Validated      varchar (10),
                                ValidationMsg  varchar (max),

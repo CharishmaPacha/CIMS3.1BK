@@ -5,6 +5,7 @@
 
   Date        Person  Comments
 
+  2023/09/10  RIA     Added AMF_BuildInvLPN_Successful (CIMSV3-3034)
   2021/06/14  RIA     Added AMF_Packing_OrderAlreadyPacked (OB2-1882)
   2021/06/13  RIA     Added AMF_NoMatchingItemsForFilteredValue (HA-1688)
   2021/04/29  RIA     Added AMF_LPNInquiry_MultiSKUPicklane (OB2-1768)
@@ -157,6 +158,12 @@ union select 'AMF_LPNOrPalletRemovedFromLoad',        '%1 unloaded successfully 
 union select 'AMF_NoLPNsAssociatedWithLoad',          'There are no LPNs associated with the load'
 
 union select 'AMF_ShipLabelCancel_Successful',        'Ship Label %1 cancelled successfully'
+
+/*------------------------------------------------------------------------------*/
+/* Build Inv LPN */
+/*------------------------------------------------------------------------------*/
+union select 'AMF_BuildInvLPN_Successful',           'Created %1 LPN with %3 Units of %2 SKU (ReasonCode: %4)'
+
 /*------------------------------------------------------------------------------*/
 /* Create Inv LPN */
 /*------------------------------------------------------------------------------*/

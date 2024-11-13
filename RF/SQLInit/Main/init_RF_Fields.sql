@@ -5,6 +5,7 @@
 
   Date        Person  Comments
 
+  2023/08/24  VKN     Added AMFEnterReference_PH (CIMSV3-3034)
   2021/06/14  RKC     Added AMFUnitsLoaded, AMFLPNsLoaded, AMFPalletsLoaded (HA-2862)
   2021/05/11  AY      Added AMFTotalQtyResvQty (OB2-1792)
   2021/03/13  RIA     Added AMFRMAOrShippingCarton, AMFRMAOrShippingCarton_PH (OB2-1357)
@@ -166,6 +167,7 @@ union select  'AMFNewTracking_PH',     'Scan or enter New Tracking No',         
 union select  'AMFScanPalletOrLoc_PH', 'Scan or enter a valid Pallet or Location',     75,  1,       null,      null,  null
 union select  'AMFScanReceiver_PH',    'Scan or enter a valid Receiver Number',        75,  1,       null,      null,  null
 union select  'AMFScanReceipt_PH',     'Scan or enter a valid Receipt Number',         75,  1,       null,      null,  null
+union select  'AMFEnterReference_PH',  'Enter Reference',                              75,  1,       null,      null,  null
 union select  'AMFScanCustPO_PH',      'Scan or enter a valid CustPO',                 75,  1,       null,      null,  null
 union select  'AMFScanWarehouse_PH',   'Scan or enter a valid Warehouse',              75,  1,       null,      null,  null
 union select  'AMFScanReceivingZone_PH',

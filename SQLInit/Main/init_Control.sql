@@ -5,6 +5,7 @@
 
   Date        Person  Comments
 
+  2023/08/22  GAG     Added Controls for BuildInvLPN (CIMSV3-3035)
   2024/10/02  AY/RV   Added Shipping_FedEx-ResidentialServices and Shipping_FedEx-NonResidentialServices
                        Removed Shipping_FedEx-AllHomeDeliveryIsResidential (CIMSV3-3836)
   2024/08/21  RV      Added AddressValidation-ExportOnAddressError (CIMSV3-3532)
@@ -1842,6 +1843,19 @@ insert into @Controls
       select 'SKUPrePackQtyLimitation',    'SKUPrePack Qty Limitation',                       'N',                     'B',       1
 
 exec pr_Controls_Setup @ControlCategory, @Controls, 'IU' /* Insert/Update */;
+
+Go
+/*----------------------------------------------------------------------------*/
+/* LPN Controls =>   Build InventoryLPN */
+/*----------------------------------------------------------------------------*/
+declare @Controls TControlsTable, @ControlCategory TCategory = 'BuildInvLPN';
+
+insert into @Controls
+            (ControlCode,                  Description,                                       ControlValue,            DataType,  Visible)
+      select 'InventoryClassesUsed',       'List of Inventory Classes used during Build Inv', 'InvClass1',             'S',       1
+union select 'AcceptExternalLPN',          'Allow Receiving External LPN',                    'Y',                     'B',       1
+
+exec pr_Controls_Setup @ControlCategory, @Controls, 'IU' /* Insert/update */;
 
 Go
 /*----------------------------------------------------------------------------*/

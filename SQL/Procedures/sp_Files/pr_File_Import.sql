@@ -5,6 +5,7 @@
 
   Date        Person  Comments
 
+  2024/11/12  PHK     Changes to get required fields as needed for SKUs (BK-1160)
   2022/03/04  GAG     pr_File_Import: Changed @vDatasetName and @vMainTableName to use function control as fn_Controls_GetAsString
                       pr_File_Upload: Add required fields if fieldtype is of "LOCREP" (BK-766)
   2021/03/24  TK      pr_File_Import_Inventory_Process: Trim trailing spaces for inventory class (HA-GoLive)
@@ -79,6 +80,11 @@ begin try /* pr_File_Import */
 
   select @vFieldList      += ', CreatedBy',
          @vImportProcName  = 'pr_File_Import_' + @vDatasetName + '_Process';
+
+  /* PHK_1211: Implemented a temporary change to insert the Business Unit (BU) into the fieldList for the SKUs fieldType.
+     This will be reverted once the proper changes are rolled out to the onsite system. */
+  if (@FileType = 'SKU')
+    select @vFieldList += ', BusinessUnit';
 
   /* If there is no RecordAction field in the field list, then we cannot process using IUD, so remove that method */
   select @vImportProcess = case when (charindex ('RecordAction', @vFieldList) = 0) then replace(@vImportProcess, 'IUDSQL', '') else @vImportProcess end;
