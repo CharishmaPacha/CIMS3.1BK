@@ -5,6 +5,7 @@
 
   Date        Person  Comments
 
+  2023/09/11  RIA     Added BuildInv_InvalidLocation, BuildInv_InvalidExternalLPN (CIMSV3-3034)
   2023/03/27  LAC     Added Waves_PreprocessOrders_* & Orders_Reprocess_InvalidOrderStatus (BK-1036)
   2023/03/22  TD      Added ReleaseForAllocation_WaveNotApprovedYet (BK-1033)
   2023/03/22  PKK     Added Waves_ApproveToRelease_* (BK-1033)
@@ -1839,6 +1840,14 @@ pr_RFC_TransferPallet:
 union select 'PalletStoreMismatch',                         'Pallets are for different Stores, Cannot transfer the inventory'
 union select 'PalletStatusMismatch',                        'Status of From Pallet and To Pallet do not match, Cannot transfer the inventory'
 union select 'PalletLoadMismatch',                          'Pallets are for two different Loads, Cannot transfer the inventory'
+
+/*------------------------------------------------------------------------------*/
+/* Build Inventory */
+/*------------------------------------------------------------------------------*/
+union select 'BuildInv_InvalidPallet',                      'Pallet is invalid'
+union select 'BuildInv_PalletLocationMismatch',             'Given Pallet has different location, Please scan Location of the Pallet'
+union select 'BuildInv_InvalidLocation',                    'Location is invalid'
+union select 'BuildInv_InvalidExternalLPN',                 'Scanned LPN is not a vendor LPN. Please scan a valid LPN applied by Vendor'
 
 /*------------------------------------------------------------------------------*/
 /* pr_RFC_Inv_MovePallet */

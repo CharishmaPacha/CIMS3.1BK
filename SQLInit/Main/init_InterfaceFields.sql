@@ -5,6 +5,7 @@
 
   Date        Person  Comments
 
+  2024/11/12  PHK     SKUs: Bug Fixes to Import Process (BK-1160)
   2022/03/10  PHK     Added SKUs Dataset (HA-109)
   2021/03/16  AY      Walmart added new field in their Routing Info (HA Golive)
   2021/03/04  VS      LoadRoutingInfo changed to LRI (HA-2122)
@@ -373,9 +374,9 @@ union select  'RecordAction',         '',                    'TVarchar',        
 /* Define the fields which are not part of the the import but which need to be added
    for either processing or for importing due to null constraints or to setup defaults */
 /* Archived is being added because in UI a default filter is setup with Archived on SKUs table and hence this is necessary */
-union select  'Archived',             '',                    'TFlags',           null,       null,              null,          ' ',     @vAugment,  '91',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
-union select  'CreatedBy',            '',                    'TUserId',          null,       null,              null,          ' ',     @vAugment,  '98',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
-union select  'BusinessUnit',         '',                    'TBusinessUnit',    null,       null,              null,          ' ',     @vAugment,  '99',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+--union select  'Archived',             '',                    'TFlags',           null,       null,              null,          ' ',     @vAugment,  '91',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+--union select  'CreatedBy',            '',                    'TUserId',          null,       null,              null,          ' ',     @vAugment,  '98',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
+--union select  'BusinessUnit',         '',                    'TBusinessUnit',    null,       null,              null,          ' ',     @vAugment,  '99',    'A',    @vProcessName, @vDataSetName, BusinessUnit from vwBusinessUnits
 
 /* Create the Data set name to the layout for respective Import file type */
 exec pr_Setup_CreateInterfaceDataSet @vProcessName, @vDataSetName;
