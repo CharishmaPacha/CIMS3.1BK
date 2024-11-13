@@ -465,19 +465,19 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>0.89029in</Width>
+                  <Width>0.87in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>0.70853in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.75488in</Width>
+                  <Width>0.73in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.73819in</Width>
+                  <Width>0.73in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.69055in</Width>
+                  <Width>0.74346in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>0.8553in</Width>
@@ -498,19 +498,19 @@
                   <Width>0.62819in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.56984in</Width>
+                  <Width>0.55in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>0.52062in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.61612in</Width>
+                  <Width>0.6in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>0.57639in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.46567in</Width>
+                  <Width>0.50208in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>0.51428in</Width>
@@ -528,7 +528,8 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Transaction Date</Value>
+                                  <Value EvaluationMode="Constant">Transaction
+Date</Value>
                                   <Style>
                                     <FontSize>9.5pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -770,7 +771,8 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Prev Qty</Value>
+                                  <Value EvaluationMode="Constant">Prev
+Qty</Value>
                                   <Style>
                                     <FontSize>9.5pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -807,7 +809,8 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Final Qty</Value>
+                                  <Value EvaluationMode="Constant">Final
+Qty</Value>
                                   <Style>
                                     <FontSize>9.5pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -844,7 +847,9 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Abs Qty Change</Value>
+                                  <Value EvaluationMode="Constant">Abs
+Qty
+Change</Value>
                                   <Style>
                                     <FontSize>9.5pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -880,7 +885,9 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Percent Qty Change</Value>
+                                  <Value EvaluationMode="Constant">Percent
+Qty
+Change</Value>
                                   <Style>
                                     <FontSize>9.5pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -916,7 +923,10 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Abs Percent Qty Change</Value>
+                                  <Value EvaluationMode="Constant">Abs
+Percent
+Qty
+Change</Value>
                                   <Style>
                                     <FontSize>9.5pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -953,7 +963,9 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Current SKU Count</Value>
+                                  <Value EvaluationMode="Constant">Current
+SKU
+Count</Value>
                                   <Style>
                                     <FontSize>9.5pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -990,7 +1002,9 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Old SKU Count</Value>
+                                  <Value EvaluationMode="Constant">Old
+SKU
+Count</Value>
                                   <Style>
                                     <FontSize>9.5pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -1027,7 +1041,8 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>SKU Variance</Value>
+                                  <Value EvaluationMode="Constant">SKU
+Variance</Value>
                                   <Style>
                                     <FontSize>9.5pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -1064,7 +1079,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Variance</Value>
+                                  <Value EvaluationMode="Constant">Variance</Value>
                                   <Style>
                                     <FontSize>9.5pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -1101,7 +1116,8 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Unit Cost</Value>
+                                  <Value EvaluationMode="Constant">Unit
+Cost</Value>
                                   <Style>
                                     <FontSize>9.5pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -1138,7 +1154,8 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Qty Change</Value>
+                                  <Value EvaluationMode="Constant">Qty
+Change</Value>
                                   <Style>
                                     <FontSize>9.5pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -1936,7 +1953,7 @@
                               <Style>None</Style>
                             </Border>
                             <VerticalAlign>Middle</VerticalAlign>
-                            <PaddingRight>6pt</PaddingRight>
+                            <PaddingRight>7pt</PaddingRight>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -1966,7 +1983,7 @@
                               <Style>None</Style>
                             </Border>
                             <VerticalAlign>Middle</VerticalAlign>
-                            <PaddingRight>4pt</PaddingRight>
+                            <PaddingRight>5pt</PaddingRight>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -1995,7 +2012,7 @@
                               <Style>None</Style>
                             </Border>
                             <VerticalAlign>Middle</VerticalAlign>
-                            <PaddingRight>4pt</PaddingRight>
+                            <PaddingRight>1pt</PaddingRight>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -2024,7 +2041,7 @@
                               <Style>None</Style>
                             </Border>
                             <VerticalAlign>Middle</VerticalAlign>
-                            <PaddingRight>4pt</PaddingRight>
+                            <PaddingRight>1pt</PaddingRight>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -2084,7 +2101,7 @@
                               <Style>None</Style>
                             </Border>
                             <VerticalAlign>Middle</VerticalAlign>
-                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingRight>5pt</PaddingRight>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -2114,7 +2131,7 @@
                               <Style>None</Style>
                             </Border>
                             <VerticalAlign>Middle</VerticalAlign>
-                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingRight>4pt</PaddingRight>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -2202,7 +2219,7 @@
                               <Style>None</Style>
                             </Border>
                             <VerticalAlign>Middle</VerticalAlign>
-                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingRight>4pt</PaddingRight>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -2287,6 +2304,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>CycleCountResults_CCResultsInfo</DataSetName>
+            <Top>0.005in</Top>
             <Left>0.1in</Left>
             <Height>0.84012in</Height>
             <Width>10.45222in</Width>
@@ -2340,11 +2358,13 @@
                 </Paragraph>
               </Paragraphs>
               <Top>0.71955cm</Top>
-              <Left>9.14173cm</Left>
+              <Left>8.82423cm</Left>
               <Height>1.14292cm</Height>
               <Width>9.37309cm</Width>
               <ZIndex>1</ZIndex>
-              <Style />
+              <Style>
+                <VerticalAlign>Middle</VerticalAlign>
+              </Style>
             </Textbox>
           </ReportItems>
           <Style />
@@ -2372,7 +2392,6 @@
                       <Style />
                     </Paragraph>
                   </Paragraphs>
-                  <Top>0.01948in</Top>
                   <Height>0.16in</Height>
                   <Width>3.06691in</Width>
                   <Style>
@@ -2411,9 +2430,8 @@
                       </Style>
                     </Paragraph>
                   </Paragraphs>
-                  <Top>0.02469in</Top>
                   <Left>9.71557in</Left>
-                  <Height>0.40635cm</Height>
+                  <Height>0.16in</Height>
                   <Width>1.87109cm</Width>
                   <ZIndex>1</ZIndex>
                   <Style>
@@ -2426,7 +2444,7 @@
               </ReportItems>
               <DataElementOutput>ContentsOnly</DataElementOutput>
               <Left>0.1in</Left>
-              <Height>0.51851cm</Height>
+              <Height>0.4064cm</Height>
               <Width>26.54864cm</Width>
               <Style>
                 <TopBorder>
@@ -2435,9 +2453,9 @@
               </Style>
             </Rectangle>
             <Line Name="line1">
-              <Left>0.31746cm</Left>
+              <Left>0.1in</Left>
               <Height>0cm</Height>
-              <Width>26.48518cm</Width>
+              <Width>10.5in</Width>
               <ZIndex>1</ZIndex>
               <Style>
                 <Border>
