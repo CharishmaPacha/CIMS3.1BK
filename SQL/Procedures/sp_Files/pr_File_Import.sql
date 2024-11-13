@@ -81,10 +81,10 @@ begin try /* pr_File_Import */
   select @vFieldList      += ', CreatedBy',
          @vImportProcName  = 'pr_File_Import_' + @vDatasetName + '_Process';
 
-  /* PHK_1211: Implemented a temporary change to insert the Business Unit (BU) into the fieldList for the SKUs fieldType.   
-     This will be reverted once the proper changes are rolled out to the onsite system. */  
-  if @FileType = 'SKU'
-    select @vFieldList    += ', BusinessUnit'; 
+  /* PHK_1211: Implemented a temporary change to insert the Business Unit (BU) into the fieldList for the SKUs fieldType.
+     This will be reverted once the proper changes are rolled out to the onsite system. */
+  if (@FileType = 'SKU')
+    select @vFieldList += ', BusinessUnit';
 
   /* If there is no RecordAction field in the field list, then we cannot process using IUD, so remove that method */
   select @vImportProcess = case when (charindex ('RecordAction', @vFieldList) = 0) then replace(@vImportProcess, 'IUDSQL', '') else @vImportProcess end;
