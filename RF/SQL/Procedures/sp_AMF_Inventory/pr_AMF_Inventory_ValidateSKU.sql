@@ -119,19 +119,19 @@ begin /* pr_AMF_Inventory_ValidateSKU */
 
       /* Fetch the InventoryClass1 values */
       exec pr_AMF_BuildLookUpList 'InventoryClass1' /* Look up Category */, 'InventoryClass1',
-                                  'Select Label Code', @vBusinessunit, @vInvClass1XML output;
+                                  'select Label Code', @vBusinessunit, @vInvClass1XML output;
 
       /* Fetch the Ownerships */
       exec pr_AMF_BuildLookUpList 'Owner' /* Look up Category */, 'Ownership',
-                                  'Select Owner', @vBusinessunit, @vOwnershipXML output;
+                                  'select Owner', @vBusinessunit, @vOwnershipXML output;
 
       /* Fetch the warehouses */
       exec pr_AMF_BuildLookUpList 'Warehouse' /* Look up Category */, 'Warehouse',
-                                  'Select Warehouse', @vBusinessunit, @vWarehouseXML output;
+                                  'select Warehouse', @vBusinessunit, @vWarehouseXML output;
 
       /* Fetch the reason codes for creating inventory */
       exec pr_AMF_BuildLookUpList 'RC_LPNCreateInv' /* Look up Category */, 'ReasonCodes',
-                                  'Select a reason', @vBusinessunit, @vReasonCodesXML output;
+                                  'select a reason', @vBusinessunit, @vReasonCodesXML output;
 
      /* Creating #table for inserting label format name and desc */
      select * into #LabelFormats from @ttLabelFormats
@@ -144,7 +144,7 @@ begin /* pr_AMF_Inventory_ValidateSKU */
        order by SortSeq, LabelFormatDesc;
 
      /* get the list of Label Formats to show in dropdown */
-     exec pr_AMF_BuildDropDownList 'LabelFormats', 'LabelFormatToPrint', 'Select Label Format', @vBusinessUnit, @vLabelFormatXML out;
+     exec pr_AMF_BuildDropDownList 'LabelFormats', 'LabelFormatToPrint', 'select Label Format', @vBusinessUnit, @vLabelFormatXML out;
 
     end
 
