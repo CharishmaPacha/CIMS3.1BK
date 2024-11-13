@@ -442,6 +442,226 @@ function Inventory_BuildPallet_CompleteOrPause(evt)
 } // Inventory_BuildPallet_CompleteOrPause
 
 //*****************************************************************************
+//***************************** Build Inventory *******************************
+//*****************************************************************************
+
+//-----------------------------------------------------------------------------
+// custom handler to perform form related updates on show
+function Inventory_BuildInv_OnShow()
+{
+  // Get the scanned SKU
+  var scannedentity = $("[data-rfname='SKU']").val();
+
+  // if sku is not scanned/entered earlier, skip form related updates
+  if ((scannedentity == null) || (scannedentity == undefined) || (scannedentity == ""))
+    return;
+
+  // clear the inputs under input panel
+  QuantityInputPanel_ClearForm();
+
+  // fetch the required values
+  var inventoryuom = $("[data-rfname='m_SKUInfo_InventoryUoM']").val();
+  var unitsperinnerpack = $("[data-rfname='m_SKUInfo_UnitsPerInnerPack']").val();
+  var innerpacksperlpn = $("[data-rfname='m_SKUInfo_InnerPacksPerLPN']").val();
+  var unitsperlpn = $("[data-rfname='m_SKUInfo_UnitsPerLPN']").val();
+
+  var selecteduom = inventoryuom.substring(0, 2);
+  var storagetype = ''; //To handle undefined error as we are using match function
+
+  // Initialize values for fields in the quantity input panel
+  QuantityInputPanel_InitializeForSKU(inventoryuom, selecteduom, storagetype, unitsperinnerpack, innerpacksperlpn, unitsperlpn);
+
+  // We need additional attributes for standard QIP panel,
+  // Any changes to js method names, need here as well
+  selector = "[data-rfname='NewUnits1']";
+  values   = {"data-rfvalidationhandler":"Inventory_BuildInv_SetFocus","data-rfvalidateon":"FOCUSOUT"};
+  QuantityInputPanel_AddAttributes(selector,values)
+
+  // Generally validation handler settings are defined after form is rendered. In
+  // this case as we added validation handler in form show, call the function to
+  // define the settings
+  VerifyFormForValidationSettings();
+
+  // set the focus flag to true, to indicate the focus is already set by this method
+  // further methods called by base framework for focus setting will verify this flag and skip setting focus
+  SetFocusFlagValue(true);
+} // Inventory_BuildInv_OnShow
+
+//-----------------------------------------------------------------------------
+//custom handler to change input controls from eaches to cases
+function Inventory_BuildInv_SelectCases_Onchange()
+{
+  // fetch the required values
+  var inventoryuom = $("[data-rfname='m_SKUInfo_InventoryUoM']").val();
+  var unitsperinnerpack = $("[data-rfname='m_SKUInfo_UnitsPerInnerPack']").val();
+  var innerpacksperlpn = $("[data-rfname='m_SKUInfo_InnerPacksPerLPN']").val();
+  var unitsperlpn = $("[data-rfname='m_SKUInfo_UnitsPerLPN']").val();
+
+  var selecteduom = 'CS';
+  var storagetype = ''; //To handle undefined error as we are using match function
+
+  QuantityInputPanel_SetupInnerPacks(inventoryuom, selecteduom, storagetype, innerpacksperlpn, unitsperinnerpack)
+
+} // Inventory_BuildInv_SelectCases_Onchange
+
+//-----------------------------------------------------------------------------
+//custom handler to change input controls from cases to eaches
+function Inventory_BuildInv_SelectEaches_Onchange()
+{
+  // fetch the required values
+  var inventoryuom = $("[data-rfname='m_SKUInfo_InventoryUoM']").val();
+  var unitsperinnerpack = $("[data-rfname='m_SKUInfo_UnitsPerInnerPack']").val();
+  var innerpacksperlpn = $("[data-rfname='m_SKUInfo_InnerPacksPerLPN']").val();
+  var unitsperlpn = $("[data-rfname='m_SKUInfo_UnitsPerLPN']").val();
+
+  var selecteduom = 'EA';
+  var storagetype = ''; //To handle undefined error as we are using match function
+
+  QuantityInputPanel_SetupEaches(inventoryuom, selecteduom, storagetype, unitsperinnerpack, unitsperlpn)
+
+} // Inventory_BuildInv_SelectEaches_Onchange
+
+//-----------------------------------------------------------------------------
+// Custom handler to set focus for Pallet or Location
+function Inventory_BuildInv_SetFocus()
+{
+  // fetch the required values
+  var pallet   = $("[data-rfname='Pallet']").val();
+  var location = $("[data-rfname='Location']").val();
+
+  if ((pallet == null) || (pallet == undefined) || (pallet == ""))
+    $("[data-rfname='Pallet']").focus();
+  else
+  if ((location == null) || (location == undefined) || (location == ""))
+    $("[data-rfname='Location']").focus();
+  else
+    // if user scanned Pallet and Location, then set focus to LPN
+    $("[data-rfname='LPN']").focus();
+
+} // Inventory_BuildInv_SetFocus
+
+//-----------------------------------------------------------------------------
+// Custom handler to set focus for Pallet or Location
+function Inventory_BuildInv_SetFocusToLocOrLPN()
+{
+  // fetch the required values
+  var location = $("[data-rfname='Location']").val();
+
+  if ((location == null) || (location == undefined) || (location == ""))
+    $("[data-rfname='Location']").focus();
+  else
+    $("[data-rfname='LPN']").focus();
+
+} // Inventory_BuildInv_SetFocusToLocOrLPN
+
+//-----------------------------------------------------------------------------
+//custom handler to validate InvClass that is selected under BuildInv
+function Inventory_BuildInv_ValidateInvClass1(evt)
+{
+  var inventoryclass = $("[data-rfname='InventoryClass1']").val();
+
+  var message = {};
+  message.Message = {};
+  message.Message.DisplayText = null;
+
+  if (inventoryclass == '*')
+  {
+    message.Message.DisplayText = "Please select a valid Inventory Class";
+  }
+
+  if (message.Message.DisplayText == null)
+    return null; // caller expects null when there are no validation messages
+  else
+    return message;
+} // Inventory_BuildInv_ValidateInvClass1
+
+//-----------------------------------------------------------------------------
+//custom handler to validate Owner that is selected under BuildInv
+function Inventory_BuildInv_ValidateOwnership(evt)
+{
+  var owner = $("[data-rfname='Owner']").val();
+
+  var message = {};
+  message.Message = {};
+  message.Message.DisplayText = null;
+
+  if (owner == '*')
+  {
+    message.Message.DisplayText = "Please select a valid Owner";
+  }
+
+  if (message.Message.DisplayText == null)
+    return null; // caller expects null when there are no validation messages
+  else
+    return message;
+} // Inventory_BuildInv_ValidateOwnership
+
+//-----------------------------------------------------------------------------
+//custom handler to validate Reason codes
+function Inventory_BuildInv_ValidateReasonCode(evt)
+{
+  var reasoncode = $("[data-rfname='ReasonCode']").val();
+
+  var message = {};
+  message.Message = {};
+  message.Message.DisplayText = null;
+
+  if (reasoncode == '*')
+  {
+    message.Message.DisplayText = "Please select a valid reason code";
+  }
+  else
+  if (reasoncode != '999')
+  {
+    message.Message.DisplayText = "Reason should be 999-Initial Inventory"
+  }
+
+  if (message.Message.DisplayText == null)
+    return null; // caller expects null when there are no validation messages
+  else
+    return message;
+} // Inventory_BuildInv_ValidateReasonCode
+
+//-----------------------------------------------------------------------------
+// custom handler to perform form related updates on submit
+function Inventory_BuildInv_Submit(evt)
+{
+  var lpn     = $("[data-rfname='LPN']").val();
+  var numlpns = parseInt($("[data-rfname='NumLPNs']").val());
+
+  // If user is updating existing SKU, then ensure that
+  if ((lpn != undefined) && (lpn != "") && (numlpns > 1))
+  {
+    DisplayErrorMessage("Num LPNs should not be more than 1 when LPN is scanned");
+    return;
+  }
+
+  $('form').submit();
+
+} // Inventory_BuildInv_Submit
+
+//-----------------------------------------------------------------------------
+//custom handler to validate Warehouse that is selected under BuildInv
+function Inventory_BuildInv_ValidateWarehouse(evt)
+{
+  var warehouse = $("[data-rfname='Warehouse']").val();
+
+  var message = {};
+  message.Message = {};
+  message.Message.DisplayText = null;
+
+  if (warehouse == '*')
+  {
+    message.Message.DisplayText = "Please select a valid Warehouse";
+  }
+
+  if (message.Message.DisplayText == null)
+    return null; // caller expects null when there are no validation messages
+  else
+    return message;
+} // Inventory_BuildInv_ValidateWarehouse
+
+//*****************************************************************************
 //***************************** Create Inv LPN ********************************
 //*****************************************************************************
 

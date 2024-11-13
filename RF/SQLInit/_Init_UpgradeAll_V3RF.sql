@@ -5,6 +5,7 @@
 
   Date        Person  Comments
 
+  2023/08/23  CHP     Added WorkFlow and Form for Build Inventory (CIMSV3-3034)
   2021/04/26  RIA     Added forms for Build Load (HA-2675)
   2021/04/19  RIA     Added forms for Location Inquiry (OB2-1767)
   2021/03/19  RIA     Added work flow and forms for Load Inquiry (HA-2347)
@@ -122,6 +123,10 @@ Input .\Inventory\Init_RF_Form_Inventory_AddSKUToLPN.sql;
 Input .\Inventory\Init_RF_WF_Inventory_AdjustQty.sql;
 Input .\Inventory\Init_RF_Form_Inventory_AdjustLPNQty.sql;
 Input .\Inventory\Init_RF_Form_Inventory_AdjustLocationQty.sql;
+
+/* Build Inventory Work Flow Forms  */
+Input .\Inventory\init_RF_WF_Inventory_BuildInventory.sql;
+Input .\Inventory\init_RF_Form_Inventory_BuildInventory.sql;
 
 /* Create Inventory LPN Work Flow Forms  */
 Input .\Inventory\Init_RF_WF_Inventory_CreateInvLPN.sql;
