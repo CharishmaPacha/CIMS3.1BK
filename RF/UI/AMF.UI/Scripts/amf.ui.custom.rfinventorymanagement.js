@@ -446,7 +446,7 @@ function Inventory_BuildPallet_CompleteOrPause(evt)
 //*****************************************************************************
 
 //-----------------------------------------------------------------------------
-// custom handler to perform form related updates on show
+// custom handler to Perform form related updates on show
 function Inventory_BuildInv_OnShow()
 {
   // Get the scanned SKU
