@@ -105,7 +105,7 @@ select @EntityType = 'CycleCountResults';
 delete from Reports where EntityType = @EntityType;
 
 insert into Reports
-            (ReportName,                      ReportDescription,      ReportTemplateName,            ReportSchema,           ReportProcedureName,              ReportFileName,                                                                     ReportDisplayName,                                  FolderName, DocumentType,   DocumentSubType, DocumentSet,                        ReportXMLType, Status, Visible)
-      select 'CC_Rpt_ResultsList',            'CC Results',           'CC_Rpt_ResultsList.rdlc',     'CCResultsList',        'pr_CC_Rpt_CCResultsList',        'CCResultsList_~SYSTEMVALUE_CURRENTTIMESTAMP~',                                     null,                                               null,       'Dynamic',      'RDLC',          'CCResultsList',                    'M',           'A',    'Y'
+            (EntityType,  ReportName,                      ReportDescription,      ReportTemplateName,            ReportSchema,           ReportProcedureName,              ReportFileName,                                                                     ReportDisplayName,                                  FolderName, DocumentType,   DocumentSubType, DocumentSet,                        ReportXMLType, Status, Visible, BusinessUnit)
+      select @EntityType, 'CC_Rpt_ResultsList',            'CC Results',           'CC_Rpt_ResultsList.rdlc',     'CCResultsList',        'pr_CC_Rpt_CCResultsList',        'CCResultsList_~SYSTEMVALUE_CURRENTTIMESTAMP~',                                     null,                                               null,       'Dynamic',      'RDLC',          'CCResultsList',                    'M',           'A',    'Y',     BusinessUnit from vwBusinessUnits
 
 Go
