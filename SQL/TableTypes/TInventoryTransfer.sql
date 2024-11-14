@@ -68,6 +68,15 @@ Create Type TInventoryTransfer as Table (
     Comment              TVarchar,
     ProcessFlag          TFlags  default 'N',  /* N - Not yet processed, Y - Processed, I - Ignored, E - Error */
 
+    KeyValue             as convert(varchar, SKUId) + '-' + Ownership + '-' + Warehouse + '-' +
+                            coalesce(Lot, '') + '-' + coalesce(InventoryClass1, ''),
+
+    InventoryKey         as concat_ws('-', SKUId, Ownership, Warehouse, Lot, InventoryClass1, InventoryClass2, InventoryClass3),
+    NewInventoryKey      as concat_ws('-', coalesce(NewSKUId, SKUId), coalesce(NewOwnership, Ownership),
+                                           coalesce(NewWarehouse, Warehouse), coalesce(NewLot, Lot),
+                                           coalesce(NewInventoryClass1, InventoryClass1),
+                                           coalesce(NewInventoryClass2, InventoryClass2),
+                                           coalesce(NewInventoryClass3, InventoryClass3)),
     RecordId             TRecordId identity(1,1)
 );
 
