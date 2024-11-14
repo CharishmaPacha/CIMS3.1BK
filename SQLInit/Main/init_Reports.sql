@@ -50,10 +50,11 @@ union select @EntityType, 'Locations_Rpt_PalletList',      'Location Pallets',  
 /*------------------------------------------------------------------------------*/
 /* OnhandInventory */
 /*------------------------------------------------------------------------------*/
-delete from #Reports;
 select @EntityType = 'OnhandInventory';
 
-insert into #Reports
+delete from Reports where EntityType = @EntityType;
+
+insert into Reports
             (ReportName,                              ReportDescription,                        ReportTemplateName,                          AdditionalReportName,                   PageModel,        ReportSchema,       ReportProcedureName,                  ReportFileName,                                ReportDisplayName,                            FolderName, DocumentType,   DocumentSubType, DocumentSet,         ReportXMLType, Status, Visible)
       select 'OnhandInventory_Rpt_InvSnapshot',       'Onhand Inventory Snapshot',              'OnhandInventory_Rpt_InvSnapshot.rdlc',      null,                                   'M',              'OnhandInventory',  'pr_Inventory_Rpt_InvSnapshot',       'InvSnapshot_~SYSTEMVALUE_CURRENTTIMESTAMP~',  'InvSnapshot_~SYSTEMVALUE_CURRENTTIMESTAMP~', null,       'Dynamic',      'RDLC',          'OnhandInvSnapshot', 'M',           'A',    'Y'
 
