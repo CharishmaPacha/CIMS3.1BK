@@ -10,13 +10,13 @@
 
 Go
 
-if object_id('dbo.pr_OnhandInventory_Rpt_InvSnapShot') is not null
+if object_id('dbo.pr_Inventory_Rpt_InvSnapShot') is not null
   drop Procedure pr_OnhandInventory_Rpt_InvSnapShot;
 Go
 /*------------------------------------------------------------------------------
-  Proc pr_OnhandInventory_Rpt_InvSnapShot: Returns the xml with the selected records
+  Proc pr_Inventory_Rpt_InvSnapShot: Returns the xml with the selected records
 ------------------------------------------------------------------------------*/
-Create Procedure pr_OnhandInventory_Rpt_InvSnapShot
+Create Procedure pr_Inventory_Rpt_InvSnapShot
  (@xmlInput          xml,
   @BusinessUnit      TBusinessUnit,
   @UserId            TUserId,
@@ -29,7 +29,7 @@ as
 
   declare @ttLPNs               TEntityKeysTable;
 
-begin /* pr_OnhandInventory_Rpt_InvSnapShot */
+begin /* pr_Inventory_Rpt_InvSnapShot */
   SET NOCOUNT ON;
 
   select @vReturnCode     = 0,
@@ -51,6 +51,6 @@ begin /* pr_OnhandInventory_Rpt_InvSnapShot */
 
 ExitHandler:
   return(coalesce(@vReturnCode, 0));
-end /* pr_OnhandInventory_Rpt_InvSnapShot */
+end /* pr_Inventory_Rpt_InvSnapShot */
 
 Go
