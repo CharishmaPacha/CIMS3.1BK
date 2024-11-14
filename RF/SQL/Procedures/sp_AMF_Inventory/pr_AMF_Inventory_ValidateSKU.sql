@@ -114,7 +114,7 @@ begin /* pr_AMF_Inventory_ValidateSKU */
                                  @vSKUInfoXML output, @vSKUDetailsXML output;
 
   /* Build LookUps based on Operation */
-  if (@vOperation in ('CreateInvLPN', 'BuildInventory'))
+  if (@vOperation in ('CreateInvLPN', 'BuildInvLPN'))
     begin
 
       /* Fetch the InventoryClass1 values */
