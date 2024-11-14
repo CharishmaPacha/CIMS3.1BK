@@ -54,8 +54,8 @@ select @EntityType = 'OnhandInventory';
 delete from Reports where EntityType = @EntityType;
 
 insert into Reports
-            (ReportName,                              ReportDescription,                        ReportTemplateName,                          AdditionalReportName,                   PageModel,        ReportSchema,       ReportProcedureName,                  ReportFileName,                                ReportDisplayName,                            FolderName, DocumentType,   DocumentSubType, DocumentSet,         ReportXMLType, Status, Visible)
-      select 'OnhandInventory_Rpt_InvSnapshot',       'Onhand Inventory Snapshot',              'OnhandInventory_Rpt_InvSnapshot.rdlc',      null,                                   'M',              'OnhandInventory',  'pr_Inventory_Rpt_InvSnapshot',       'InvSnapshot_~SYSTEMVALUE_CURRENTTIMESTAMP~',  'InvSnapshot_~SYSTEMVALUE_CURRENTTIMESTAMP~', null,       'Dynamic',      'RDLC',          'OnhandInvSnapshot', 'M',           'A',    'Y'
+            (EntityType,  ReportName,                              ReportDescription,                        ReportTemplateName,                          AdditionalReportName,                   PageModel,        ReportSchema,       ReportProcedureName,                  ReportFileName,                                ReportDisplayName,                            FolderName, DocumentType,   DocumentSubType, DocumentSet,         ReportXMLType, Status, Visible, BusinessUnit)
+      select @EntityType, 'OnhandInventory_Rpt_InvSnapshot',       'Onhand Inventory Snapshot',              'OnhandInventory_Rpt_InvSnapshot.rdlc',      null,                                   'M',              'OnhandInventory',  'pr_Inventory_Rpt_InvSnapshot',       'InvSnapshot_~SYSTEMVALUE_CURRENTTIMESTAMP~',  'InvSnapshot_~SYSTEMVALUE_CURRENTTIMESTAMP~', null,       'Dynamic',      'RDLC',          'OnhandInvSnapshot', 'M',           'A',    'Y',     BusinessUnit from vwBusinessUnits
 
 /*------------------------------------------------------------------------------*/
 select @EntityType = 'Order';
