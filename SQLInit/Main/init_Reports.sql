@@ -100,13 +100,12 @@ insert into Reports
 /*------------------------------------------------------------------------------*/
 /* CycleCountResults */
 /*------------------------------------------------------------------------------*/
-delete from #Reports;
 select @EntityType = 'CycleCountResults';
 
-insert into #Reports
+delete from Reports where EntityType = @EntityType;
+
+insert into Reports
             (ReportName,                      ReportDescription,      ReportTemplateName,            ReportSchema,           ReportProcedureName,              ReportFileName,                                                                     ReportDisplayName,                                  FolderName, DocumentType,   DocumentSubType, DocumentSet,                        ReportXMLType, Status, Visible)
       select 'CC_Rpt_ResultsList',            'CC Results',           'CC_Rpt_ResultsList.rdlc',     'CCResultsList',        'pr_CC_Rpt_CCResultsList',        'CCResultsList_~SYSTEMVALUE_CURRENTTIMESTAMP~',                                     null,                                               null,       'Dynamic',      'RDLC',          'CCResultsList',                    'M',           'A',    'Y'
-
-exec pr_Setup_Reports @EntityType, 'AU' /* Add/update */, @CreatedBy, @BusinessUnit;
 
 Go
