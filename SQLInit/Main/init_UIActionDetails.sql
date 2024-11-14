@@ -629,10 +629,10 @@ select @ContextName    = 'List.OnhandInventory',
        @Entity         = 'OnhandInventory';
 
 insert into UIActionDetails
-            (ActionId,                          PermissionName,                     Caption,                       UITarget,               Entity,   LayoutType,  ActionInputFormType,  ActionInputFormName,           SelectionCriteria,  ActionActivationFieldName,  ActionActivationFieldValues,  ConfirmAction,  ConfirmChangeToSubmit,  MaxRecordsPerRun, StartNewMenuGroup, SortSeq, ActionProcedureName,                                                  ParentActionId,  BusinessUnit )
+            (ActionId,                          PermissionName,                     Caption,                       UITarget,               Entity,   LayoutType,  ActionInputFormType,  ActionInputFormName,           SelectionCriteria,  ActionActivationFieldName,  ActionActivationFieldValues,  ConfirmAction,  MaxRecordsPerRun, StartNewMenuGroup, SortSeq, ActionProcedureName,                                                  ParentActionId,  BusinessUnit )
             output INSERTED.ActionId, @ContextName, INSERTED.BusinessUnit into UIActionContexts(ActionId, ContextName, BusinessUnit)
       /* Actions for Reports */
-      select 'OnhandInventory_Rpt_InvSnapshot', 'OnhandInventory.Rpt.InvSnapshot',  'Inventory Snapshot',          @ExecuteReportNoDialog, @Entity,  'L',         'N',                  null,                          'Multiple',         null,                       null,                         'N',            'No',                   10,               0,                 50,      null,                                                                 @ParentActionId, BusinessUnit from vwBusinessUnits
+      select 'OnhandInventory_Rpt_InvSnapshot', 'OnhandInventory.Rpt.InvSnapshot',  'Inventory Snapshot',          @ExecuteReportNoDialog, @Entity,  'L',         'N',                  null,                          'Multiple',         null,                       null,                         'N',            10,               0,                 50,      null,                                                                 @ParentActionId, BusinessUnit from vwBusinessUnits
 
 /******************************************************************************/
 /* List.Orders actions */
