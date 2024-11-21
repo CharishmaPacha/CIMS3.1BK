@@ -636,7 +636,11 @@ function Inventory_BuildInv_Submit(evt)
     return;
   }
 
-  $('form').submit();
+  // when lpn is not scanned and user tries to create more than 1 lpn
+  if ((lpn == "") || (lpn == undefined) || (lpn == null) && (numlpns > 1))
+    SkipInputValidationsAndSubmit();
+  else
+    $('form').submit();
 
 } // Inventory_BuildInv_Submit
 
